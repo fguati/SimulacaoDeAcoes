@@ -7,9 +7,13 @@ const FormContainer = styled.form`
 `
 
 function Form({fields}) {
+    let i = 0
     return(
         <FormContainer action="">
-            {fields.map(field => <InputField>{field}</InputField>)}
+            {fields.map(field => {
+                i += 1
+                return (<InputField key={i}>{field}</InputField>)
+            })}
             <Button>Submit</Button>
         </FormContainer>
     )

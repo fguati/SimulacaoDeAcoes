@@ -1,12 +1,13 @@
 import Form from "Components/Form";
+import PageLayout from "Components/PageLayout";
 
 function SignUpPage() {
     const fields = ['Login', 'Password', 'Confirm Password'] 
     return(
-        <main>
+        <PageLayout>
             <Form fields={fields} />
 
-        </main>
+        </PageLayout>
     )
 }
 
