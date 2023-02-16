@@ -66,6 +66,18 @@ class UserDAO {
             throw error 
         }
     }
+
+    static async selectById(id) {
+        const sql = `SELECT * FROM users WHERE id=?`
+
+        try {
+            await dbRun(sql, [id])
+            
+        } catch (error) {
+            console.log(`Delete Error: ${error}`); 
+            throw error 
+        }
+    }
 }
 
 module.exports = UserDAO

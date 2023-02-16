@@ -37,6 +37,6 @@ describe('Testing select queries to users table in DB', () => {
 
 })
 
-// describe('Testing the insert method of the class responsible for querying the user table in the DB', () => {
+// describe('Testing the insert and delete methods of the class responsible for querying the user table in the DB', () => {
 
 // })
