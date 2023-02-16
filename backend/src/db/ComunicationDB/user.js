@@ -54,6 +54,18 @@ class UserDAO {
             throw new Error(error.message)
         }
     }
+
+    static async delete(id) {
+        const sql = `DELETE FROM users WHERE id=?`
+        
+        try {
+            await dbRun(sql, [id])
+            
+        } catch (error) {
+            console.log(`Delete Error: ${error}`); 
+            throw error 
+        }
+    }
 }
 
 module.exports = UserDAO
