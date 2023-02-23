@@ -1,5 +1,3 @@
-const { listInvalidInputs } = require("../utils");
-
 class InvalidInputError extends Error {
     constructor(message, InvalidInputList) {
         super(message)

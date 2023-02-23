@@ -21,10 +21,10 @@ class UserController {
             const listParams = userPropertyList.map(key => newUser[key])
 
             if(hasInvalidParam(listParams)) {
-                const invalidInputs = listInvalidInputs(newUser, listKeys)
+                const invalidInputs = listInvalidInputs(newUser, userPropertyList)
                 throw new InvalidInputError('Invalid user information', invalidInputs)
             }
-            
+
             await UserDAO.insert(newUser)
             return res.status(201).send('User created successfully')
             

@@ -1,7 +1,11 @@
-const { InvalidInputError, treatInvalidInputError } = require('../CustomErrors')
+const { 
+    treatInvalidInputError, 
+    treatUniqueConstraintError 
+} = require('../CustomErrors')
 
 const errorList = {
-    InvalidInputError: treatInvalidInputError
+    InvalidInputError: treatInvalidInputError,
+    UniqueConstraintError: treatUniqueConstraintError
 }
 
 function treatError(error, res) {

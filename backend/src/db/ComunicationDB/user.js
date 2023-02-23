@@ -1,7 +1,8 @@
 const { InvalidInputError } = require('../../CustomErrors/InvalidInputError')
 const { userPropertyList, hasInvalidParam, listInvalidInputs } = require('../../utils')
 
-const { dbAll, dbRun } = require('../dbUtils.js')
+const checkUniqueConstraintError = require('../../utils/checkUniqueConstraintError.js')
+const { dbAll, dbRun, dbGet } = require('../dbUtils.js')
 
 class UserDAO {
     static async select(property = '*') {
@@ -27,7 +28,7 @@ class UserDAO {
         let sql = `INSERT INTO users (nome, email, senhaHash) VALUES (?, ?, ?)`;
         
         try {
-            const listOfArguments = Object.values(user)
+            const listOfArguments = [nome, email, senhaHash]
             
             if(hasInvalidParam(listOfArguments)) {
                 const InvalidInputList = listInvalidInputs(user, userPropertyList)
@@ -37,21 +38,11 @@ class UserDAO {
             await dbRun(sql, [nome, email, senhaHash])
             
         } catch (error) {
-            const isSqliteError = error.message.includes('SQLITE_CONSTRAINT')
             console.log('Insert Error:', error.message)
             
-            if (isSqliteError) {
-                const isUniqueConstraintError = error.message.includes('UNIQUE')
-                const regexColumn = /users.(.*)/
-                const errorColumn = error.message.match(regexColumn)[1]
-
-                if(isUniqueConstraintError) {
-                    
-                    throw new InvalidInputError(`Column ${errorColumn} already has this entry`,[errorColumn])
-                }
-            }
+            checkUniqueConstraintError(error)
             
-            throw new Error(error.message)
+            throw error
         }
     }
 
@@ -59,8 +50,13 @@ class UserDAO {
         const sql = `DELETE FROM users WHERE id=?`
         
         try {
+            const selectedUser = await dbGet(`SELECT * FROM users WHERE id=?`, [id])
+            if(!selectedUser) {
+                throw new InvalidInputError(`User id ${id} not found`, ['id'])
+            }
+
             await dbRun(sql, [id])
-            
+            console.log('did not throw')
         } catch (error) {
             console.log(`Delete Error: ${error}`); 
             throw error 
@@ -71,10 +67,14 @@ class UserDAO {
         const sql = `SELECT * FROM users WHERE id=?`
 
         try {
-            await dbRun(sql, [id])
+            const selectedUser = await dbGet(sql, [id])
+            if(selectedUser) {
+                return selectedUser
+            }
+            throw new InvalidInputError(`User id ${id} not found`, ['id'])
             
         } catch (error) {
-            console.log(`Delete Error: ${error}`); 
+            console.log(`Select Error: ${error}`); 
             throw error 
         }
     }
