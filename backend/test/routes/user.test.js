@@ -19,6 +19,39 @@ describe('Testar GET em /', () => {
     })
 })
 
+describe('Test get by id in /', () => {
+    it('Must get a response with one user object', async () => {
+        const id = 1
+        
+        const resposta = await request(server)
+            .get(`/${id}`)
+            .set('Content-Type', 'application/json')
+            .expect(200)
+        const parsedBody = JSON.parse(resposta.text)
+        expect(parsedBody).toEqual(expect.objectContaining({
+            id: id,
+            nome: expect.any(String),
+            email: expect.any(String),
+            senhaHash: expect.any(String)
+        }))
+    })
+
+    it('must get an error 422 response from an invalid id', async () => {
+        const id = 'asfdsadf'
+        
+        const resposta = await request(server)
+            .get(`/${id}`)
+            .set('Content-Type', 'application/json')
+            .expect(422)
+        const parsedBody = JSON.parse(resposta.text)
+        expect(parsedBody).toEqual(expect.objectContaining({
+            code: 'InvalidInputError',
+            message: expect.any(String),
+            listOfInvalidInputs: expect.any(Array)
+        }))
+    })
+})
+
 describe('Testar POST em /', () => {   
     async function getObjId({ nome, email, senhaHash }) {
         let sql = `SELECT id FROM users WHERE nome=? AND email=? AND senhaHash=?`;
