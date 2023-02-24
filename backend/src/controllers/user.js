@@ -15,6 +15,22 @@ class UserController {
         }
     }
 
+    static async getOneById(req, res) {
+        const id = req.params.id
+        try {
+            const user = await UserDAO.selectById(id)
+            
+            if(!user) {
+                throw new InvalidInputError("Id not found", [id])
+            }
+
+            return res.status(200).json(user)
+
+        } catch (error) {
+            return treatError(error, res)
+        }
+    }
+
     static async postUser(req, res) {
         try {
             const newUser = req.body
@@ -32,6 +48,7 @@ class UserController {
             return treatError(error, res)
         }
     }
+
 }
 
 module.exports = UserController;

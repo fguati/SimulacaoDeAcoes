@@ -23,6 +23,22 @@ class UserDAO {
         
     }
 
+    static async selectById(id) {
+        const sql = `SELECT * FROM users WHERE id=?`
+
+        try {
+            const selectedUser = await dbGet(sql, [id])
+            if(selectedUser) {
+                return selectedUser
+            }
+            throw new InvalidInputError(`User id ${id} not found`, ['id'])
+            
+        } catch (error) {
+            console.log(`Select Error: ${error}`); 
+            throw error 
+        }
+    }
+
     static async insert(user) {
         const { nome, email, senhaHash } = user
         let sql = `INSERT INTO users (nome, email, senhaHash) VALUES (?, ?, ?)`;
@@ -63,21 +79,6 @@ class UserDAO {
         }
     }
 
-    static async selectById(id) {
-        const sql = `SELECT * FROM users WHERE id=?`
-
-        try {
-            const selectedUser = await dbGet(sql, [id])
-            if(selectedUser) {
-                return selectedUser
-            }
-            throw new InvalidInputError(`User id ${id} not found`, ['id'])
-            
-        } catch (error) {
-            console.log(`Select Error: ${error}`); 
-            throw error 
-        }
-    }
 }
 
 module.exports = UserDAO
