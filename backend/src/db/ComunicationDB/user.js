@@ -39,6 +39,22 @@ class UserDAO {
         }
     }
 
+    static async selectByEmail(email) {
+        const sql = `SELECT * FROM users WHERE email=?`
+
+        try {
+            const selectedUser = await dbGet(sql, [email])
+            if(selectedUser) {
+                return selectedUser
+            }
+            throw new InvalidInputError(`User email ${email} not found`, ['email'])
+            
+        } catch (error) {
+            console.log(`Select Error: ${error}`); 
+            throw error 
+        }
+    }
+
     static async insert(user) {
         const { nome, email, senhaHash } = user
         let sql = `INSERT INTO users (nome, email, senhaHash) VALUES (?, ?, ?)`;
