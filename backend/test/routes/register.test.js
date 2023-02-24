@@ -11,7 +11,7 @@ afterEach(() => {
     server.close()
 })
 
-describe('Testar POST em /signin', () => {   
+describe('Testar POST em /register', () => {   
     async function getObjId({ nome, email, senhaHash }) {
         let sql = `SELECT id FROM users WHERE nome=? AND email=? AND senhaHash=?`;
         const result = await dbGet(sql, [nome, email, senhaHash])
@@ -27,7 +27,7 @@ describe('Testar POST em /signin', () => {
         };
         
         const resposta = await request(server)
-            .post('/signin')
+            .post('/register')
             .send(userObject)
             .expect(201)
 
@@ -47,7 +47,7 @@ describe('Testar POST em /signin', () => {
         };
 
         const resposta = await request(server)
-            .post('/signin')
+            .post('/register')
             .send(userObject)
             .expect(422)
 
@@ -61,7 +61,7 @@ describe('Testar POST em /signin', () => {
         };
 
         const resposta = await request(server)
-            .post('/signin')
+            .post('/register')
             .send(userObject)
             .expect(422)
 
@@ -75,7 +75,7 @@ describe('Testar POST em /signin', () => {
         };
 
         const resposta = await request(server)
-            .post('/signin')
+            .post('/register')
             .send(userObject)
             .expect(422)
 
@@ -90,7 +90,7 @@ describe('Testar POST em /signin', () => {
         };
 
         const resposta = await request(server)
-            .post('/signin')
+            .post('/register')
             .send(userObject)
             .expect(422)
 
@@ -105,7 +105,7 @@ describe('Testar POST em /signin', () => {
         };
 
         const resposta = await request(server)
-            .post('/signin')
+            .post('/register')
             .send(userObject)
             .expect(422)
 
@@ -120,7 +120,7 @@ describe('Testar POST em /signin', () => {
         };
 
         const resposta = await request(server)
-            .post('/signin')
+            .post('/register')
             .send(userObject)
             .expect(422)
 
@@ -137,7 +137,7 @@ describe('Testar POST em /signin', () => {
         await UserDao.insert(userObject)
 
         const resposta = await request(server)
-            .post('/signin')
+            .post('/register')
             .send(userObject)
             .expect(422)
 
