@@ -11,51 +11,7 @@ afterEach(() => {
     server.close()
 })
 
-describe('Testar GET em /user', () => {
-    it('Deve retornar uma lista com pelo menos um elemento', async () => {
-        const resposta = await request(server)
-            .get('/user/')
-            .set('Content-Type', 'application/json')
-            .expect(200)
-        const parsedBody = JSON.parse(resposta.text)
-        expect(parsedBody.length).toBeGreaterThan(0)
-    })
-})
-
-describe('Test get by id in /user', () => {
-    it('Must get a response with one user object', async () => {
-        const id = 1
-        
-        const resposta = await request(server)
-            .get(`/user/${id}`)
-            .set('Content-Type', 'application/json')
-            .expect(200)
-        const parsedBody = JSON.parse(resposta.text)
-        expect(parsedBody).toEqual(expect.objectContaining({
-            id: id,
-            nome: expect.any(String),
-            email: expect.any(String),
-            senhaHash: expect.any(String)
-        }))
-    })
-
-    it('must get an error 422 response from an invalid id', async () => {
-        const id = 'asfdsadf'
-        
-        const resposta = await request(server)
-            .get(`/user/${id}`)
-            .set('Content-Type', 'application/json')
-            .expect(422)
-        const parsedBody = JSON.parse(resposta.text)
-        expect(parsedBody).toEqual(expect.objectContaining({
-            code: 'InvalidInputError',
-            message: expect.any(String),
-            listOfInvalidInputs: expect.any(Array)
-        }))
-    })
-})
-
-describe('Testar POST em /user', () => {   
+describe('Testar POST em /signin', () => {   
     async function getObjId({ nome, email, senhaHash }) {
         let sql = `SELECT id FROM users WHERE nome=? AND email=? AND senhaHash=?`;
         const result = await dbGet(sql, [nome, email, senhaHash])
@@ -71,7 +27,7 @@ describe('Testar POST em /user', () => {
         };
         
         const resposta = await request(server)
-            .post('/user')
+            .post('/signin')
             .send(userObject)
             .expect(201)
 
@@ -91,7 +47,7 @@ describe('Testar POST em /user', () => {
         };
 
         const resposta = await request(server)
-            .post('/user')
+            .post('/signin')
             .send(userObject)
             .expect(422)
 
@@ -105,7 +61,7 @@ describe('Testar POST em /user', () => {
         };
 
         const resposta = await request(server)
-            .post('/user')
+            .post('/signin')
             .send(userObject)
             .expect(422)
 
@@ -119,7 +75,7 @@ describe('Testar POST em /user', () => {
         };
 
         const resposta = await request(server)
-            .post('/user')
+            .post('/signin')
             .send(userObject)
             .expect(422)
 
@@ -134,7 +90,7 @@ describe('Testar POST em /user', () => {
         };
 
         const resposta = await request(server)
-            .post('/user')
+            .post('/signin')
             .send(userObject)
             .expect(422)
 
@@ -149,7 +105,7 @@ describe('Testar POST em /user', () => {
         };
 
         const resposta = await request(server)
-            .post('/user')
+            .post('/signin')
             .send(userObject)
             .expect(422)
 
@@ -164,7 +120,7 @@ describe('Testar POST em /user', () => {
         };
 
         const resposta = await request(server)
-            .post('/user')
+            .post('/signin')
             .send(userObject)
             .expect(422)
 
@@ -181,7 +137,7 @@ describe('Testar POST em /user', () => {
         await UserDao.insert(userObject)
 
         const resposta = await request(server)
-            .post('/user')
+            .post('/signin')
             .send(userObject)
             .expect(422)
 
