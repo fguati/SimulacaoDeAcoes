@@ -1,3 +1,4 @@
+const { InvalidCredentialsError } = require('../../CustomErrors')
 const { InvalidInputError } = require('../../CustomErrors/InvalidInputError')
 const { userPropertyList, hasInvalidParam, listInvalidInputs } = require('../../utils')
 
@@ -47,7 +48,7 @@ class UserDAO {
             if(selectedUser) {
                 return selectedUser
             }
-            throw new InvalidInputError(`User email ${email} not found`, ['email'])
+            throw new InvalidCredentialsError(`User email ${email} not found`)
             
         } catch (error) {
             console.log(`Select Error: ${error}`); 

@@ -1,7 +1,7 @@
-const { InvalidInputError } = require("../CustomErrors");
+const { InvalidInputError, InvalidCredentialsError } = require("../CustomErrors");
 const UserDAO = require("../db/ComunicationDB/user");
 const treatError = require("../services/errorTreating");
-const validateLogin = require('../utils/validateLogin.js');
+const validateLogin = require('../services/validateLogin.js');
 const { listInvalidInputs } = require('../utils/invalidInputFunctions.js')
 
 class LoginController {
@@ -17,12 +17,14 @@ class LoginController {
             const dbUserInfo = await UserDAO.selectByEmail(email)
 
             if(!dbUserInfo) {
-                throw new InvalidInputError('Invalid email', ['email'])
+                throw new InvalidCredentialsError('Invalid email')
             }
 
             if(validateLogin(dbUserInfo.senhaHash, senha)) {
                 return res.status(200).send('Successfully logged in')
-            }            
+            }
+            
+            throw new InvalidCredentialsError('Invalid Password')
 
         } catch (error) {
             treatError(error, res)

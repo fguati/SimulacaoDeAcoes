@@ -1,4 +1,4 @@
-const { InvalidInputError, UniqueConstraintError } = require('../../../src/CustomErrors')
+const { InvalidInputError, UniqueConstraintError, InvalidCredentialsError } = require('../../../src/CustomErrors')
 const UserDAO = require('../../../src/db/ComunicationDB/user.js')
 const { dbGet } = require('../../../src/db/dbUtils.js')
 
@@ -60,6 +60,32 @@ describe('Testing select by id queries to users table in DB', ()=> {
         }
         
         await expect(testFunction).rejects.toThrow(InvalidInputError)
+    })
+
+})
+
+describe('Testing select by email queries to users table in DB', ()=> {
+    it('must return an object with the email entered as argument', async () => {
+        const user = await UserDAO.selectByEmail("algumExemplo")
+        expect(user.email).toBe("algumExemplo")
+    })
+
+    it('must return an object with nome, email and senhaHash properties', async () => {
+        const user = await UserDAO.selectByEmail("algumExemplo")
+        expect(user).toEqual(expect.objectContaining({
+            nome: expect.any(String),
+            email: expect.any(String),
+            senhaHash: expect.any(String)
+        }))
+    })
+
+    it('must throw an InvalidCredentialsError if the email queried is Invalid', async () => {
+
+        async function testFunction() {
+            await UserDAO.selectByEmail('dfgdsfg')
+        }
+        
+        await expect(testFunction).rejects.toThrow(InvalidCredentialsError)
     })
 
 })
