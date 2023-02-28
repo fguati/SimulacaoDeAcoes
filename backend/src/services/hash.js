@@ -1,7 +1,7 @@
 const crypto = require('crypto')
 
 function generateSalt() {
-    return crypto.randomBytes(256).toString('hex')
+    return crypto.randomBytes(128).toString('hex')
 }
 
 function hashPassword(password, salt) {

@@ -56,9 +56,9 @@ describe('Test get by id in /user', () => {
 })
 
 describe('Testar POST em /user', () => {   
-    async function getObjId({ nome, email, senhaHash }) {
-        let sql = `SELECT id FROM users WHERE nome=? AND email=? AND senhaHash=?`;
-        const result = await dbGet(sql, [nome, email, senhaHash])
+    async function getObjId({ nome, email }) {
+        let sql = `SELECT id FROM users WHERE nome=? AND email=?`;
+        const result = await dbGet(sql, [nome, email])
     
         return result.id
     };
@@ -66,8 +66,8 @@ describe('Testar POST em /user', () => {
     it('must create an object in the the DB', async () => {
         const userObject = {
             nome: 'TestObject',
-            email: 'TestEmail@mail.com',
-            senhaHash: 'SenhaHashTeste'
+            email: 'TestEmailNovo@mail.com',
+            senha: 'SenhaHashTeste'
         };
         
         const resposta = await request(server)
@@ -78,7 +78,10 @@ describe('Testar POST em /user', () => {
         const id = await getObjId(userObject)
         const dbObject = await UserDao.selectById(id)
 
-        expect(dbObject).toEqual(expect.objectContaining(userObject))
+        expect(dbObject).toEqual(expect.objectContaining({
+            nome: userObject.nome,
+            email: userObject.email
+        }))
 
         await UserDao.delete(id)
 
@@ -123,7 +126,7 @@ describe('Testar POST em /user', () => {
             .send(userObject)
             .expect(422)
 
-        expect(resposta.body.listOfInvalidInputs[0]).toBe('senhaHash')
+        expect(resposta.body.listOfInvalidInputs[0]).toBe('senha')
     })
 
     it('must receive an error with invalid input if body has an invalid name', async () => {
@@ -160,7 +163,7 @@ describe('Testar POST em /user', () => {
         const userObject = {
             nome: 'TestObject',
             email: 'TestEmail@mail.com',
-            senhaHash: null
+            senha: null
         };
 
         const resposta = await request(server)
@@ -168,14 +171,14 @@ describe('Testar POST em /user', () => {
             .send(userObject)
             .expect(422)
 
-        expect(resposta.body.listOfInvalidInputs[0]).toBe('senhaHash')
+        expect(resposta.body.listOfInvalidInputs[0]).toBe('senha')
     })
 
     it('must receive an error with invalid input if body has a repeated email', async () => {
         const userObject = {
             nome: 'TestObject',
             email: 'email@email.com',
-            senhaHash: 'SenhaHashTeste'
+            senha: 'SenhaHashTeste'
         };
 
         await UserDao.insert(userObject)

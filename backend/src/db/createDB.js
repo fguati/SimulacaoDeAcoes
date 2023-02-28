@@ -17,6 +17,11 @@ const db = new sqlite3.Database(dbFilePath, (err) => {
     console.log('Connected to db')
 })
 
+if(!existBefore){
+    db.run(`INSERT INTO users (nome, email, senhaHash, salt) VALUES ("nomeTeste", "algumExemplo", "senhaTeste", "saltTeste")`)
+
+}
+
 db.serialize(() => {
     // db.run('PRAGMA foreign_keys=ON',(err) => {
     //     return console.log(`Erro no FK do db: ${err.message}`)
@@ -28,6 +33,7 @@ db.serialize(() => {
             }
         })
     })
+
 })
 
 process.on('SIGINT',() => {

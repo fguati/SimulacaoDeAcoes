@@ -95,12 +95,12 @@ describe('Testing the insert and delete methods of the class responsible for que
     const userObject = {
         nome: 'TestObject',
         email: 'TestEmail@mail.com',
-        senhaHash: 'SenhaHashTeste'
+        senha: 'SenhaHashTeste'
     };
 
-    async function getId({ nome, email, senhaHash }) {
-        let sql = `SELECT id FROM users WHERE nome=? AND email=? AND senhaHash=?`;
-        const resultado = await dbGet(sql, [nome, email, senhaHash])
+    async function getId({ nome, email }) {
+        let sql = `SELECT id FROM users WHERE nome=? AND email=?`;
+        const resultado = await dbGet(sql, [nome, email])
     
         return resultado.id
     };
@@ -117,10 +117,14 @@ describe('Testing the insert and delete methods of the class responsible for que
 
     it('must have created an entry in the db that is the object inserted', async () => {
         const idOfInsertedUser = await getId(userObject)
+        const {nome, email} = userObject;
         
         let selectedObj = await UserDAO.selectById(idOfInsertedUser)
     
-        expect(selectedObj).toEqual(expect.objectContaining(userObject))
+        expect(selectedObj).toEqual(expect.objectContaining({
+            nome: nome, 
+            email:email
+        }))
 
     })
 
@@ -148,7 +152,7 @@ describe('Testing the insert and delete methods of the class responsible for que
     it('must throw an InvalidInputError if is missing name', async () => {
         const missingInputObj = {
             email: 'TestEmail@mail.com',
-            senhaHash: 'SenhaHashTeste'
+            senha: 'SenhaHashTeste'
         };
 
         async function testFunction() {
@@ -162,7 +166,7 @@ describe('Testing the insert and delete methods of the class responsible for que
     it('must throw an InvalidInputError if is missing email', async () => {
         const missingInputObj = {
             nome: 'TestObject',
-            senhaHash: 'SenhaHashTeste'
+            senha: 'SenhaHashTeste'
         };
 
         async function testFunction() {
@@ -191,7 +195,7 @@ describe('Testing the insert and delete methods of the class responsible for que
         const missingInputObj = {
             nome: null,
             email: 'TestEmail@mail.com',
-            senhaHash: 'SenhaHashTeste'
+            senha: 'SenhaHashTeste'
         };
 
         async function testFunction() {
@@ -206,7 +210,7 @@ describe('Testing the insert and delete methods of the class responsible for que
         const missingInputObj = {
             nome: 'TestObject',
             email: null,
-            senhaHash: 'SenhaHashTeste'
+            senha: 'SenhaHashTeste'
         };
 
         async function testFunction() {
@@ -221,7 +225,7 @@ describe('Testing the insert and delete methods of the class responsible for que
         const missingInputObj = {
             nome: 'TestObject',
             email: 'TestEmail@mail.com',
-            senhaHash: null
+            senha: null
         };
 
         async function testFunction() {

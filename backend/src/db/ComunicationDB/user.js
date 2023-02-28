@@ -1,5 +1,6 @@
 const { InvalidCredentialsError } = require('../../CustomErrors')
 const { InvalidInputError } = require('../../CustomErrors/InvalidInputError')
+const { generateHashedPasswordAndSalt } = require('../../services/hash')
 const { userPropertyList, hasInvalidParam, listInvalidInputs } = require('../../utils')
 
 const checkUniqueConstraintError = require('../../utils/checkUniqueConstraintError.js')
@@ -57,18 +58,20 @@ class UserDAO {
     }
 
     static async insert(user) {
-        const { nome, email, senhaHash } = user
-        let sql = `INSERT INTO users (nome, email, senhaHash) VALUES (?, ?, ?)`;
+        const { nome, email, senha } = user
+        let sql = `INSERT INTO users (nome, email, senhaHash, salt) VALUES (?, ?, ?, ?)`;
         
         try {
-            const listOfArguments = [nome, email, senhaHash]
+            const listOfArguments = [nome, email, senha]
             
             if(hasInvalidParam(listOfArguments)) {
                 const InvalidInputList = listInvalidInputs(user, userPropertyList)
                 throw new InvalidInputError('Invalid column', InvalidInputList)
             }
+
+            const { hashedPassword, salt } = generateHashedPasswordAndSalt(senha)
             
-            await dbRun(sql, [nome, email, senhaHash])
+            await dbRun(sql, [nome, email, hashedPassword, salt])
             
         } catch (error) {
             console.log('Insert Error:', error.message)

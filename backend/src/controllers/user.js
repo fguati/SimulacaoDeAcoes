@@ -1,4 +1,4 @@
-const { userPropertyList, listInvalidInputs } = require('../utils')
+const { listInvalidInputs } = require('../utils')
 
 const UserDAO = require('../db/ComunicationDB/user.js');
 const { InvalidInputError } = require('../CustomErrors');
@@ -32,6 +32,8 @@ class UserController {
     }
 
     static async postUser(req, res) {
+        const userPropertyList = ['nome', 'email', 'senha']
+        
         try {
             const newUser = req.body
             const listParams = userPropertyList.map(key => newUser[key])

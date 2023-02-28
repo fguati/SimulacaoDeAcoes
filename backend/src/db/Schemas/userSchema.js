@@ -5,7 +5,8 @@ const USERS_SCHEMA = `
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     ${userPropertyList[0]} VARCHAR(40) NOT NULL,
     ${userPropertyList[1]} VARCHAR(255) NOT NULL UNIQUE,
-    ${userPropertyList[2]} VARCHAR(255) NOT NULL
+    ${userPropertyList[2]} VARCHAR(255) NOT NULL,
+    salt VARCHAR(255) NOT NULL
   );
   `
 
