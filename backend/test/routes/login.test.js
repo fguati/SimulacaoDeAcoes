@@ -1,6 +1,7 @@
 const app = require('../../src/app.js')
 const request = require('supertest')
 const UserDAO = require('../../src/db/ComunicationDB/user.js')
+const { generateJWT } = require('../../src/services/tokens.js')
 
 beforeEach(() => {
     server = app.listen(0)
@@ -30,6 +31,29 @@ describe('Test /login route', () => {
             .set('Content-Type', 'application/json')
             .send(submittedData)
             .expect(200)
+    })
+
+    it('must return the correct JWT authToken for valid credentials', async () => {
+        const submittedData = {
+            nome: "exampleName",
+            email: "algumExemplo3",
+            senha: "asdasfsa32"
+        }
+
+        const JWT = generateJWT(submittedData)
+        
+        try {
+            const exampleEmailinDB = await UserDAO.selectByEmail(submittedData.email)
+        } catch (error) {
+            await UserDAO.insert(submittedData)
+        }
+        
+        const resposta = await request(server)
+            .post('/login')
+            .set('Content-Type', 'application/json')
+            .send(submittedData)
+        
+        expect(resposta.text).toBe(JWT)
     })
 
     it('must return an error response if receives an invalid email', async () => {

@@ -3,6 +3,7 @@ const UserDAO = require("../db/ComunicationDB/user");
 const treatError = require("../services/errorTreating");
 const validateLogin = require('../services/validateLogin.js');
 const { listInvalidInputs } = require('../utils/invalidInputFunctions.js')
+const { generateJWT } = require('../services/tokens.js')
 
 class LoginController {
     static async login(req, res) {
@@ -21,7 +22,8 @@ class LoginController {
             }
 
             if(validateLogin(senha, dbUserInfo.senhaHash, dbUserInfo.salt)) {
-                return res.status(200).send('Successfully logged in')
+                let authToken = generateJWT(req.body)
+                return res.status(200).send(authToken)
             }
             
             throw new InvalidCredentialsError('Invalid Password')
