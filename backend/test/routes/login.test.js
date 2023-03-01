@@ -1,5 +1,6 @@
 const app = require('../../src/app.js')
 const request = require('supertest')
+const UserDAO = require('../../src/db/ComunicationDB/user.js')
 
 beforeEach(() => {
     server = app.listen(0)
@@ -13,8 +14,15 @@ describe('Test /login route', () => {
         
     it('must return an status 200 for a valid credentials', async () => {
         const submittedData = {
+            nome: "exampleName",
             email: "algumExemplo3",
             senha: "asdasfsa32"
+        }
+        
+        try {
+            const exampleEmailinDB = await UserDAO.selectByEmail(submittedData.email)
+        } catch (error) {
+            await UserDAO.insert(submittedData)
         }
         
         const resposta = await request(server)

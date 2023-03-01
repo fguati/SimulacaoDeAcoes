@@ -20,7 +20,7 @@ class LoginController {
                 throw new InvalidCredentialsError('Invalid email')
             }
 
-            if(validateLogin(dbUserInfo.senhaHash, senha)) {
+            if(validateLogin(senha, dbUserInfo.senhaHash, dbUserInfo.salt)) {
                 return res.status(200).send('Successfully logged in')
             }
             
