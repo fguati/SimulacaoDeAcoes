@@ -3,3 +3,4 @@ exemplo.test.js
 coverage
 db.sqlite
 teste.js
+.env
