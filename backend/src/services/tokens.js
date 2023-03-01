@@ -1,5 +1,6 @@
 require("dotenv-safe").config()
 const jwt = require('jsonwebtoken');
+const { TokenExpiredError } = require("../CustomErrors");
 
 function generateJWT(payload) {
     const token = jwt.sign(payload, process.env.JWT_KEY, {
@@ -15,6 +16,9 @@ function validateJWT(token) {
         return payload
         
     } catch (error) {
+        if(error.name === 'TokenExpiredError'){
+            throw new TokenExpiredError(error.message, error.expiredAt)
+        }
         throw error
     }
 }

@@ -1,6 +1,8 @@
 const { InvalidInputError, treatInvalidInputError } = require('./InvalidInputError.js')
 const { UniqueConstraintError, treatUniqueConstraintError } = require('./UniqueConstraintError.js')
 const { InvalidCredentialsError, treatInvalidCredentialsError } = require('./InvalidCredentialsError.js')
+const { TokenExpiredError, treatTokenExpiredError } = require('./TokenExpiredError')
+const { JsonWebTokenError, treatJsonWebToken } = require('./JsonWebTokenError')
 
 module.exports = { 
     InvalidInputError,
@@ -8,5 +10,9 @@ module.exports = {
     UniqueConstraintError,
     treatUniqueConstraintError,
     InvalidCredentialsError, 
-    treatInvalidCredentialsError
+    treatInvalidCredentialsError,
+    TokenExpiredError, 
+    treatTokenExpiredError,
+    JsonWebTokenError, 
+    treatJsonWebToken 
 }

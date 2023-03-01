@@ -1,5 +1,5 @@
 const { generateJWT, validateJWT } = require('../../src/services/tokens.js')
-// const { useFakeTimers, advanceTimersByTime } = require('jest')
+const { TokenExpiredError } = require('../../src/CustomErrors')
 
 describe('Test the functions responsible for dealing with standard jwts', () => {
     jest.useFakeTimers();
@@ -25,7 +25,7 @@ describe('Test the functions responsible for dealing with standard jwts', () => 
         expect(result).toEqual(expect.objectContaining(testPayload))
     })
 
-    test('validateJWT must throw error if token is expired', () => {
+    test('validateJWT must throw TokenExpiredError if token is expired', () => {
         const testPayload = {
             id: '1',
             name: 'teste'
@@ -38,6 +38,6 @@ describe('Test the functions responsible for dealing with standard jwts', () => 
             const result = validateJWT(token)
             return result
         }
-        expect(testFunction).toThrow(Error)
+        expect(testFunction).toThrow(TokenExpiredError)
     })
 })
