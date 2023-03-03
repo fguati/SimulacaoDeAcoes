@@ -3,7 +3,19 @@ const request = require('supertest')
 const UserDao = require('../../src/db/ComunicationDB/user.js')
 const { dbGet } = require('../../src/db/dbUtils.js')
 
-beforeEach(() => {
+async function login() {
+    const validCredentials = {
+        nome: "exampleName",
+        email: "algumExemplo3",
+        senha: "asdasfsa32"
+    }
+
+    const resposata = await request(server).post('/login').send(validCredentials)
+    const authToken = resposata.headers['set-cookie']
+    return authToken
+}
+
+beforeEach(async () => {
     server = app.listen(0)
 })
 
@@ -12,10 +24,14 @@ afterEach(() => {
 })
 
 describe('Testar GET em /user', () => {
+    
     it('Deve retornar uma lista com pelo menos um elemento', async () => {
+        const authToken = await login()
+
         const resposta = await request(server)
             .get('/user/')
             .set('Content-Type', 'application/json')
+            .set('Cookie', authToken)
             .expect(200)
         const parsedBody = JSON.parse(resposta.text)
         expect(parsedBody.length).toBeGreaterThan(0)
@@ -24,11 +40,13 @@ describe('Testar GET em /user', () => {
 
 describe('Test get by id in /user', () => {
     it('Must get a response with one user object', async () => {
+        const authToken = await login()
         const id = 1
         
         const resposta = await request(server)
             .get(`/user/${id}`)
             .set('Content-Type', 'application/json')
+            .set('Cookie', authToken)
             .expect(200)
         const parsedBody = JSON.parse(resposta.text)
         expect(parsedBody).toEqual(expect.objectContaining({
@@ -40,11 +58,13 @@ describe('Test get by id in /user', () => {
     })
 
     it('must get an error 422 response from an invalid id', async () => {
+        const authToken = await login()
         const id = 'asfdsadf'
         
         const resposta = await request(server)
             .get(`/user/${id}`)
             .set('Content-Type', 'application/json')
+            .set('Cookie', authToken)
             .expect(422)
         const parsedBody = JSON.parse(resposta.text)
         expect(parsedBody).toEqual(expect.objectContaining({
@@ -64,6 +84,7 @@ describe('Testar POST em /user', () => {
     };
 
     it('must create an object in the the DB', async () => {
+        const authToken = await login()
         const userObject = {
             nome: 'TestObject',
             email: 'TestEmailNovo@mail.com',
@@ -72,6 +93,7 @@ describe('Testar POST em /user', () => {
         
         const resposta = await request(server)
             .post('/user')
+            .set('Cookie', authToken)
             .send(userObject)
             .expect(201)
 
@@ -88,6 +110,8 @@ describe('Testar POST em /user', () => {
     })
 
     it('must receive an error with invalid input if body is missing name', async () => {
+        const authToken = await login()
+        
         const userObject = {
             email: 'TestEmail@mail.com',
             senhaHash: 'SenhaHashTeste'
@@ -95,6 +119,7 @@ describe('Testar POST em /user', () => {
 
         const resposta = await request(server)
             .post('/user')
+            .set('Cookie', authToken)
             .send(userObject)
             .expect(422)
 
@@ -102,6 +127,8 @@ describe('Testar POST em /user', () => {
     })
 
     it('must receive an error with invalid input if body is missing email', async () => {
+        const authToken = await login()
+        
         const userObject = {
             nome: 'TestObject',
             senhaHash: 'SenhaHashTeste'
@@ -109,6 +136,7 @@ describe('Testar POST em /user', () => {
 
         const resposta = await request(server)
             .post('/user')
+            .set('Cookie', authToken)
             .send(userObject)
             .expect(422)
 
@@ -116,6 +144,8 @@ describe('Testar POST em /user', () => {
     })
 
     it('must receive an error with invalid input if body is missing senhaHash', async () => {
+        const authToken = await login()
+        
         const userObject = {
             nome: 'TestObject',
             email: 'TestEmail@mail.com'
@@ -123,6 +153,7 @@ describe('Testar POST em /user', () => {
 
         const resposta = await request(server)
             .post('/user')
+            .set('Cookie', authToken)
             .send(userObject)
             .expect(422)
 
@@ -130,6 +161,8 @@ describe('Testar POST em /user', () => {
     })
 
     it('must receive an error with invalid input if body has an invalid name', async () => {
+        const authToken = await login()
+        
         const userObject = {
             nome: null,
             email: 'TestEmail@mail.com',
@@ -138,6 +171,7 @@ describe('Testar POST em /user', () => {
 
         const resposta = await request(server)
             .post('/user')
+            .set('Cookie', authToken)
             .send(userObject)
             .expect(422)
 
@@ -145,6 +179,8 @@ describe('Testar POST em /user', () => {
     })
 
     it('must receive an error with invalid input if body has an invalid email', async () => {
+        const authToken = await login()
+        
         const userObject = {
             nome: 'TestObject',
             email: null,
@@ -153,6 +189,7 @@ describe('Testar POST em /user', () => {
 
         const resposta = await request(server)
             .post('/user')
+            .set('Cookie', authToken)
             .send(userObject)
             .expect(422)
 
@@ -160,6 +197,8 @@ describe('Testar POST em /user', () => {
     })
 
     it('must receive an error with invalid input if body has an invalid senhaHash', async () => {
+        const authToken = await login()
+        
         const userObject = {
             nome: 'TestObject',
             email: 'TestEmail@mail.com',
@@ -168,6 +207,7 @@ describe('Testar POST em /user', () => {
 
         const resposta = await request(server)
             .post('/user')
+            .set('Cookie', authToken)
             .send(userObject)
             .expect(422)
 
@@ -175,6 +215,8 @@ describe('Testar POST em /user', () => {
     })
 
     it('must receive an error with invalid input if body has a repeated email', async () => {
+        const authToken = await login()
+        
         const userObject = {
             nome: 'TestObject',
             email: 'email@email.com',
@@ -185,6 +227,7 @@ describe('Testar POST em /user', () => {
 
         const resposta = await request(server)
             .post('/user')
+            .set('Cookie', authToken)
             .send(userObject)
             .expect(422)
 

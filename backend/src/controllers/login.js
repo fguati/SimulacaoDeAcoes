@@ -2,12 +2,13 @@ const { InvalidInputError, InvalidCredentialsError } = require("../CustomErrors"
 const treatError = require("../services/errorTreating");
 const { validateLogin } = require('../services/validate.js');
 const { listInvalidInputs } = require('../utils/invalidInputFunctions.js')
-const { generateJWT } = require('../services/tokens.js')
+const JWToken = require('../services/tokens.js')
 
 function sendAuthTokenResponse(req, res) {
-    let authToken = generateJWT(req.body)
-    res.set('Authorization', authToken)
-    return res.status(200).send(authToken)
+    let authToken = new JWToken(req.body)
+    res.set('Authorization', authToken.token)
+    res.cookie('authToken', authToken.token)
+    return res.status(200).send(authToken.token)
 }
 
 function throwInvalidInputError(req) {

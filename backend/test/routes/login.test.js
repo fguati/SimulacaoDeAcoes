@@ -1,7 +1,7 @@
 const app = require('../../src/app.js')
 const request = require('supertest')
 const UserDAO = require('../../src/db/ComunicationDB/user.js')
-const { generateJWT } = require('../../src/services/tokens.js')
+const JWToken = require('../../src/services/tokens.js')
 
 beforeEach(() => {
     server = app.listen(0)
@@ -40,7 +40,8 @@ describe('Test /login route', () => {
             senha: "asdasfsa32"
         }
 
-        const JWT = generateJWT(submittedData)
+        const token = new JWToken(submittedData)
+        const JWT = token.token
         
         try {
             const exampleEmailinDB = await UserDAO.selectByEmail(submittedData.email)

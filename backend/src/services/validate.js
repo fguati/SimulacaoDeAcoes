@@ -1,5 +1,4 @@
 const { checkifValidPassword } = require('./hash.js')
-const { validateJWT } = require('./tokens.js')
 const { InvalidCredentialsError } = require("../CustomErrors");
 const UserDAO = require("../db/ComunicationDB/user");
 
@@ -24,4 +23,4 @@ async function checkIfValidUser(email) {
     return dbUserInfo
 }
 
-module.exports = { validateLogin, validateJWT }
+module.exports = { validateLogin }
