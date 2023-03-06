@@ -40,8 +40,8 @@ describe('Test /login route', () => {
             senha: "asdasfsa32"
         }
 
-        const token = new JWToken(submittedData)
-        const JWT = token.token
+        const token = JWToken.generate(submittedData)
+        const JWT = token
         
         try {
             const exampleEmailinDB = await UserDAO.selectByEmail(submittedData.email)

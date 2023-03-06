@@ -5,10 +5,10 @@ const { listInvalidInputs } = require('../utils/invalidInputFunctions.js')
 const JWToken = require('../services/tokens.js')
 
 function sendAuthTokenResponse(req, res) {
-    let authToken = new JWToken(req.body)
-    res.set('Authorization', authToken.token)
-    res.cookie('authToken', authToken.token)
-    return res.status(200).send(authToken.token)
+    let authToken = JWToken.generate(req.body)
+    res.set('Authorization', authToken)
+    res.cookie('authToken', authToken)
+    return res.status(200).send(authToken)
 }
 
 function throwInvalidInputError(req) {

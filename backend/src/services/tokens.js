@@ -3,12 +3,9 @@ const jwt = require('jsonwebtoken');
 const { TokenExpiredError, JsonWebTokenError } = require("../CustomErrors");
 
 class JWToken {
-    constructor(payload){
-        this.token = JWToken.generate(payload)
-    }
 
-    static generate(payload) {
-        const token = jwt.sign(payload, process.env.JWT_KEY, {
+    static generate(payload, key = process.env.JWT_KEY) {
+        const token = jwt.sign(payload, key, {
             expiresIn:'5m'
         })
         
@@ -16,9 +13,9 @@ class JWToken {
 
     }
     
-    static validateJWT(token) {
+    static validateJWT(token, key = process.env.JWT_KEY) {
         try {
-            const payload = jwt.verify(token, process.env.JWT_KEY)
+            const payload = jwt.verify(token, key)
             return payload
             
         } catch (error) {

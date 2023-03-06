@@ -10,8 +10,8 @@ describe('Test the functions responsible for dealing with standard jwts', () => 
             name: 'teste'
         }
 
-        const token = new JWToken(testPayload)
-        expect(token.token).toEqual(expect.any(String))
+        const token = JWToken.generate(testPayload)
+        expect(token).toEqual(expect.any(String))
     })
 
     test('validateJWT must return the entered payload', () => {
@@ -20,8 +20,8 @@ describe('Test the functions responsible for dealing with standard jwts', () => 
             name: 'teste'
         }
 
-        const token = new JWToken(testPayload)
-        const result = JWToken.validateJWT(token.token)
+        const token = JWToken.generate(testPayload)
+        const result = JWToken.validateJWT(token)
         expect(result).toEqual(expect.objectContaining(testPayload))
     })
 
@@ -31,11 +31,11 @@ describe('Test the functions responsible for dealing with standard jwts', () => 
             name: 'teste'
         }
 
-        const token = new JWToken(testPayload)
+        const token = JWToken.generate(testPayload)
         jest.advanceTimersByTime(5 * 60 * 1000 + 1)
         
         function testFunction() {
-            const result = JWToken.validateJWT(token.token)
+            const result = JWToken.validateJWT(token)
             return result
         }
         expect(testFunction).toThrow(TokenExpiredError)
