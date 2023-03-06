@@ -1,12 +1,9 @@
 import Title from "Components/Title"
 import Input from "Components/Input"
-import styled from "styled-components";
+import InputFieldContainer from "./InputFieldContainer";
+import IInputFieldProps from "./IInputFieldProps";
 
-const InputFieldContainer = styled.div`
-    margin: 8px;
-`
-
-function InputField( {children} ) {
+function InputField( {children}: IInputFieldProps ) {
     return(
         <InputFieldContainer>
             <Title>{children}</Title>

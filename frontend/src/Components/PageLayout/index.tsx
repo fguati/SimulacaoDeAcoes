@@ -1,6 +1,7 @@
 import Header from "Components/Header";
+import IPageLayoutProps from "./IPageLayoutProps";
 
-function PageLayout({children}) {
+function PageLayout({children}:IPageLayoutProps) {
     return(
         <>
             <Header />

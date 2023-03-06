@@ -1,12 +1,9 @@
 import Button from "Components/Button"
 import InputField from "Components/InputField"
-import styled from "styled-components";
+import FormContainer from "./FormContainer"
+import IFormProps from "./IFormProps"
 
-const FormContainer = styled.form`
-    padding: 8px;
-`
-
-function Form({fields}) {
+function Form({fields}:IFormProps) {
     let i = 0
     return(
         <FormContainer action="">
