@@ -15,7 +15,7 @@ function treatUniqueConstraintError (error, res) {
             message: error.message,
             uniqueColumn: error.errorColumn
         }
-        return res.status(422).send(responseObject)
+        return res.status(422).send(JSON.stringify(responseObject))
     }
 }
 

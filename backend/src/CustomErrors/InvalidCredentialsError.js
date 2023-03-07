@@ -11,7 +11,7 @@ function treatInvalidCredentialsError(error, res) {
             code: error.name,
             message: error.message
         }
-        return res.status(401).send(responseObject)
+        return res.status(401).send(JSON.stringify(responseObject))
     }
 }
 

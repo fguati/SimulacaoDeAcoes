@@ -12,7 +12,7 @@ function treatJsonWebToken(error, res) {
             message: error.message
         }
 
-        return res.status(401).send(responseObject)
+        return res.status(401).send(JSON.stringify(responseObject))
     }
 }
 

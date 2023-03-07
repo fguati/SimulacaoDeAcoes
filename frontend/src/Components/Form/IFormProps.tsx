@@ -1,5 +1,8 @@
+import IFormField from "Interfaces/IFormField";
+
 interface IFormProps {
-    fields: string[]
+    fields: IFormField[]
+    onSubmit: (e: React.FormEvent<HTMLFormElement>) => void
 }
 
 export default IFormProps;

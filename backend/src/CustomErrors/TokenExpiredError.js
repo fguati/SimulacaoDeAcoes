@@ -14,7 +14,7 @@ function treatTokenExpiredError(error, res) {
             expiredAt: error.expiredAt
         }
 
-        return res.status(401).send(responseObject)
+        return res.status(401).send(JSON.stringify(responseObject))
     }
 }
 

@@ -14,7 +14,7 @@ function treatInvalidInputError(error, res) {
             message: error.message,
             listOfInvalidInputs: error.InvalidInputList
         }
-        return res.status(422).send(responseObject)
+        return res.status(422).send(JSON.stringify(responseObject))
     }
 }
 
