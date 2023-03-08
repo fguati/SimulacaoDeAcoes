@@ -15,7 +15,6 @@ function SignUpPage() {
     ] 
 
     const onSubmitSignUp = async (e:React.FormEvent<HTMLFormElement>) =>{
-        e.preventDefault()
         const target = e.target as typeof e.target & {
             "Username": { value: string };
             "E-mail": { value: string };

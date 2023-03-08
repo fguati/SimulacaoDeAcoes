@@ -21,8 +21,23 @@ function Form({fields, onSubmit}:IFormProps) {
         setCurrentFieldsValues(newList)
     }
 
+    const baseOnSubmit = (e:React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault()
+        onSubmit(e)
+        clearForm()
+    }
+
+    const clearForm = () => {
+        const clearedFields = currentFieldValues.map(field => {
+            field.value=''
+            return field
+        })
+
+        setCurrentFieldsValues(clearedFields)
+    }
+
     return(
-        <FormContainer action="" onSubmit={(e) => onSubmit(e)}>
+        <FormContainer action="" onSubmit={baseOnSubmit}>
             {currentFieldValues.map((field) => {
                 const {name, value, type} = field
                 return (
