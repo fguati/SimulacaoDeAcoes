@@ -1,11 +1,13 @@
 import Form from "Components/Form";
 import PageLayout from "Components/PageLayout";
 import IFormField from "Interfaces/IFormField";
-import IUser from "Interfaces/IUser";
-import { signUpRequest } from "./utils";
+import { useNavigate } from "react-router-dom";
+import { submitSignUp } from "./utils";
 
 
 function SignUpPage() {
+    const navigate = useNavigate()
+    
     const fields:IFormField[] = [
         {name: 'Username', type: 'text', value:''},
         {name: 'E-mail', type:'email', value:''}, 
@@ -14,27 +16,9 @@ function SignUpPage() {
 
     ] 
 
-    const onSubmitSignUp = async (e:React.FormEvent<HTMLFormElement>) =>{
-        const target = e.target as typeof e.target & {
-            "Username": { value: string };
-            "E-mail": { value: string };
-            "Password": { value: string };
-            "Confirm Password": { value: string };
-        };
-
-        const user: IUser = {
-            nome: target.Username.value,
-            email: target["E-mail"].value,
-            senha: target.Password.value
-        }
-
-        const response = await signUpRequest(user)
-
-    }
-
     return(
         <PageLayout>
-            <Form fields={fields} onSubmit={onSubmitSignUp}/>
+            <Form fields={fields} onSubmit={(e) => submitSignUp(e, navigate)}/>
 
         </PageLayout>
     )

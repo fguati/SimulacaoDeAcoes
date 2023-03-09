@@ -5,7 +5,7 @@ function Header() {
     return (
         <HeaderContainer>
             <nav>
-                <StyledLink to='/'>Login</StyledLink>
+                <StyledLink to='/login'>Login</StyledLink>
                 <StyledLink to='/signup'>Sign Up</StyledLink>
             </nav>
         </HeaderContainer>
