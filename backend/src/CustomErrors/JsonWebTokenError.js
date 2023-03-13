@@ -8,7 +8,7 @@ class JsonWebTokenError extends Error {
 function treatJsonWebToken(error, res) {
     if(error instanceof JsonWebTokenError){
         const responseObject = {
-            code: error.name,
+            name: error.name,
             message: error.message
         }
 

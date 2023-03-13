@@ -1,11 +1,14 @@
 import PageLayout from "Components/PageLayout";
 import Title from "Components/Title";
+import useErrorHandler from "./useErrorHandler";
 
-function ErrorPage({errorCode, errorName, errorMessage}:IErrorPageProps) {
+function ErrorPage(props: IErrorPageProps) {
+    const {code, name, message} = useErrorHandler(props)
+
     return(
         <PageLayout>
-            <Title>{`Error ${errorCode}: ${errorName}`}</Title>
-            <p>{errorMessage}</p>
+            <Title>{`Error ${code}: ${name}`}</Title>
+            <p>{message}</p>
         </PageLayout>
     )
 }

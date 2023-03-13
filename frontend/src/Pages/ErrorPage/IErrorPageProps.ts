@@ -1,5 +1,5 @@
 interface IErrorPageProps {
-    errorCode: number
-    errorName: string
-    errorMessage: string
+    code?: number
+    name?: string
+    message?: string
 }

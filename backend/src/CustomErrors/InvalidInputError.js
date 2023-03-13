@@ -10,9 +10,9 @@ class InvalidInputError extends Error {
 function treatInvalidInputError(error, res) {
     if (error instanceof InvalidInputError) {
         const responseObject ={
-            code: error.name,
+            name: error.name,
             message: error.message,
-            listOfInvalidInputs: error.InvalidInputList
+            aditionalInfo: `listOfInvalidInputs: ${error.InvalidInputList}`
         }
         return res.status(422).send(JSON.stringify(responseObject))
     }

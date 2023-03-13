@@ -8,7 +8,7 @@ class MissingAuthTokenError extends Error {
 function treatMissingAuthTokenError(error, res) {
     if (error instanceof MissingAuthTokenError) {
         const responseObject = {
-            code: error.name,
+            name: error.name,
             message: error.message
         }
         return res.status(401).send(JSON.stringify(responseObject))

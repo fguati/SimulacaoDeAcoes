@@ -2,7 +2,7 @@ import { RouteObject } from "react-router-dom";
 import LoginPage from "Pages/Login";
 
 const loginRoute: RouteObject = {
-    path: '/login',
+    path: 'login',
     element: <LoginPage />
 }
 

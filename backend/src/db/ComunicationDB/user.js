@@ -49,6 +49,7 @@ class UserDAO {
             if(selectedUser) {
                 return selectedUser
             }
+            
             throw new InvalidCredentialsError(`User email ${email} not found`)
             
         } catch (error) {

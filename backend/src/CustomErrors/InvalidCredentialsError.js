@@ -8,7 +8,7 @@ class InvalidCredentialsError extends Error {
 function treatInvalidCredentialsError(error, res) {
     if (error instanceof InvalidCredentialsError) {
         const responseObject = {
-            code: error.name,
+            name: error.name,
             message: error.message
         }
         return res.status(401).send(JSON.stringify(responseObject))

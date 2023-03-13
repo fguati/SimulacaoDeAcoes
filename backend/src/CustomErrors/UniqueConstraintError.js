@@ -11,9 +11,9 @@ class UniqueConstraintError extends Error {
 function treatUniqueConstraintError (error, res) {
     if (error instanceof UniqueConstraintError) {
         const responseObject ={
-            code: error.name,
-            message: error.message,
-            uniqueColumn: error.errorColumn
+            name: error.name,
+            message: `The ${error.errorColumn} entered is already registered in our database. Please attempt with another ${error.errorColumn}`,
+            aditionalInfo: `uniqueColumn: ${error.errorColumn}`
         }
         return res.status(422).send(JSON.stringify(responseObject))
     }

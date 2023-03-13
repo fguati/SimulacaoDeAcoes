@@ -2,7 +2,7 @@ import { RouteObject } from "react-router-dom";
 import SignUpPage from "Pages/SignUp";
 
 const signUpRoute: RouteObject = {
-    path: '/signup',
+    path: 'signup',
     element: <SignUpPage />
 }
 

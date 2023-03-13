@@ -9,9 +9,9 @@ class TokenExpiredError extends Error {
 function treatTokenExpiredError(error, res) {
     if(error instanceof TokenExpiredError) {
         const responseObject = {
-            code: error.name,
+            name: error.name,
             message: error.message,
-            expiredAt: error.expiredAt
+            aditionalInfo: `expiredAt: ${error.expiredAt}`
         }
 
         return res.status(401).send(JSON.stringify(responseObject))
