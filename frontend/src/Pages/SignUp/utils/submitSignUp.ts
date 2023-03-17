@@ -1,20 +1,24 @@
 import IUser from "Interfaces/IUser"
 import castSignUpEventTargetType from "./castFormEventTargetType"
 import signUpRequest from "./signUpRequest"
-import handleSignUpResponse from "./handleSignUpResponse"
-import { NavigateFunction } from "react-router-dom"
+import useHandleSignUpResponse from "./handleSignUpResponse"
 
-const submitSignUp = async (e:React.FormEvent<HTMLFormElement>, navigate: NavigateFunction) =>{
-    const target = castSignUpEventTargetType(e)
+const useSubmitSignUp = () =>{
+    const signUpResponseHandler = useHandleSignUpResponse()
 
-    const user: IUser = {
-        nome: target.Username.value,
-        email: target["E-mail"].value,
-        senha: target.Password.value
+    return async (e:React.FormEvent<HTMLFormElement>) => {
+        const target = castSignUpEventTargetType(e)
+    
+        const user: IUser = {
+            nome: target.Username.value,
+            email: target["E-mail"].value,
+            senha: target.Password.value
+        }
+    
+        const response = await signUpRequest(user)
+        const handledResponse = await signUpResponseHandler(response)
+        return handledResponse
     }
-
-    const response = await signUpRequest(user)
-    await handleSignUpResponse(response, navigate)
 }
 
-export default submitSignUp;
+export default useSubmitSignUp;

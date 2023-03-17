@@ -1,12 +1,11 @@
 import Form from "Components/Form";
 import PageLayout from "Components/PageLayout";
 import IFormField from "Interfaces/IFormField";
-import { useNavigate } from "react-router-dom";
-import { submitSignUp } from "./utils";
+import { useSubmitSignUp } from "./utils";
 
 
 function SignUpPage() {
-    const navigate = useNavigate()
+    const submitSignUp = useSubmitSignUp()
     
     const fields:IFormField[] = [
         {name: 'Username', type: 'text', value:''},
@@ -18,7 +17,7 @@ function SignUpPage() {
 
     return(
         <PageLayout>
-            <Form fields={fields} onSubmit={(e) => submitSignUp(e, navigate)}/>
+            <Form fields={fields} onSubmit={(e) => submitSignUp(e)}/>
 
         </PageLayout>
     )
