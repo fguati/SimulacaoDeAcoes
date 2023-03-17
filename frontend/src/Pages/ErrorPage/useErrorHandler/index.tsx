@@ -1,7 +1,7 @@
 import { useLocation, useRouteError } from "react-router-dom";
 import IErrorResponse from "Interfaces/IErrorResponse";
 import handleRouteError from "./handleRouteError";
-import handleErrorResponse from "./handleErrorResponse";
+import parseErrorResponse from "./parseErrorResponse";
 import unknownError from "./unknownError";
 
 
@@ -12,10 +12,8 @@ function useErrorHandler(errorPageProps?: IErrorResponse) {
     
     const routeError = useRouteError()
 
-    console.log(errorSentInNav, Boolean(errorSentInNav))
-
     if(errorPageProps?.code) {
-        return handleErrorResponse(errorPageProps)
+        return parseErrorResponse(errorPageProps)
     }
 
     if(routeError) {
@@ -23,7 +21,7 @@ function useErrorHandler(errorPageProps?: IErrorResponse) {
     }
 
     if(errorSentInNav) {
-        return handleErrorResponse(errorSentInNav)
+        return parseErrorResponse(errorSentInNav)
     }
     
     return unknownError

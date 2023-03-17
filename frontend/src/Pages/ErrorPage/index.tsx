@@ -7,8 +7,8 @@ function ErrorPage(props: IErrorPageProps) {
 
     return(
         <PageLayout>
-            <Title>{`Error ${code}: ${name}`}</Title>
-            <p>{message}</p>
+            <Title role={'title'}>{`Error ${code}: ${name}`}</Title>
+            <p role={'message'}>{message}</p>
         </PageLayout>
     )
 }

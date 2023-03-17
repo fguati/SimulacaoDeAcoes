@@ -1,6 +1,8 @@
 import Form from "Components/Form";
 import PageLayout from "Components/PageLayout";
 import IFormField from "Interfaces/IFormField";
+import useSubmitLoginRequest from "./utils/useSubmitLoginRequest";
+
 
 function LoginPage() {
     const fields:IFormField[] = [
@@ -8,13 +10,9 @@ function LoginPage() {
         {name: 'Password', type:'password', value:''}
     ] 
     
-    const submitLoginRequest = (e:React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault()
-    }
-    
     return(
         <PageLayout>
-            <Form fields={fields} onSubmit={submitLoginRequest}/>
+            <Form fields={fields} onSubmit={useSubmitLoginRequest}/>
 
         </PageLayout>
     )

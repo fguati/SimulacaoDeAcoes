@@ -1,8 +1,7 @@
 import IErrorResponse from "Interfaces/IErrorResponse";
 
 
-function handleErrorResponse(errorResponse: IErrorResponse): IErrorPageProps {
-    console.log(errorResponse.code)
+function parseErrorResponse(errorResponse: IErrorResponse): IErrorPageProps {
     let {code, name, message, aditionalInfo} = errorResponse
     
     if (aditionalInfo) {
@@ -12,4 +11,4 @@ function handleErrorResponse(errorResponse: IErrorResponse): IErrorPageProps {
     return {code, name, message}
 }
 
-export default handleErrorResponse
+export default parseErrorResponse

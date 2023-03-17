@@ -14,7 +14,6 @@ const submitSignUp = async (e:React.FormEvent<HTMLFormElement>, navigate: Naviga
     }
 
     const response = await signUpRequest(user)
-    console.log('passou do request', response)
     await handleSignUpResponse(response, navigate)
 }
 

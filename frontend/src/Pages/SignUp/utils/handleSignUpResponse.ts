@@ -1,14 +1,11 @@
 import { NavigateFunction } from "react-router-dom";
-import IErrorResponse from "Interfaces/IErrorResponse";
+import handleErrorResponse from "utils/handleErrorResponse";
 
 const handleSignUpResponse = async (response: Response, navigate:NavigateFunction) => {
-    const status = response.status
-    console.log(status, status > 399)
-    
-    if (status > 399) {
-        let errorResponse: IErrorResponse = await response.json() as IErrorResponse
-        errorResponse.code = status
-        return navigate('/error', {state: JSON.stringify(errorResponse)})
+    console.log('entrou')
+    if (response.status > 399) {
+       const handleError = await handleErrorResponse(response, navigate)
+       return handleError
     }
 
     alert('User registered successfully')
