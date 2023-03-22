@@ -1,13 +1,13 @@
 import PageLayout from "Components/PageLayout";
-import { useCookies } from "react-cookie";
+import StockTable from "Components/StockTable";
+import Title from "Components/Title";
 
 
 function HomePage() {
-    const [cookies, setCookie] = useCookies()
-    console.log(cookies.authToken)
     return(
         <PageLayout>
-            dashboard
+            <Title>Dashboard</Title>
+            <StockTable/>
         </PageLayout>
     )
 }

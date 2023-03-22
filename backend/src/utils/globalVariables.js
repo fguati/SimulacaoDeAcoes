@@ -1,4 +1,4 @@
 const userPropertyList = ['nome', 'email', 'senhaHash']
-const authTokenDurationInSec = 5 * 60
+const authTokenDurationInSec = 30 * 60
 
 module.exports = { userPropertyList, authTokenDurationInSec }

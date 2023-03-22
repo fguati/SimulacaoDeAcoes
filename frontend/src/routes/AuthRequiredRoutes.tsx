@@ -2,7 +2,7 @@ import useCookies from "react-cookie/cjs/useCookies";
 import LoginPage from "Pages/Login";
 import { Outlet } from "react-router-dom";
 import { RouteObject } from "react-router-dom";
-import { rootIndex } from "./rootRoute";
+import rootIndex from "./rootIndex";
 
 
 function AuthProvider() {
