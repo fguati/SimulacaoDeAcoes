@@ -1,15 +1,21 @@
 import StyledLink from "Components/StyledLink"
+import useCookies from "react-cookie/cjs/useCookies";
+import logOut from "utils/logOut";
 import HeaderContainer from "./HeaderContainer"
 
 function Header() {
+    const [cookies, setCookie] = useCookies()
+    
     return (
         <HeaderContainer>
             <StyledLink to='/'>Home</StyledLink>
 
-            <nav>
+            {!cookies.authToken && <nav>
                 <StyledLink to='/login'>Login</StyledLink>
                 <StyledLink to='/signup'>Sign Up</StyledLink>
-            </nav>
+            </nav>}
+
+            {cookies.authToken && <StyledLink to='/login' onClick={() => logOut()}>Log Out</StyledLink>}
         </HeaderContainer>
     )
 }
