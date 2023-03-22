@@ -10,7 +10,8 @@ async function requestLogin(user: IUser) {
         body: JSON.stringify(user),
         headers: {
             'Content-Type': 'application/json'
-        }
+        },
+        credentials: "include"
         
     }
     

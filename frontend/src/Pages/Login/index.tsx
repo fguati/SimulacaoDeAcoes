@@ -10,9 +10,11 @@ function LoginPage() {
         {name: 'Password', type:'password', value:''}
     ] 
     
+    const submitLogin = useSubmitLoginRequest()
+
     return(
         <PageLayout>
-            <Form fields={fields} onSubmit={useSubmitLoginRequest}/>
+            <Form fields={fields} onSubmit={submitLogin}/>
 
         </PageLayout>
     )
