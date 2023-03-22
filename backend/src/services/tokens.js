@@ -1,12 +1,13 @@
 require("dotenv-safe").config()
 const jwt = require('jsonwebtoken');
 const { TokenExpiredError, JsonWebTokenError } = require("../CustomErrors");
+const { authTokenDurationInSec } = require("../utils/globalVariables");
 
 class JWToken {
 
     static generate(payload, key = process.env.JWT_KEY) {
         const token = jwt.sign(payload, key, {
-            expiresIn:'5m'
+            expiresIn: authTokenDurationInSec
         })
         
         return token

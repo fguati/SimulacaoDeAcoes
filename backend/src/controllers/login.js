@@ -3,11 +3,13 @@ const treatError = require("../services/errorTreating");
 const { validateLogin } = require('../services/validate.js');
 const { listInvalidInputs } = require('../utils/invalidInputFunctions.js')
 const JWToken = require('../services/tokens.js')
+const { authTokenDurationInSec } = require("../utils/globalVariables")
+
 
 function sendAuthTokenResponse(req, res) {
     let authToken = JWToken.generate(req.body)
     res.set('Authorization', authToken)
-    res.cookie('authToken', authToken)
+    res.setHeader('Set-Cookie', `authToken=${authToken}; Max-Age=${authTokenDurationInSec}; Path=/`)
     return res.status(200).send(authToken)
 }
 

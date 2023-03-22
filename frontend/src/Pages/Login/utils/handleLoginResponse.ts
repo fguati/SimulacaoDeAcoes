@@ -1,7 +1,8 @@
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import handleErrorResponse from "utils/handleErrorResponse";
 
 function useHandleLoginResponse() {
+    const location = useLocation()
     const navigation = useNavigate()
     return async (response: Response) => {
         if(response.status > 399) {
@@ -10,7 +11,11 @@ function useHandleLoginResponse() {
         }
         alert('Login feito com suscesso')
         
-        return navigation('/')
+        if(location.pathname === '/login') {
+            return navigation('/')
+        }
+
+        return navigation(0)
     }
 }
 
