@@ -10,7 +10,7 @@ function sendAuthTokenResponse(req, res) {
     let authToken = JWToken.generate(req.body)
     res.set('Authorization', authToken)
     res.setHeader('Set-Cookie', `authToken=${authToken}; Max-Age=${authTokenDurationInSec}; Path=/`)
-    return res.status(200).send(authToken)
+    return res.status(200).send(JSON.stringify({authToken: authToken}))
 }
 
 function throwInvalidInputError(req) {

@@ -9,6 +9,7 @@ function useHandleLoginResponse() {
             const handleError = await handleErrorResponse(response, navigation)
             return handleError
         }
+        
         alert('Login feito com suscesso')
         
         if(location.pathname === '/login') {

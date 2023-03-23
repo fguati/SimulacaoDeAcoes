@@ -24,7 +24,7 @@ class UserController {
                 throw new InvalidInputError("Id not found", [id])
             }
 
-            return res.status(200).json(user)
+            return res.status(200).send(JSON.stringify(user))
 
         } catch (error) {
             return treatError(error, res)
@@ -42,7 +42,7 @@ class UserController {
             }
 
             await UserDAO.insert(newUser)
-            return res.status(201).send('User created successfully')
+            return res.status(201).send(JSON.stringify({message: 'User created successfully'}))
             
         } catch (error) {
             return treatError(error, res)
