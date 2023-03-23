@@ -1,11 +1,13 @@
 import IStock from "Interfaces/IStock"
+import StandardCell from "./StandardCell"
 import StyledTable from "./Table"
 import StyledTableHeader from "./Table/StyledTableHeader"
 import StyledTableItem from "./Table/StyledTableItem"
+import TotalValueCell from "./TotalValueCell"
 
 
 function StockTable() {
-    const headersMap = {
+    const propertyToHeadersMap = {
         id: 'id',
         ticker: 'Ticker',
         companyName: 'Nome',
@@ -14,8 +16,8 @@ function StockTable() {
         totalValue: 'Valor Total'
     }
 
-    const stockProperties = Object.keys(headersMap)
-    const headers = Object.values(headersMap)
+    const stockProperties = Object.keys(propertyToHeadersMap)
+    const headers = Object.values(propertyToHeadersMap)
     
     const stockList: IStock[] = [
         {
@@ -49,22 +51,20 @@ function StockTable() {
             {stockList.map((stock, indStock) => {
                 return stockProperties.map((Property, indProperty) => {
                     if(Property === 'totalValue'){
-                        return <StyledTableItem
-                            key={`${stock.id}/${indProperty}`}
-                            row={indStock + 2}
-                            column={6}
-                        >
-                            {stock.qty * stock.currentPrice}
-                        </StyledTableItem>
+                        return <TotalValueCell 
+                            key={`${stock.id}/6`}
+                            indStock={indStock} 
+                            stock={stock} 
+                        />
                     }
                     
-                    return <StyledTableItem
+                    return <StandardCell 
                         key={`${stock.id}/${indProperty}`}
-                        row={indStock + 2}
-                        column={indProperty + 1}
-                    >
-                        {stock[Property as keyof IStock]}
-                    </StyledTableItem>
+                        Property={Property}
+                        stock={stock}
+                        indProperty={indProperty}
+                        indStock={indStock}
+                    />
                 })
             })}
             
