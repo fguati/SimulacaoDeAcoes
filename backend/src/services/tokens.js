@@ -1,4 +1,4 @@
-require("dotenv-safe").config()
+require("dotenv").config()
 const jwt = require('jsonwebtoken');
 const { TokenExpiredError, JsonWebTokenError } = require("../CustomErrors");
 const { authTokenDurationInSec } = require("../utils/globalVariables");

@@ -1,23 +1,19 @@
 const { InvalidInputError } = require('../../src/CustomErrors')
 
-describe('Test the InvalidInputError class', () => {
-    const message = 'Test message'
-    const inputList = ['test invalid input']
-    const erroTeste = new InvalidInputError(message, inputList)
+describe('Unit tests of the InvalidInputError class', () => {
     
-    it('must instantiate an error object', () => {
+    it('must have name attribute that is InvalidInputError with attributes message and invalidInputList received from constructor', () => {
+        const message = 'Test message'
+        const inputList = ['test invalid input']
+        const erroTeste = new InvalidInputError(message, inputList)
+        
         expect(erroTeste).toBeInstanceOf(Error)
-    })
-
-    it('must have name attribute that is InvalidInputError', () => {
-
         expect(erroTeste.name).toBe('InvalidInputError')
-    })
-
-    it('must have attributes message and invalidInputList received from constructor', () => {
         expect(erroTeste).toEqual(expect.objectContaining({
             message: expect.any(String),
             InvalidInputList: expect.any(Array)
         }))
+
     })
+
 })

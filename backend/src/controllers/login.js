@@ -35,7 +35,7 @@ class LoginController {
             throw new InvalidCredentialsError('Invalid Password')
 
         } catch (error) {
-            treatError(error, res)
+            return treatError(error, res)
         }
     }
 }

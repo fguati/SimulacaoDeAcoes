@@ -1,17 +1,13 @@
 const { InvalidInputError, UniqueConstraintError, InvalidCredentialsError } = require('../../../src/CustomErrors')
 const UserDAO = require('../../../src/db/ComunicationDB/user.js')
-const { dbGet } = require('../../../src/db/dbUtils.js')
+const { dbGet, dbRun } = require('../../../src/db/dbUtils.js')
+const db = require('../../../src/db/createDB.js')
 
-describe('Testing select queries to users table in DB', () => {
-    test('select must return a non empty list', async () => {
-        const listOfUsers = await UserDAO.select()
-
-        expect(listOfUsers.length).toBeGreaterThan(0)
-    })
-
+describe('Unit tests of select queries to users table in DB', () => {
     it('must return a list of objects with properties nome, email, senhaHash when has no arguments', async () => {
         const listOfUsers = await UserDAO.select()
-
+        
+        expect(listOfUsers.length).toBeGreaterThan(0)
         expect(listOfUsers[0]).toEqual(expect.objectContaining({
             nome: expect.any(String),
             email: expect.any(String),
@@ -38,15 +34,16 @@ describe('Testing select queries to users table in DB', () => {
 
 })
 
-describe('Testing select by id queries to users table in DB', ()=> {
-    it('must return an object with the id entered as argument', async () => {
-        const user = await UserDAO.selectById(1)
-        expect(user.id).toBe(1)
-    })
-
+describe('Unit tests of select by id queries to users table in DB', ()=> {
+    
     it('must return an object with nome, email and senhaHash properties', async () => {
-        const user = await UserDAO.selectById(1)
+        const testUser = await dbGet(`SELECT id FROM users LIMIT 1`)
+        const testId = testUser.id
+        
+        const user = await UserDAO.selectById(testId)
+
         expect(user).toEqual(expect.objectContaining({
+            id: testId,
             nome: expect.any(String),
             email: expect.any(String),
             senhaHash: expect.any(String)
@@ -64,17 +61,17 @@ describe('Testing select by id queries to users table in DB', ()=> {
 
 })
 
-describe('Testing select by email queries to users table in DB', ()=> {
-    it('must return an object with the email entered as argument', async () => {
-        const user = await UserDAO.selectByEmail("algumExemplo")
-        expect(user.email).toBe("algumExemplo")
-    })
-
+describe('Unit tests of select by email queries to users table in DB', ()=> {
+    const selectSQL = `SELECT email FROM users LIMIT 1`
+    
     it('must return an object with nome, email and senhaHash properties', async () => {
-        const user = await UserDAO.selectByEmail("algumExemplo")
+        let testEmail = await dbGet(selectSQL)
+        testEmail = testEmail.email
+
+        const user = await UserDAO.selectByEmail(testEmail)
         expect(user).toEqual(expect.objectContaining({
             nome: expect.any(String),
-            email: expect.any(String),
+            email: testEmail,
             senhaHash: expect.any(String)
         }))
     })
@@ -90,7 +87,7 @@ describe('Testing select by email queries to users table in DB', ()=> {
 
 })
 
-describe('Testing the insert and delete methods of the class responsible for querying the user table in the DB', () => {
+describe('Unit tests of the insert and delete methods of the class responsible for querying the user table in the DB', () => {
     
     const userObject = {
         nome: 'TestObject',
@@ -105,28 +102,29 @@ describe('Testing the insert and delete methods of the class responsible for que
         return resultado.id
     };
 
-    it('must create an entry in the db with a numerical id', async () => {
+    async function getObjectById(id) {
+        let sql = `SELECT * FROM users WHERE id=?`;
+        const resultado = await dbGet(sql, [id])
+    
+        return resultado
+    }
+
+    it('must create an entry in the db with a numerical id that is the object inserted', async () => {
 
         await UserDAO.insert(userObject)
 
         const idOfInsertedUser = await getId(userObject)
-        
-        expect(typeof idOfInsertedUser).toBe('number')
-
-    });
-
-    it('must have created an entry in the db that is the object inserted', async () => {
-        const idOfInsertedUser = await getId(userObject)
+        let selectedObj = await getObjectById(idOfInsertedUser)
         const {nome, email} = userObject;
         
-        let selectedObj = await UserDAO.selectById(idOfInsertedUser)
-    
+        expect(typeof idOfInsertedUser).toBe('number')
         expect(selectedObj).toEqual(expect.objectContaining({
             nome: nome, 
             email:email
         }))
 
-    })
+    });
+
 
     it('must throw an UniqueConstraintError if has an repeated email', async () => {
         async function testFunction() {
@@ -149,91 +147,55 @@ describe('Testing the insert and delete methods of the class responsible for que
 
     })
 
-    it('must throw an InvalidInputError if is missing name', async () => {
-        const missingInputObj = {
+    it('must throw an InvalidInputError if has a missing or invalid mandatory field', async () => {
+        async function testFunction() {
+            await UserDAO.insert(missingInputObj)
+        }
+
+        let missingInputObj = {
             email: 'TestEmail@mail.com',
             senha: 'SenhaHashTeste'
         };
 
-        async function testFunction() {
-            await UserDAO.insert(missingInputObj)
-        }
-
         expect(testFunction).rejects.toThrow(InvalidInputError)
         
-    })
-
-    it('must throw an InvalidInputError if is missing email', async () => {
-        const missingInputObj = {
+        missingInputObj = {
             nome: 'TestObject',
             senha: 'SenhaHashTeste'
         };
-
-        async function testFunction() {
-            await UserDAO.insert(missingInputObj)
-        }
-
+    
         expect(testFunction).rejects.toThrow(InvalidInputError)
-        
-    })
 
-    it('must throw an InvalidInputError if is missing senhaHash', async () => {
-        const missingInputObj = {
+        missingInputObj = {
             nome: 'TestObject',
             email: 'TestEmail@mail.com'
         };
-
-        async function testFunction() {
-            await UserDAO.insert(missingInputObj)
-        }
-
+    
         expect(testFunction).rejects.toThrow(InvalidInputError)
         
-    })
-
-    it('must throw an InvalidInputError if has invalid name', async () => {
-        const missingInputObj = {
+        missingInputObj = {
             nome: null,
             email: 'TestEmail@mail.com',
             senha: 'SenhaHashTeste'
         };
-
-        async function testFunction() {
-            await UserDAO.insert(missingInputObj)
-        }
-
+    
         expect(testFunction).rejects.toThrow(InvalidInputError)
         
-    })
-
-    it('must throw an InvalidInputError if has invalid email', async () => {
-        const missingInputObj = {
+        missingInputObj = {
             nome: 'TestObject',
             email: null,
             senha: 'SenhaHashTeste'
         };
 
-        async function testFunction() {
-            await UserDAO.insert(missingInputObj)
-        }
-
         expect(testFunction).rejects.toThrow(InvalidInputError)
-        
-    })
 
-    it('must throw an InvalidInputError if has invalid senhaHash', async () => {
-        const missingInputObj = {
+        missingInputObj = {
             nome: 'TestObject',
             email: 'TestEmail@mail.com',
             senha: null
         };
-
-        async function testFunction() {
-            await UserDAO.insert(missingInputObj)
-        }
-
-        expect(testFunction).rejects.toThrow(InvalidInputError)
         
+        expect(testFunction).rejects.toThrow(InvalidInputError)
     })
 
     it('delete must throw an InvalidInputError if has invalid id', async () => {

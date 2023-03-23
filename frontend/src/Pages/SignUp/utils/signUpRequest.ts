@@ -1,5 +1,5 @@
 import IUser from "Interfaces/IUser";
-import backendURL from "Shared/backEndUrl";
+import backendURL from "Common/backEndUrl";
 
 const url = backendURL + '/register'
 

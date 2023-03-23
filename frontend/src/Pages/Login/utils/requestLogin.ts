@@ -1,5 +1,5 @@
 import IUser from "Interfaces/IUser"
-import backendURL from "Shared/backEndUrl"
+import backendURL from "Common/backEndUrl"
 
 
 async function requestLogin(user: IUser) {

@@ -13,6 +13,7 @@
   "license": "ISC",
   "dependencies": {
     "cookie-parser": "^1.4.6",
+    "dotenv": "^16.0.3",
     "dotenv-safe": "^8.2.0",
     "jsonwebtoken": "^9.0.0",
     "nodemon": "^2.0.20",

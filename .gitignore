@@ -4,3 +4,4 @@ coverage
 db.sqlite
 teste.js
 .env
+.env.test
