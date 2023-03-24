@@ -8,9 +8,7 @@ class Authentication {
         
         try {
             const cookies = req.cookies;
-            console.log(cookies)
             const authToken = cookies['authToken'];
-            console.log(authToken)
 
             if(!authToken){
                 throw new MissingAuthTokenError('faltou o auth')

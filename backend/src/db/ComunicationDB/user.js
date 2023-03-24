@@ -8,7 +8,8 @@ const { dbAll, dbRun, dbGet } = require('../dbUtils.js')
 
 class UserDAO {
     static async select(property = '*') {
-        let sql = `SELECT ${property} FROM users`
+        const resultLimit = 5
+        let sql = `SELECT ${property} FROM users LIMIT ${resultLimit}`
         
         try {
             const isInList = userPropertyList.some( item => item === property)
@@ -19,7 +20,6 @@ class UserDAO {
             const rows = await dbAll(sql)
             return rows
         } catch (error) {
-            console.log(`Select Error: ${error}`); 
             throw error   
         }
         
@@ -36,7 +36,6 @@ class UserDAO {
             throw new InvalidInputError(`User id ${id} not found`, ['id'])
             
         } catch (error) {
-            console.log(`Select Error: ${error}`); 
             throw error 
         }
     }
@@ -53,7 +52,6 @@ class UserDAO {
             throw new InvalidCredentialsError(`User email ${email} not found`)
             
         } catch (error) {
-            console.log(`Select Error: ${error}`); 
             throw error 
         }
     }
@@ -75,8 +73,6 @@ class UserDAO {
             await dbRun(sql, [nome, email, hashedPassword, salt])
             
         } catch (error) {
-            console.log('Insert Error:', error.message)
-            
             checkUniqueConstraintError(error)
             
             throw error
@@ -93,9 +89,7 @@ class UserDAO {
             }
 
             await dbRun(sql, [id])
-            console.log('did not throw')
         } catch (error) {
-            console.log(`Delete Error: ${error}`); 
             throw error 
         }
     }

@@ -3,6 +3,14 @@ const UserDAO = require('../../../src/db/ComunicationDB/user.js')
 const { dbGet, dbRun } = require('../../../src/db/dbUtils.js')
 const db = require('../../../src/db/createDB.js')
 
+beforeAll(async () => {
+    const testMail = 'emailTeste'
+    const example = await dbGet(`SELECT * FROM users WHERE email=?`, [testMail])
+    if(!example) {
+        await dbRun(`INSERT INTO users (nome, email, senhaHash, salt) VALUES ('nomeTeste', ?, 'senhaTeste', 'saltTeste')`, [testMail])
+    }
+})
+
 describe('Unit tests of select queries to users table in DB', () => {
     it('must return a list of objects with properties nome, email, senhaHash when has no arguments', async () => {
         const listOfUsers = await UserDAO.select()

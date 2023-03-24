@@ -11,20 +11,36 @@ afterEach(() => {
     server.close()
 })
 
+
+
 describe('Testar POST em /register', () => {   
     async function getObjId({ nome, email }) {
         let sql = `SELECT id FROM users WHERE nome=? AND email=?`;
         const result = await dbGet(sql, [nome, email])
-    
-        return result.id
+        if(result){
+            return result.id
+        }
+
+        return undefined
     };
 
+    const exampleObj = {
+        nome: 'TestObject',
+        email: 'TestEmail1@mail.com',
+        senha: 'SenhaHashTeste'
+    };
+
+    beforeEach(async () => {
+        const id = await getObjId(exampleObj)
+        if(id) {
+            await UserDao.delete(id)
+
+        }
+
+    })
+
     it('must create an object in the the DB', async () => {
-        const userObject = {
-            nome: 'TestObject',
-            email: 'TestEmail1@mail.com',
-            senha: 'SenhaHashTeste'
-        };
+        const userObject = exampleObj
         
         const resposta = await request(server)
             .post('/register')
@@ -43,99 +59,86 @@ describe('Testar POST em /register', () => {
 
     })
 
-    it('must receive an error with invalid input if body is missing name', async () => {
-        const userObject = {
-            email: 'TestEmail@mail.com',
-            senha: 'SenhaHashTeste'
-        };
-
-        const resposta = await request(server)
-            .post('/register')
-            .send(userObject)
-            .expect(422)
-
-        expect(resposta.body.listOfInvalidInputs[0]).toBe('nome')
-    })
-
-    it('must receive an error with invalid input if body is missing email', async () => {
-        const userObject = {
+    it('must receive an error with invalid input if required info is missing or invalid', async () => {
+        let userObject = {
             nome: 'TestObject',
             senha: 'SenhaHashTeste'
         };
 
-        const resposta = await request(server)
+        let resposta = await request(server)
             .post('/register')
             .send(userObject)
             .expect(422)
 
-        expect(resposta.body.listOfInvalidInputs[0]).toBe('email')
-    })
-
-    it('must receive an error with invalid input if body is missing senha', async () => {
-        const userObject = {
+        expect(JSON.parse(resposta.text).aditionalInfo).toEqual(expect.stringContaining('email'))
+        
+        userObject = {
             nome: 'TestObject',
             email: 'TestEmail@mail.com'
         };
 
-        const resposta = await request(server)
+        resposta = await request(server)
             .post('/register')
             .send(userObject)
             .expect(422)
 
-        expect(resposta.body.listOfInvalidInputs[0]).toBe('senha')
-    })
+        expect(JSON.parse(resposta.text).aditionalInfo).toEqual(expect.stringContaining('senha'))
 
-    it('must receive an error with invalid input if body has an invalid name', async () => {
-        const userObject = {
+        userObject = {
+            senha: 'SenhaHashTeste',
+            email: 'TestEmail@mail.com'
+        };
+
+        resposta = await request(server)
+            .post('/register')
+            .send(userObject)
+            .expect(422)
+
+        expect(JSON.parse(resposta.text).aditionalInfo).toEqual(expect.stringContaining('nome'))
+
+        userObject = {
             nome: null,
             email: 'TestEmail@mail.com',
             senha: 'SenhaHashTeste'
         };
 
-        const resposta = await request(server)
+        resposta = await request(server)
             .post('/register')
             .send(userObject)
             .expect(422)
 
-        expect(resposta.body.listOfInvalidInputs[0]).toBe('nome')
-    })
+        expect(JSON.parse(resposta.text).aditionalInfo).toEqual(expect.stringContaining('nome'))
 
-    it('must receive an error with invalid input if body has an invalid email', async () => {
-        const userObject = {
+        userObject = {
             nome: 'TestObject',
-            email: null,
-            senha: 'SenhaHashTeste'
+            senha: 'SenhaHashTeste',
+            email: null
         };
 
-        const resposta = await request(server)
+        resposta = await request(server)
             .post('/register')
             .send(userObject)
             .expect(422)
 
-        expect(resposta.body.listOfInvalidInputs[0]).toBe('email')
-    })
-
-    it('must receive an error with invalid input if body has an invalid senha', async () => {
-        const userObject = {
+        expect(JSON.parse(resposta.text).aditionalInfo).toEqual(expect.stringContaining('email'))
+        
+        userObject = {
             nome: 'TestObject',
             email: 'TestEmail@mail.com',
             senha: null
         };
 
-        const resposta = await request(server)
+        resposta = await request(server)
             .post('/register')
             .send(userObject)
             .expect(422)
 
-        expect(resposta.body.listOfInvalidInputs[0]).toBe('senha')
+        expect(JSON.parse(resposta.text).aditionalInfo).toEqual(expect.stringContaining('senha'))
+
     })
 
     it('must receive an error with invalid input if body has a repeated email', async () => {
-        const userObject = {
-            nome: 'TestObject',
-            email: 'email@email.com',
-            senha: 'SenhaHashTeste'
-        };
+        const userObject = exampleObj
 
         await UserDao.insert(userObject)
 
@@ -144,12 +147,10 @@ describe('Testar POST em /register', () => {
             .send(userObject)
             .expect(422)
 
-        expect(resposta.body.uniqueColumn).toBe('email')
+        expect(JSON.parse(resposta.text).aditionalInfo).toEqual(expect.stringContaining('email'))
 
         const id = await getObjId(userObject)
         await UserDao.delete(id)
     })
-
-    
 
 })

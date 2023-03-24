@@ -4,9 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "jest --verbose",
-    "test:watch": "jest --watch --verbose",
-    "test:coverage": "jest --coverage --verbose",
+    "test": "jest --verbose --silent",
+    "test:watch": "jest --watch --verbose --silent",
+    "test:coverage": "jest --coverage --verbose --silent",
     "start": "nodemon .\\src\\server.js"
   },
   "author": "",

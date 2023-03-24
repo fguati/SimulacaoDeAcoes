@@ -9,7 +9,6 @@ async function validateLogin(enteredEmail, enteredPassword) {
         return checkifValidPassword(enteredPassword, senhaHash, salt)
         
     } catch (error) {
-        console.log('Login validation error:', error)
         throw error
     }
 }
