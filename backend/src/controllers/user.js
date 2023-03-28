@@ -3,49 +3,50 @@ const { listInvalidInputs } = require('../utils')
 const UserDAO = require('../db/ComunicationDB/user.js');
 const { InvalidInputError } = require('../CustomErrors');
 const { hasInvalidParam } = require('../utils');
-const treatError = require('../services/errorTreating.js');
 
 class UserController {
-    static async getAll(req, res) {
+    static async getAll(req, res, next) {
         try {
             const listOfUsers = await UserDAO.select();
             return res.status(200).send(JSON.stringify(listOfUsers))
         } catch (error) {
-            return treatError(error, res)
+            return next(error)
         }
     }
 
-    static async getOneById(req, res) {
+    static async getOneById(req, res, next) {
         const id = req.params.id
         try {
             const user = await UserDAO.selectById(id)
             
             if(!user) {
-                throw new InvalidInputError("Id not found", [id])
+                return next(new InvalidInputError("Id not found", [id]))
             }
 
             return res.status(200).send(JSON.stringify(user))
 
         } catch (error) {
-            return treatError(error, res)
+            return next(error)
         }
     }
 
-    static async postUser(req, res) {
+    static async postUser(req, res, next) {
         const userPropertyList = ['nome', 'email', 'senha']
         try {
             const newUser = req.body
             const listParams = userPropertyList.map(key => newUser[key])
+
             if(hasInvalidParam(listParams)) {
                 const invalidInputs = listInvalidInputs(newUser, userPropertyList)
-                throw new InvalidInputError('Invalid user information', invalidInputs)
+                const invalidInputError = new InvalidInputError('Invalid user information', invalidInputs)
+                return next(invalidInputError)
             }
 
             await UserDAO.insert(newUser)
             return res.status(201).send(JSON.stringify({message: 'User created successfully'}))
             
         } catch (error) {
-            return treatError(error, res)
+            return next(error)
         }
     }
 

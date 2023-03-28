@@ -3,11 +3,6 @@ const { MissingAuthTokenError } = require('../../src/CustomErrors/index.js');
 const Authentication = require('../../src/middleware/Authentication');
 const JWToken = require('#root/src/services/tokens.js')
 
-//mocking external dependencies: their unit tests are conducted in their own test files
-const treatError = require('#root/src/services/errorTreating.js')
-jest.mock('#root/src/services/errorTreating.js', () => jest.fn((res, error) => error))
-
-
 function mockReqResNext() {
     const { req, res } = createMocks();
     const next = jest.fn()
@@ -49,12 +44,12 @@ describe('unit tests for Authentication middleware class', () => {
         expect(next).toBeCalledTimes(1)
     })
 
-    it('must call treatError with a MissingAuthTokenError if authToken is not received throough cookies', async () => {
+    it('must call next with a MissingAuthTokenError if authToken is not received throough cookies', async () => {
         const { req, res, next } = mockReqResNext() 
 
         const response = await Authentication.authToken(req, res, next)
 
-        expect(treatError).toBeCalledWith(expect.any(MissingAuthTokenError) ,res)
+        expect(next).toBeCalledWith(expect.any(MissingAuthTokenError))
 
     })
 

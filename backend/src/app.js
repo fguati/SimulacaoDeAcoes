@@ -2,13 +2,13 @@
 const express = require('express');
 const cookieParser = require('cookie-parser')
 
-const {router: userRoute} = require('./routes/user.js');
 const {router: signInRoute} = require('./routes/register.js')
 const {router: loginRoute} = require('./routes/login.js')
+const {router: authRqRoutes} = require('./routes/authRequiredRoutes')
 
-const Authentication = require('./middleware/Authentication.js');
 const { corsAllowances } = require('./middleware/corsAllowances.js');
 const { cookieSettings } = require('./middleware/cookiesSettings.js');
+const { errorHandler } = require('./middleware/errorHandler.js');
 
 //instantiate app
 const app = express();
@@ -23,10 +23,13 @@ app.use(cookieSettings)
 app.use('/login', loginRoute)
 app.use('/register', signInRoute)
 
-//auth middleware
-app.use(Authentication.authToken)
-
 //routes that require auth
-app.use('/user', userRoute)
+app.use(authRqRoutes)
+
+//error 404 route - not working
+app.get('/:anything', (req, res) => res.status(404).send('Resource not Found'))
+
+//error handling middleware
+app.use(errorHandler)
 
 module.exports = app;

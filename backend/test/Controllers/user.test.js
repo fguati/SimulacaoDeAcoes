@@ -17,7 +17,7 @@ async function clearTestUserFromDB(testUser) {
     }
 }
 
-function mockReqRes () {
+function mockReqResNext() {
     const { req, res } = createMocks();
     req.body = {...validCredentials}
     res.status = (code) => {
@@ -35,7 +35,9 @@ function mockReqRes () {
     }
     res.set = res.setHeader
 
-    return {req, res}
+    const next = jest.fn(param => param)
+
+    return {req, res, next}
 }
 
 beforeAll(async () => {
@@ -51,9 +53,9 @@ afterAll(async () => {
 
 describe('test the getAll method of the UserController', () => {
     it('returns a non empty list of users', async () => {
-        const {req, res} = mockReqRes()
+        const {req, res, next} = mockReqResNext()
         
-        const response = await UserController.getAll(req, res)
+        const response = await UserController.getAll(req, res, next)
         const userList = JSON.parse(response.body)
 
         expect(response.statusCode).toBe(200)
@@ -71,12 +73,12 @@ describe('test the getAll method of the UserController', () => {
 
 describe('test getOneById method of the UserController', () => {
     it('returns a user if a valid Id is entered', async () => {
-        const {req, res} = mockReqRes()
+        const {req, res, next} = mockReqResNext()
 
         const dbTestUser = await UserDAO.selectByEmail(validCredentials.email)
         req.params.id = dbTestUser.id
 
-        const response = await UserController.getOneById(req, res)
+        const response = await UserController.getOneById(req, res, next)
         const user = JSON.parse(response.body)
 
         expect(response.statusCode).toBe(200)
@@ -90,16 +92,15 @@ describe('test getOneById method of the UserController', () => {
     })
 
     it('must return an invalid input error response if id is invalid', async () => {
-        const {req, res} = mockReqRes()
+        const {req, res, next} = mockReqResNext()
 
         const dbTestUser = await UserDAO.selectByEmail(validCredentials.email)
         req.params.id = `${dbTestUser.id}00000000000000000000000000000000000000000000000000000`
 
-        const response = await UserController.getOneById(req, res)
-        const user = JSON.parse(response.body)
+        const invalidInputError = await UserController.getOneById(req, res, next)
 
-        expect(response.statusCode).toBe(422)
-        expect(user).toEqual(expect.objectContaining({
+        expect(invalidInputError.statusCode).toBe(422)
+        expect(invalidInputError).toEqual(expect.objectContaining({
             name:'InvalidInputError',
             message: expect.any(String),
             aditionalInfo: expect.stringContaining('id')
@@ -114,10 +115,10 @@ describe('test the postUser method of the user controller', () =>{
     })
     
     it('must insert a user in the db', async () => {
-        const { req, res } = mockReqRes()
+        const { req, res, next } = mockReqResNext()
 
-        const response = await UserController.postUser(req, res)
-        console.log(req.body, validCredentials.email)
+        const response = await UserController.postUser(req, res, next)
+        
         expect(response.statusCode).toBe(201)
 
         const userInDb = await UserDAO.selectByEmail(validCredentials.email)
@@ -129,15 +130,14 @@ describe('test the postUser method of the user controller', () =>{
     })
 
     it('must return invalid input error response if receive an invalid value for either name, email or password', async () => {
-        const { req, res } = mockReqRes()
+        const { req, res, next } = mockReqResNext()
 
         //empty email
         req.body.email = ''
-        let response = await UserController.postUser(req, res)
-        let parsedResBody = JSON.parse(response.body) 
-
-        expect(response.statusCode).toBe(422)
-        expect(parsedResBody).toEqual(expect.objectContaining({
+        let invalidError = await UserController.postUser(req, res, next)
+         
+        expect(invalidError.statusCode).toBe(422)
+        expect(invalidError).toEqual(expect.objectContaining({
             name: 'InvalidInputError',
             message: expect.any(String),
             aditionalInfo: expect.stringContaining('email')
@@ -147,11 +147,11 @@ describe('test the postUser method of the user controller', () =>{
 
         //empty name
         req.body.nome = ''
-        response = await UserController.postUser(req, res)
-        parsedResBody = JSON.parse(response.body) 
+        invalidError = await UserController.postUser(req, res, next)
+         
 
-        expect(response.statusCode).toBe(422)
-        expect(parsedResBody).toEqual(expect.objectContaining({
+        expect(invalidError.statusCode).toBe(422)
+        expect(invalidError).toEqual(expect.objectContaining({
             name: 'InvalidInputError',
             message: expect.any(String),
             aditionalInfo: expect.stringContaining('nome')
@@ -161,11 +161,11 @@ describe('test the postUser method of the user controller', () =>{
         
         //empty password
         req.body.senha = ''
-        response = await UserController.postUser(req, res)
-        parsedResBody = JSON.parse(response.body) 
+        invalidError = await UserController.postUser(req, res, next)
+         
 
-        expect(response.statusCode).toBe(422)
-        expect(parsedResBody).toEqual(expect.objectContaining({
+        expect(invalidError.statusCode).toBe(422)
+        expect(invalidError).toEqual(expect.objectContaining({
             name: 'InvalidInputError',
             message: expect.any(String),
             aditionalInfo: expect.stringContaining('senha')
@@ -175,11 +175,11 @@ describe('test the postUser method of the user controller', () =>{
         
         //invalid email
         req.body.email = null
-        response = await UserController.postUser(req, res)
-        parsedResBody = JSON.parse(response.body) 
+        invalidError = await UserController.postUser(req, res, next)
+         
 
-        expect(response.statusCode).toBe(422)
-        expect(parsedResBody).toEqual(expect.objectContaining({
+        expect(invalidError.statusCode).toBe(422)
+        expect(invalidError).toEqual(expect.objectContaining({
             name: 'InvalidInputError',
             message: expect.any(String),
             aditionalInfo: expect.stringContaining('email')
@@ -189,11 +189,11 @@ describe('test the postUser method of the user controller', () =>{
 
         //invalid name
         req.body.nome = null
-        response = await UserController.postUser(req, res)
-        parsedResBody = JSON.parse(response.body) 
+        invalidError = await UserController.postUser(req, res, next)
+         
 
-        expect(response.statusCode).toBe(422)
-        expect(parsedResBody).toEqual(expect.objectContaining({
+        expect(invalidError.statusCode).toBe(422)
+        expect(invalidError).toEqual(expect.objectContaining({
             name: 'InvalidInputError',
             message: expect.any(String),
             aditionalInfo: expect.stringContaining('nome')
@@ -203,11 +203,11 @@ describe('test the postUser method of the user controller', () =>{
         
         //invalid password
         req.body.senha = null
-        response = await UserController.postUser(req, res)
-        parsedResBody = JSON.parse(response.body) 
+        invalidError = await UserController.postUser(req, res, next)
+         
 
-        expect(response.statusCode).toBe(422)
-        expect(parsedResBody).toEqual(expect.objectContaining({
+        expect(invalidError.statusCode).toBe(422)
+        expect(invalidError).toEqual(expect.objectContaining({
             name: 'InvalidInputError',
             message: expect.any(String),
             aditionalInfo: expect.stringContaining('senha')
@@ -222,13 +222,12 @@ describe('test the postUser method of the user controller', () =>{
             await dbRun(`INSERT INTO users ('nome', 'email', 'senhaHash', 'salt') VALUES (?, ?, ?, 'exampleSalt')`, [validCredentials.nome, validCredentials.email, validCredentials.senha])
         }
 
-        const { req, res } = mockReqRes()
+        const { req, res, next } = mockReqResNext()
 
-        const response = await UserController.postUser(req, res)
-        const parsedBody = JSON.parse(response.body)
+        const uniqueConstraintError = await UserController.postUser(req, res, next)
 
-        expect(response.statusCode).toBe(422)
-        expect(parsedBody).toEqual(expect.objectContaining({
+        expect(uniqueConstraintError.statusCode).toBe(422)
+        expect(uniqueConstraintError).toEqual(expect.objectContaining({
             name: 'UniqueConstraintError',
             message: expect.any(String),
             aditionalInfo: expect.stringContaining('email')

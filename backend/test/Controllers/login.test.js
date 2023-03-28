@@ -17,7 +17,7 @@ describe('Tests of the coltroller used for the Login route', () => {
         }
     }
 
-    function boilerPlateReqRes () {
+    function mockReqResNext () {
         const { req, res } = createMocks();
         req.body = {...validCredentials}
         res.status = (code) => {
@@ -35,7 +35,9 @@ describe('Tests of the coltroller used for the Login route', () => {
         }
         res.set = res.setHeader
 
-        return {req, res}
+        const next = jest.fn(param => param)
+
+        return {req, res, next}
     }
 
     beforeAll(async () => {
@@ -50,23 +52,22 @@ describe('Tests of the coltroller used for the Login route', () => {
     })
 
     test('Must return a response with a JWT in the cookies if has valid credentials', async () => {
-        const { req, res } = boilerPlateReqRes()
-            
+        const { req, res, next } = mockReqResNext()
         
-        const response = await LoginController.login(req, res)
+        const response = await LoginController.login(req, res, next)
 
         expect(response.statusCode).toBe(200)
         expect(response.headers['Set-Cookie']).toEqual(expect.stringContaining('authToken='))
     })
 
     test('Must return an invalid input error response if email or password are empty or invalid', async () => {
-        const { req, res } = boilerPlateReqRes()
+        const { req, res, next } = mockReqResNext()
         
         //empty email
         req.body.email = ''
-        let response = await LoginController.login(req, res)
-        expect(response.statusCode).toBe(422)
-        expect(JSON.parse(response.body)).toEqual(expect.objectContaining({
+        let inputError = await LoginController.login(req, res, next)
+        expect(inputError.statusCode).toBe(422)
+        expect(inputError).toEqual(expect.objectContaining({
             name: 'InvalidInputError',
             message: expect.any(String),
             aditionalInfo: expect.stringContaining('email')
@@ -74,9 +75,9 @@ describe('Tests of the coltroller used for the Login route', () => {
 
         //invalid email
         req.body.email = null
-        response = await LoginController.login(req, res)
-        expect(response.statusCode).toBe(422)
-        expect(JSON.parse(response.body)).toEqual(expect.objectContaining({
+        inputError = await LoginController.login(req, res, next)
+        expect(inputError.statusCode).toBe(422)
+        expect(inputError).toEqual(expect.objectContaining({
             name: 'InvalidInputError',
             message: expect.any(String),
             aditionalInfo: expect.stringContaining('email')
@@ -86,9 +87,9 @@ describe('Tests of the coltroller used for the Login route', () => {
 
         //empty password
         req.body.senha = ''
-        response = await LoginController.login(req, res)
-        expect(response.statusCode).toBe(422)
-        expect(JSON.parse(response.body)).toEqual(expect.objectContaining({
+        inputError = await LoginController.login(req, res, next)
+        expect(inputError.statusCode).toBe(422)
+        expect(inputError).toEqual(expect.objectContaining({
             name: 'InvalidInputError',
             message: expect.any(String),
             aditionalInfo: expect.stringContaining('senha')
@@ -96,9 +97,9 @@ describe('Tests of the coltroller used for the Login route', () => {
 
         //invalid password
         req.body.senha = null
-        response = await LoginController.login(req, res)
-        expect(response.statusCode).toBe(422)
-        expect(JSON.parse(response.body)).toEqual(expect.objectContaining({
+        inputError = await LoginController.login(req, res, next)
+        expect(inputError.statusCode).toBe(422)
+        expect(inputError).toEqual(expect.objectContaining({
             name: 'InvalidInputError',
             message: expect.any(String),
             aditionalInfo: expect.stringContaining('senha')
@@ -107,14 +108,14 @@ describe('Tests of the coltroller used for the Login route', () => {
     })
 
     test('Must return an invalid credentials error response if password or email are invalid', async () => {
-        const {req, res} = boilerPlateReqRes()
+        const {req, res, next} = mockReqResNext()
 
         //invalid email
         req.body.email = `invalid: ${req.body.email}`
-        let response = await LoginController.login(req, res)
+        let credentialsError = await LoginController.login(req, res, next)
 
-        expect(response.statusCode).toBe = 401
-        expect(JSON.parse(response.body)).toEqual(expect.objectContaining({
+        expect(credentialsError.statusCode).toBe = 401
+        expect(credentialsError).toEqual(expect.objectContaining({
             name:'InvalidCredentialsError',
             message:expect.any(String),
         }))
@@ -122,10 +123,10 @@ describe('Tests of the coltroller used for the Login route', () => {
         //invalid password
         req.body.email = validCredentials.email
         req.body.senha = `invalid: ${req.body.senha}`
-        response = await LoginController.login(req, res)
+        credentialsError = await LoginController.login(req, res, next)
 
-        expect(response.statusCode).toBe = 401
-        expect(JSON.parse(response.body)).toEqual(expect.objectContaining({
+        expect(credentialsError.statusCode).toBe = 401
+        expect(credentialsError).toEqual(expect.objectContaining({
             name:'InvalidCredentialsError',
             message:expect.any(String),
         }))

@@ -1,4 +1,3 @@
-const treatError = require('#root/src/services/errorTreating.js');
 const JWToken = require('../services/tokens.js')
 const { MissingAuthTokenError } = require('../CustomErrors')
 
@@ -11,7 +10,8 @@ class Authentication {
             const authToken = cookies['authToken'];
 
             if(!authToken){
-                throw new MissingAuthTokenError('faltou o auth')
+                const error = new MissingAuthTokenError('faltou o auth')
+                return next(error)
             }
 
             const payload = JWToken.validateJWT(authToken)
@@ -20,7 +20,7 @@ class Authentication {
             
             
         } catch (error) {
-            return treatError(error, res)
+            return next(error)
         }
         
     } 
