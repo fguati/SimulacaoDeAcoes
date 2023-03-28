@@ -1,4 +1,4 @@
-const treatError = require('../services/errorTreating.js');
+const treatError = require('#root/src/services/errorTreating.js');
 const JWToken = require('../services/tokens.js')
 const { MissingAuthTokenError } = require('../CustomErrors')
 
@@ -15,12 +15,12 @@ class Authentication {
             }
 
             const payload = JWToken.validateJWT(authToken)
-
+            
             return next()
             
             
         } catch (error) {
-            treatError(error, res)
+            return treatError(error, res)
         }
         
     } 

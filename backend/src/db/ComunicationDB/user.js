@@ -65,7 +65,7 @@ class UserDAO {
             
             if(hasInvalidParam(listOfArguments)) {
                 const InvalidInputList = listInvalidInputs(user, userPropertyList)
-                throw new InvalidInputError('Invalid column', InvalidInputList)
+                throw new InvalidInputError(`Invalid column`, InvalidInputList)
             }
 
             const { hashedPassword, salt } = generateHashedPasswordAndSalt(senha)
