@@ -1,19 +1,10 @@
-class JsonWebTokenError extends Error {
+const BaseError = require("./BaseError")
+
+class JsonWebTokenError extends BaseError {
     constructor(message) {
-        super(message)
+        super(message, 401)
         this.name = 'JsonWebTokenError'
     }
 }
 
-function treatJsonWebToken(error, res) {
-    if(error instanceof JsonWebTokenError){
-        const responseObject = {
-            name: error.name,
-            message: error.message
-        }
-
-        return res.status(401).send(JSON.stringify(responseObject))
-    }
-}
-
-module.exports = { JsonWebTokenError, treatJsonWebToken }
+module.exports = {JsonWebTokenError}

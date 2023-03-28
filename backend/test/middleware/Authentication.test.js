@@ -1,5 +1,5 @@
 const { createMocks } = require('node-mocks-http');
-const { MissingAuthTokenError } = require('../../src/CustomErrors');
+const { MissingAuthTokenError } = require('../../src/CustomErrors/index.js');
 const Authentication = require('../../src/middleware/Authentication');
 const JWToken = require('#root/src/services/tokens.js')
 

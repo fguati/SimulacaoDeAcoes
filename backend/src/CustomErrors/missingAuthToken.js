@@ -1,18 +1,10 @@
-class MissingAuthTokenError extends Error {
+const BaseError = require("./BaseError")
+
+class MissingAuthTokenError extends BaseError {
     constructor(message) {
-        super(message)
+        super(message, 401)
         this.name = 'MissingAuthTokenError'
     }
 }
 
-function treatMissingAuthTokenError(error, res) {
-    if (error instanceof MissingAuthTokenError) {
-        const responseObject = {
-            name: error.name,
-            message: error.message
-        }
-        return res.status(401).send(JSON.stringify(responseObject))
-    }
-}
-
-module.exports = { MissingAuthTokenError, treatMissingAuthTokenError }
+module.exports = {MissingAuthTokenError}

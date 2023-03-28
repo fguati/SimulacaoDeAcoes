@@ -135,7 +135,7 @@ describe('Test get by id in /user', () => {
         expect(parsedBody).toEqual(expect.objectContaining({
             name: 'InvalidInputError',
             message: expect.any(String),
-            aditionalInfo: expect.stringContaining('listOfInvalidInputs')
+            aditionalInfo: expect.any(String)
         }))
     })
 

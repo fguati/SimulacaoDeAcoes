@@ -1,5 +1,5 @@
 const { InvalidCredentialsError } = require('../../CustomErrors')
-const { InvalidInputError } = require('../../CustomErrors/InvalidInputError')
+const { InvalidInputError } = require('../../CustomErrors')
 const { generateHashedPasswordAndSalt } = require('../../services/hash')
 const { userPropertyList, hasInvalidParam, listInvalidInputs } = require('../../utils')
 

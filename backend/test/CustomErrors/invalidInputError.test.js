@@ -11,7 +11,7 @@ describe('Unit tests of the InvalidInputError class', () => {
         expect(erroTeste.name).toBe('InvalidInputError')
         expect(erroTeste).toEqual(expect.objectContaining({
             message: expect.any(String),
-            InvalidInputList: expect.any(Array)
+            aditionalInfo: expect.stringContaining(`${inputList}`)
         }))
 
     })

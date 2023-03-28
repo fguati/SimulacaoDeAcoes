@@ -1,21 +1,11 @@
-class TokenExpiredError extends Error {
+const BaseError = require("./BaseError")
+
+class TokenExpiredError extends BaseError {
     constructor(message, expiredAt) {
-        super(message)
+        super(message, 401, `Expired at: ${expiredAt}`)
         this.name = 'TokenExpiredError'
         this.expiredAt = expiredAt
     }
 }
 
-function treatTokenExpiredError(error, res) {
-    if(error instanceof TokenExpiredError) {
-        const responseObject = {
-            name: error.name,
-            message: error.message,
-            aditionalInfo: `expiredAt: ${error.expiredAt}`
-        }
-
-        return res.status(401).send(JSON.stringify(responseObject))
-    }
-}
-
-module.exports = { TokenExpiredError, treatTokenExpiredError }
+module.exports = {TokenExpiredError}

@@ -1,18 +1,11 @@
-class InvalidCredentialsError extends Error {
+const BaseError = require("./BaseError")
+
+class InvalidCredentialsError extends BaseError {
     constructor(message) {
-        super(message)
+        super(message, 401)
         this.name = 'InvalidCredentialsError'
     }
+
 }
 
-function treatInvalidCredentialsError(error, res) {
-    if (error instanceof InvalidCredentialsError) {
-        const responseObject = {
-            name: error.name,
-            message: error.message
-        }
-        return res.status(401).send(JSON.stringify(responseObject))
-    }
-}
-
-module.exports = { InvalidCredentialsError, treatInvalidCredentialsError }
+module.exports = {InvalidCredentialsError}

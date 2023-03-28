@@ -1,21 +1,11 @@
-class InvalidInputError extends Error {
+const BaseError = require("./BaseError")
+
+class InvalidInputError extends BaseError {
     constructor(message, InvalidInputList) {
-        super(message)
-        this.InvalidInputList = InvalidInputList
+        super(message, 422, `List of invalid inputs: ${InvalidInputList}`)
         this.name = 'InvalidInputError'
     }
 
 }
 
-function treatInvalidInputError(error, res) {
-    if (error instanceof InvalidInputError) {
-        const responseObject ={
-            name: error.name,
-            message: error.message,
-            aditionalInfo: `listOfInvalidInputs: ${error.InvalidInputList}`
-        }
-        return res.status(422).send(JSON.stringify(responseObject))
-    }
-}
-
-module.exports = { InvalidInputError, treatInvalidInputError };
+module.exports = {InvalidInputError};
