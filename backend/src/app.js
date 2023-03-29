@@ -9,6 +9,7 @@ const {router: authRqRoutes} = require('./routes/authRequiredRoutes')
 const { corsAllowances } = require('./middleware/corsAllowances.js');
 const { cookieSettings } = require('./middleware/cookiesSettings.js');
 const { errorHandler } = require('./middleware/errorHandler.js');
+const { NotFoundError } = require('./CustomErrors/NotFoundError.js');
 
 //instantiate app
 const app = express();
@@ -26,8 +27,8 @@ app.use('/register', signInRoute)
 //routes that require auth
 app.use(authRqRoutes)
 
-//error 404 route - not working
-app.get('/:anything', (req, res) => res.status(404).send('Resource not Found'))
+//error 404 route - for now only applied for routes with auth required
+app.get('/:anything', (req, res, next) => next(new NotFoundError()))
 
 //error handling middleware
 app.use(errorHandler)
