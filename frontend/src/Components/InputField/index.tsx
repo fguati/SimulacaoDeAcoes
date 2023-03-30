@@ -1,4 +1,4 @@
-import Input from "Components/Input"
+import Input from "./StyledInput"
 import InputFieldContainer from "./InputFieldContainer";
 import IInputFieldProps from "./IInputFieldProps";
 import Label from "Components/Label";

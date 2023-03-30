@@ -23,12 +23,11 @@ describe('Testing the behavior of the form component', () => {
 
     const mockOnSubmit = jest.fn()
 
-    test('correct number of fields was rendered', () => {
-        render(<Form fields = {testFields} onSubmit = {mockOnSubmit} />)
-        
-        const renderedFields = screen.queryAllByRole('InputField')
-        expect(renderedFields.length).toBe(testFields.length)
-    })
+    function inputRenderedCorrectly(input:HTMLInputElement | null, field: IFormField) {
+        return (input!.getAttribute('name') === field.name &&
+                input!.getAttribute('type') === field.type &&
+                input!.getAttribute('value') === field.value)
+    }
 
     test('all fields were rendered correctly', () => {
         render(<Form fields = {testFields} onSubmit = {mockOnSubmit} />)
@@ -37,33 +36,45 @@ describe('Testing the behavior of the form component', () => {
         
         testFields.forEach((field) => {
             const wasRendered = renderedInputs.some(input => {
-                return (input!.getAttribute('name') === field.name &&
-                input!.getAttribute('type') === field.type &&
-                input!.getAttribute('value') === field.value)
+                return inputRenderedCorrectly(input, field)
             })
 
+            expect(renderedFields.length).toBe(testFields.length)  
             expect(wasRendered).toBe(true)
         })
     })
 
-    test('onSubmit function must be called when button is clicked', () => {
+    test('onSubmit function must be called, form cleared and page must not refresh when button is clicked', () => {
         render(<Form fields = {testFields} onSubmit = {mockOnSubmit} />)
+
         const button = screen.getByRole('button')
-        fireEvent.click(button)
-        expect(mockOnSubmit).toBeCalledTimes(1)
-    })
-
-    test('form is cleared when button is clicked', () => {
-        render(<Form fields = {testFields} onSubmit = {mockOnSubmit} />)
-
         const fields = screen.queryAllByRole('InputField')
         const inputs = fields.map(field => field.querySelector('input'))
-        const button = screen.getByRole('button')
+
         fireEvent.click(button)
 
+        expect(mockOnSubmit).toBeCalledTimes(1)
         inputs.forEach(input => {
             const inputValue = input!.getAttribute('value')
             expect(inputValue).toBe('')
         })
     })
+
+    test('changing the values of a field actually changes their value', () => {
+        render(<Form fields={testFields} onSubmit={mockOnSubmit}/>)
+
+        const renderedFields = screen.queryAllByRole('InputField')
+        const renderedInputs = renderedFields.map(field => field.querySelector('input'))
+        
+        const newValueA = 'a'
+        const newValueB = 'b'
+
+        renderedInputs.forEach(input => {
+            fireEvent.change(input!, {target: {value: newValueA}})
+            expect(input?.value).toBe(newValueA)
+            fireEvent.change(input!, {target: {value: newValueB}})
+            expect(input?.value).toBe(newValueB)
+        })
+    })
+
 })

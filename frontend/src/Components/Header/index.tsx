@@ -2,10 +2,11 @@ import StyledLink from "Components/StyledLink"
 import useCookies from "react-cookie/cjs/useCookies";
 import logOut from "utils/logOut";
 import HeaderContainer from "./HeaderContainer"
+import { useEffect } from 'react'
 
 function Header() {
     const [cookies, setCookie] = useCookies()
-    
+
     return (
         <HeaderContainer>
             <StyledLink to='/'>Home</StyledLink>
