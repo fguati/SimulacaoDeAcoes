@@ -3,7 +3,6 @@ import '@testing-library/jest-dom'
 import { createMemoryRouter, RouteObject, RouterProvider } from 'react-router-dom'
 import unknownError from './useErrorHandler/unknownError'
 import ErrorPage from '.'
-import { useRouteError } from 'react-router-dom'
 
 function renderErrorPage(props?: IErrorPageProps) {
     const routerConfig:RouteObject[] = [

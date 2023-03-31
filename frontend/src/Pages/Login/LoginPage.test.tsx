@@ -1,8 +1,7 @@
 import LoginPage from "."
-import { render, screen } from "@testing-library/react"
+import { fireEvent, render, screen } from "@testing-library/react"
 import { MemoryRouter } from "react-router-dom"
 import '@testing-library/jest-dom'
-
 
 describe('test login page render and behavior', () => {
     test('Page must render with fields email and password', () => {
@@ -15,4 +14,5 @@ describe('test login page render and behavior', () => {
         expect($emailField).toBeInTheDocument()
         expect($passwordField).toBeInTheDocument()
     })
+
 })
