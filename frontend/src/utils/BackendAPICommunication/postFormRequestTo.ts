@@ -1,4 +1,5 @@
 import backendURL from "Common/backEndUrl";
+import BackendRoutes from "Interfaces/BackendRoutes";
 
 function postForm<bodyType>(body:bodyType) {
     const myInit: RequestInit = {
@@ -11,7 +12,7 @@ function postForm<bodyType>(body:bodyType) {
     }
 
     return {
-        async to(route: string) {
+        async to(route: BackendRoutes) {
             const url = backendURL + route
             const response = await fetch(url, myInit)
             return response
