@@ -1,5 +1,5 @@
-import Button from "Components/Button"
-import InputField from "Components/InputField"
+import Button from "Components/AtomComponents/Button"
+import InputField from "Components/AtomComponents/InputField"
 import FormContainer from "./FormContainer"
 import IFormProps from "./IFormProps"
 import useFormFields from "./useFormFields"

@@ -1,5 +1,5 @@
 import PageLayout from "Components/PageLayout";
-import Title from "Components/Title";
+import Title from "Components/AtomComponents/Title";
 import useErrorHandler from "./useErrorHandler";
 
 function ErrorPage(props: IErrorPageProps) {

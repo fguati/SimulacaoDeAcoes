@@ -64,7 +64,7 @@ describe('Test the correct rendering of the stock table', () => {
 
         function getValueFromCell(col:number, row: number) {
             if(row == 1) {
-                return headers[col]
+                return headers[col - 1]
             }
 
             const stock = exampleStockList[row - 2]
@@ -78,13 +78,15 @@ describe('Test the correct rendering of the stock table', () => {
 
         }
 
-        const selectedCellRow = getRandomIntUpTo(numberOfRows)
-        const selectedCellCol = getRandomIntUpTo(numberOfColumns)
-        const selectedCellIndex = numberOfColumns * (selectedCellRow - 1) - 1 + selectedCellCol
-        const selectedCell = renderedCells[selectedCellIndex]
-        const selectedCellValue = getValueFromCell(selectedCellCol, selectedCellRow)
-        
-        expect(selectedCell).toHaveTextContent(selectedCellValue!.toString())
+        for(let selectedCellRow = 1; selectedCellRow <= numberOfRows; selectedCellRow++) {
+            for(let selectedCellCol = 1; selectedCellCol <= numberOfColumns; selectedCellCol++) {
+                const selectedCellIndex = numberOfColumns * (selectedCellRow - 1) - 1 + selectedCellCol
+                const selectedCell = renderedCells[selectedCellIndex]
+                const selectedCellValue = getValueFromCell(selectedCellCol, selectedCellRow)
+                expect(selectedCell).toHaveTextContent(selectedCellValue!.toString())
+
+            }
+        }
 
     })
 })

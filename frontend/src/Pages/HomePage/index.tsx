@@ -1,6 +1,6 @@
 import PageLayout from "Components/PageLayout";
 import StockTable from "Components/StockTable";
-import Title from "Components/Title";
+import Title from "Components/AtomComponents/Title";
 import IStock from "Interfaces/IStock";
 
 const stockList: IStock[] = [

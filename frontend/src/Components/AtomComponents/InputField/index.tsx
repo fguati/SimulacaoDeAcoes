@@ -1,7 +1,7 @@
 import Input from "./StyledInput"
 import InputFieldContainer from "./InputFieldContainer";
 import IInputFieldProps from "./IInputFieldProps";
-import Label from "Components/Label";
+import Label from "Components/AtomComponents/Label";
 
 function InputField( {children, name, currentValue, setValue, inputType = 'text'}: IInputFieldProps ) {
     return(
