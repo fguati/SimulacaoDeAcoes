@@ -1,9 +1,7 @@
 import IUser from "Interfaces/IUser"
+import { postForm, addProperties, useHandleRequestResponse } from "utils/BackendAPICommunication/"
 import useSignUpSuccessHandler from "./useSignUpSuccessHandler"
-import submitForm from "utils/BackendAPICommunication/submitFormRequestTo"
-import addProperties from "utils/BackendAPICommunication/castEventTargetType"
 import listOfSignUpValues from "./listOfSignUpValuesType"
-import useHandleRequestResponse from "utils/BackendAPICommunication/useHandleRequestResponse"
 
 const useSubmitSignUp = () =>{
     const signUpSuccessHandler = useSignUpSuccessHandler()
@@ -19,7 +17,7 @@ const useSubmitSignUp = () =>{
             senha: target.Password.value
         }
     
-        const response = await submitForm<IUser>(user).to(route)
+        const response = await postForm<IUser>(user).to(route)
         const handledResponse = await signUpResponseHandler(response)
         return handledResponse
     }

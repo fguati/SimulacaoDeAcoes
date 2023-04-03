@@ -1,8 +1,6 @@
 import IUser from "Interfaces/IUser";
+import { postForm, useHandleRequestResponse, addProperties } from "utils/BackendAPICommunication/";
 import useLoginSuccessHandler from "./useLoginSuccessHandler";
-import submitForm from "utils/BackendAPICommunication/submitFormRequestTo";
-import useHandleRequestResponse from "utils/BackendAPICommunication/useHandleRequestResponse";
-import addProperties from "utils/BackendAPICommunication/castEventTargetType";
 import listOfLoginFormValues from "./listOfLoginFormValuesType";
 
 const useSubmitLoginRequest = () => {
@@ -18,7 +16,7 @@ const useSubmitLoginRequest = () => {
             senha: target.Password.value
         }
 
-        const response = await submitForm<IUser>(user).to(route)
+        const response = await postForm<IUser>(user).to(route)
         const handledResponse = await loginResponseHandler(response)
         return handledResponse
     }

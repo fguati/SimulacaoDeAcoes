@@ -1,11 +1,11 @@
 import addProperties from "./castEventTargetType";
 import handleErrorResponse from './handleErrorResponse';
-import submitForm from "./submitFormRequestTo";
+import postForm from "./postFormRequestTo";
 import useHandleRequestResponse from "./useHandleRequestResponse";
 
 export {
     addProperties,
     handleErrorResponse,
-    submitForm,
-    useHandleRequestResponse
+    postForm,
+    useHandleRequestResponse,
 }

@@ -1,6 +1,6 @@
 import backendURL from "Common/backEndUrl";
 
-function submitForm<bodyType>(body:bodyType) {
+function postForm<bodyType>(body:bodyType) {
     const myInit: RequestInit = {
         method: 'POST',
         body: JSON.stringify(body),
@@ -20,4 +20,4 @@ function submitForm<bodyType>(body:bodyType) {
     }
 }
 
-export default submitForm;
+export default postForm;
