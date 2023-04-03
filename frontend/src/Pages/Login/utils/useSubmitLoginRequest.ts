@@ -1,21 +1,24 @@
 import IUser from "Interfaces/IUser";
-import castLoginEventTargetType from "./castLoginEventType";
-import useHandleLoginResponse from "./handleLoginResponse";
-import requestLogin from "./requestLogin";
+import useLoginSuccessHandler from "./useLoginSuccessHandler";
+import submitForm from "utils/BackendAPICommunication/submitFormRequestTo";
+import useHandleRequestResponse from "utils/BackendAPICommunication/useHandleRequestResponse";
+import addProperties from "utils/BackendAPICommunication/castEventTargetType";
+import listOfLoginFormValues from "./listOfLoginFormValuesType";
 
 const useSubmitLoginRequest = () => {
-    const loginResponseHandler = useHandleLoginResponse()
-    
+    const loginSuccessHandler = useLoginSuccessHandler()
+    const loginResponseHandler = useHandleRequestResponse(loginSuccessHandler)
+    const route = '/login'
     
     return async (e:React.FormEvent<HTMLFormElement>) => {
-        const target = castLoginEventTargetType(e)
+        const target = addProperties<listOfLoginFormValues>().toTarget(e.target)
         
         const user: IUser = {
             email: target["E-mail"].value,
             senha: target.Password.value
         }
 
-        const response = await requestLogin(user)
+        const response = await submitForm<IUser>(user).to(route)
         const handledResponse = await loginResponseHandler(response)
         return handledResponse
     }

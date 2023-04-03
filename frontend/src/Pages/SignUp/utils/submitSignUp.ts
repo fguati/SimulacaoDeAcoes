@@ -1,13 +1,17 @@
 import IUser from "Interfaces/IUser"
-import castSignUpEventTargetType from "./castFormEventTargetType"
-import signUpRequest from "./signUpRequest"
-import useHandleSignUpResponse from "./handleSignUpResponse"
+import useSignUpSuccessHandler from "./useSignUpSuccessHandler"
+import submitForm from "utils/BackendAPICommunication/submitFormRequestTo"
+import addProperties from "utils/BackendAPICommunication/castEventTargetType"
+import listOfSignUpValues from "./listOfSignUpValuesType"
+import useHandleRequestResponse from "utils/BackendAPICommunication/useHandleRequestResponse"
 
 const useSubmitSignUp = () =>{
-    const signUpResponseHandler = useHandleSignUpResponse()
+    const signUpSuccessHandler = useSignUpSuccessHandler()
+    const signUpResponseHandler = useHandleRequestResponse(signUpSuccessHandler)
+    const route = '/register'
 
     return async (e:React.FormEvent<HTMLFormElement>) => {
-        const target = castSignUpEventTargetType(e)
+        const target = addProperties<listOfSignUpValues>().toTarget(e.target)
     
         const user: IUser = {
             nome: target.Username.value,
@@ -15,7 +19,7 @@ const useSubmitSignUp = () =>{
             senha: target.Password.value
         }
     
-        const response = await signUpRequest(user)
+        const response = await submitForm<IUser>(user).to(route)
         const handledResponse = await signUpResponseHandler(response)
         return handledResponse
     }
