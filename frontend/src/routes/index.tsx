@@ -5,8 +5,8 @@ import rootRoute from './rootRoute';
 
 const routes:RouteObject[] = [
   rootRoute,
-  notFoundRoute,
-  errorRoute
+  errorRoute,
+  notFoundRoute
 ]
 
 export default routes;
