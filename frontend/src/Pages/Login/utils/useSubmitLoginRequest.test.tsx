@@ -1,25 +1,54 @@
 import { renderHook } from '@testing-library/react-hooks';
 import useSubmitLoginRequest from './useSubmitLoginRequest';
+import useLoginSuccessHandler from './useLoginSuccessHandler';
+import { postForm, useHandleRequestResponse, addProperties } from "utils/BackendAPICommunication/";
 
-jest.mock('./handleLoginResponse', () => jest.fn(() => jest.fn()))
 
-import useHandleLoginResponse from './useLoginSuccessHandler';
+jest.mock('./useLoginSuccessHandler')
+jest.mock('utils/BackendAPICommunication/', () => {
+  return {
+    __esModule: true,
+    ...jest.requireActual('utils/BackendAPICommunication/'),
+    postForm: jest.fn(),
+    useHandleRequestResponse: jest.fn(),
+    addProperties: jest.fn(() => {
+      return { toTarget: jest.fn(target => target) }
+    })
+  }
+})
+
+
 
 describe('testing the useSubmitLoginRequest custom hook', () => {
-    const mockHandleLoginResponse = jest.fn(response => response)
-    const mockRequestLogin = jest.fn(() => Promise.resolve({}))
+    const mockSuccessFunction = jest.fn()
+    const mockResponseHandler = jest.fn(response => response)
+
+    const mockuseLoginSuccessHandler = useLoginSuccessHandler as jest.MockedFunction<typeof useLoginSuccessHandler>
+    const mockuseHandleRequestResponse = useHandleRequestResponse as jest.MockedFunction<typeof useHandleRequestResponse>
+    const mockedAddProperties = addProperties as jest.MockedFunction<typeof addProperties>
+    const mockedPostForm = postForm as jest.MockedFunction<typeof postForm>
 
     beforeEach(() => {
-        const mockUseHandleLoginResponse = useHandleLoginResponse as jest.MockedFunction<typeof useHandleLoginResponse>
-        mockUseHandleLoginResponse.mockReturnValue(mockHandleLoginResponse)
+      mockuseLoginSuccessHandler.mockReturnValue(mockSuccessFunction)
+      mockuseHandleRequestResponse.mockReturnValue(mockResponseHandler)
+      mockedAddProperties.mockImplementation(() => ({
+        toTarget: jest.fn(target => target)
+      }))
+      mockedPostForm.mockImplementation(user => ({
+        to: jest.fn().mockImplementation((route) => Promise.resolve(user))
+      }))
+
     })
 
     afterEach(() => {
-        jest.clearAllMocks();
-    });
+      jest.clearAllMocks()
+    })
 
-    it('calls requestLogin with the correct user object', async () => {
+
+    it('calls the useLoginSuccessHandler hook', async () => {
+        console.log('mock', addProperties)
         const { result } = renderHook(() => useSubmitLoginRequest())
+
         const mockEvent = {
           preventDefault: jest.fn(),
           target: {
@@ -27,11 +56,9 @@ describe('testing the useSubmitLoginRequest custom hook', () => {
             Password: { value: 'password' },
           }
         }
+
         await result.current(mockEvent as unknown as React.FormEvent<HTMLFormElement>)
-        expect(mockRequestLogin).toHaveBeenCalledWith({
-          email: 'test@example.com',
-          senha: 'password',
-        })
+        expect(mockuseLoginSuccessHandler).toBeCalled()
       })
 })
 
