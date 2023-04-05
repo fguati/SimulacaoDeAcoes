@@ -4,10 +4,18 @@ import { MemoryRouter } from 'react-router-dom'
 import Header from '.'
 import { CookiesProvider } from 'react-cookie'
 import Cookies from 'js-cookie';
+import { SessionProvider } from 'Common/Contexts/SessionContext'
 
 describe('Testing links in the header component', () => {
     test('header must have links login and sign up when logged out', () => {
-        render(<Header/>, {wrapper: MemoryRouter})
+        render(
+        <SessionProvider>
+            <CookiesProvider>
+                <Header/>
+            </CookiesProvider>
+
+        </SessionProvider>, 
+        {wrapper: MemoryRouter})
 
         const loginLink = screen.queryByText('Login')
         const signUpLink = screen.queryByText('Sign Up')
@@ -23,9 +31,11 @@ describe('Testing links in the header component', () => {
         Cookies.set('authToken', 'testValues')
         
         render(
-            <CookiesProvider>
-                <Header/>
-            </CookiesProvider>,
+            <SessionProvider>
+                <CookiesProvider>
+                    <Header/>
+                </CookiesProvider>
+            </SessionProvider>,
             {wrapper: MemoryRouter}
         )
 

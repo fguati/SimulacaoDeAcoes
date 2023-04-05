@@ -1,5 +1,5 @@
 import { createContext, useState } from 'react'
-import getCookie from './utils/getCookie'
+import getCookie from 'utils/getCookie'
 import ReactChildren from 'Common/Types/ReactChildren'
 
 interface Props {
@@ -7,17 +7,16 @@ interface Props {
 }
 
 interface ISessionContext {
-    loggedIn: boolean
     setLogIn?: React.Dispatch<React.SetStateAction<boolean>>
     getLogInStatus?: () => boolean
 }
 
-let authCookie = getCookie('authToken')
-const currentlyLoged = authCookie !== ''
-const SessionContext = createContext<ISessionContext>({loggedIn: currentlyLoged})
+const SessionContext = createContext<ISessionContext>({})
 
 
 const SessionProvider = ({ children }: Props) => {
+    let authCookie = getCookie('authToken')
+    const currentlyLoged = authCookie !== ''
     const [loggedIn, setLogIn] = useState(currentlyLoged)
 
     function getLogInStatus() {
@@ -29,7 +28,7 @@ const SessionProvider = ({ children }: Props) => {
     }
 
     return (
-        <SessionContext.Provider value={{loggedIn, setLogIn, getLogInStatus}}>
+        <SessionContext.Provider value={{setLogIn, getLogInStatus}}>
             {children}
         </SessionContext.Provider>
     )
