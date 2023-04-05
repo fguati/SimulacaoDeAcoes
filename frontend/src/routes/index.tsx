@@ -1,10 +1,10 @@
 import {  RouteObject } from 'react-router-dom'
-import errorRoute from './errorRoute';
-import notFoundRoute from './notFoundRoute';
-import rootRoute from './rootRoute';
+import errorRoute from './ErrorRoutes/errorRoute';
+import notFoundRoute from './ErrorRoutes/notFoundRoute';
+import entryRoute from './entryRoute';
 
 const routes:RouteObject[] = [
-  rootRoute,
+  entryRoute,
   errorRoute,
   notFoundRoute
 ]

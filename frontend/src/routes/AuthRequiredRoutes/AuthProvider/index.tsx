@@ -1,9 +1,6 @@
 import useCookies from "react-cookie/cjs/useCookies";
 import LoginPage from "Pages/Login";
 import { Outlet } from "react-router-dom";
-import { RouteObject } from "react-router-dom";
-import rootIndex from "./rootIndex";
-
 
 function AuthProvider() {
     const [ cookies ] = useCookies()
@@ -13,11 +10,4 @@ function AuthProvider() {
     )
 }
 
-const authRequiredRoutes: RouteObject = {
-    element: <AuthProvider/>,
-    children: [
-        rootIndex
-    ]
-}
-
-export default authRequiredRoutes
+export default AuthProvider
