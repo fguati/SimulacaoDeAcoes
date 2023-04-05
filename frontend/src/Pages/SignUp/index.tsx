@@ -16,7 +16,7 @@ function SignUpPage() {
     ] 
 
     return(
-        <PageLayout>
+        <PageLayout >
             <Form fields={fields} onSubmit={(e) => submitSignUp(e)}/>
 
         </PageLayout>

@@ -1,9 +1,9 @@
 import { renderHook } from '@testing-library/react-hooks';
-import useSubmitLoginRequest from './useSubmitLoginRequest';
-import useLoginSuccessHandler from './useLoginSuccessHandler';
+import useSubmitLoginRequest from 'Pages/Login/utils/useSubmitLoginRequest';
+import useLoginSuccessHandler from 'Pages/Login/utils/useLoginSuccessHandler';
 import { postForm, useHandleRequestResponse, addProperties } from "utils/BackendAPICommunication/";
 
-jest.mock('./useLoginSuccessHandler')
+jest.mock('Pages/Login/utils/useLoginSuccessHandler')
 jest.mock('utils/BackendAPICommunication/', () => {
   return {
     __esModule: true,

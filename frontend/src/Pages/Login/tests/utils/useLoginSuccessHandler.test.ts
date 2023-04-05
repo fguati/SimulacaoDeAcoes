@@ -1,4 +1,4 @@
-import useLoginSuccessHandler from "./useLoginSuccessHandler"
+import useLoginSuccessHandler from "../../utils/useLoginSuccessHandler"
 import { renderHook } from '@testing-library/react-hooks';
 import { NavigateFunction, useLocation, Location } from "react-router-dom";
 

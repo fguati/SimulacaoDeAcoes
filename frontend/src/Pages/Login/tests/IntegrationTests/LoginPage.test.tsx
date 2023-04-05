@@ -1,9 +1,9 @@
-import LoginPage from "."
+import LoginPage from "Pages/Login"
 import { render, screen } from "@testing-library/react"
 import { MemoryRouter } from "react-router-dom"
 import '@testing-library/jest-dom'
 
-describe('test login page render and behavior', () => {
+describe('unit tests: test login page render and behavior', () => {
     test('Page must render with fields email and password', () => {
         
         render(<LoginPage/>, {wrapper:MemoryRouter})
@@ -12,7 +12,7 @@ describe('test login page render and behavior', () => {
         const $passwordField = screen.queryByLabelText('Password')
 
         expect($emailField).toBeInTheDocument()
-        expect($passwordField).toBeInTheDocument()
+        expect($passwordField).toHaveAttribute('name', 'Password')
     })
 
 })
