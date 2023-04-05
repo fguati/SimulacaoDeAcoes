@@ -1,10 +1,15 @@
 import 'App.css';
-import { createBrowserRouter, RouterProvider } from 'react-router-dom'
+import { createBrowserRouter, RouteObject, RouterProvider } from 'react-router-dom'
 import routes from 'routes';
+import Header from 'Components/Header';
 
 function App() {
-  
-  const router = createBrowserRouter(routes)
+  const routesWithHeader: RouteObject[] = [{
+    element: <Header/>,
+    children: routes
+  }]
+
+  const router = createBrowserRouter(routesWithHeader)
 
   return (
     <div className="App">

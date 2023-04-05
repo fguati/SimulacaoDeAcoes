@@ -1,23 +1,30 @@
 import StyledLink from "Components/AtomComponents/StyledLink"
-import useCookies from "react-cookie/cjs/useCookies";
 import useLogOut from "utils/logOut";
 import HeaderContainer from "./HeaderContainer"
+import { Outlet } from "react-router-dom";
+import { useContext } from "react";
+import { SessionContext } from "Common/Contexts/SessionContext";
 
 function Header() {
-    const [cookies] = useCookies()
+    const { getLogInStatus } = useContext(SessionContext)
+    const loggedIn = getLogInStatus!()
     const logOut = useLogOut()
 
     return (
-        <HeaderContainer>
-            <StyledLink to='/'>Home</StyledLink>
+        <>
+            <HeaderContainer>
+                <StyledLink to='/'>Home</StyledLink>
 
-            {!cookies.authToken && <nav>
-                <StyledLink to='/login'>Login</StyledLink>
-                <StyledLink to='/signup'>Sign Up</StyledLink>
-            </nav>}
+                {!loggedIn && <nav>
+                    <StyledLink to='/login'>Login</StyledLink>
+                    <StyledLink to='/signup'>Sign Up</StyledLink>
+                </nav>}
 
-            {cookies.authToken && <StyledLink to='/login' onClick={() => logOut()}>Log Out</StyledLink>}
-        </HeaderContainer>
+                {loggedIn && <StyledLink to='/login' onClick={() => logOut()}>Log Out</StyledLink>}
+            </HeaderContainer>
+            
+            <Outlet/>
+        </>
     )
 }
 

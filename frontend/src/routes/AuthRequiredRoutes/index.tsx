@@ -1,10 +1,10 @@
 
 import { RouteObject } from "react-router-dom";
 import loggedRoot from "./loggedRoot";
-import AuthProvider from "./AuthProvider";
+import AuthRequestBranch from "./AuthChecker";
 
 const authRequiredRoutes: RouteObject = {
-    element: <AuthProvider/>,
+    element: <AuthRequestBranch/>,
     children: [
         loggedRoot
     ]

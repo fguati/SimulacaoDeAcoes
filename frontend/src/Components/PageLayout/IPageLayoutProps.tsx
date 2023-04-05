@@ -1,7 +1,7 @@
-import { ReactElement } from 'react'
+import ReactChildren from 'Common/Types/ReactChildren';
 
 interface IPageLayoutProps {
-    children: ReactElement | string | Array<ReactElement | string>
+    children: ReactChildren
 }
 
 export default IPageLayoutProps;
