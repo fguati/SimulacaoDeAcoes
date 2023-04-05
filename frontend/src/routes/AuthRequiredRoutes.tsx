@@ -6,7 +6,7 @@ import rootIndex from "./rootIndex";
 
 
 function AuthProvider() {
-    const [cookies, setCookie] = useCookies()
+    const [ cookies ] = useCookies()
 
     return(
         cookies.authToken ? <Outlet/> : <LoginPage/> 

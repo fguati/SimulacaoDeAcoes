@@ -1,10 +1,11 @@
 import StyledLink from "Components/AtomComponents/StyledLink"
 import useCookies from "react-cookie/cjs/useCookies";
-import logOut from "utils/logOut";
+import useLogOut from "utils/logOut";
 import HeaderContainer from "./HeaderContainer"
 
 function Header() {
-    const [cookies, setCookie] = useCookies()
+    const [cookies] = useCookies()
+    const logOut = useLogOut()
 
     return (
         <HeaderContainer>
