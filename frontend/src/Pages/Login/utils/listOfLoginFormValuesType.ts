@@ -1,4 +1,3 @@
-import addProperties from "utils/BackendAPICommunication/castEventTargetType";
 
 type listOfLoginFormValues = {
     "E-mail": { value: string };

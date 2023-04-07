@@ -1,5 +1,5 @@
 import backendURL from "Common/backEndUrl";
-import BackendRoutes from "Interfaces/BackendRoutes";
+import BackendRoutes from "Common/Types/BackendRoutes";
 
 function postForm<bodyType>(body:bodyType) {
     const myInit: RequestInit = {

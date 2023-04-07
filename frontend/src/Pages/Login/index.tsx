@@ -14,7 +14,7 @@ function LoginPage() {
 
     return(
         <PageLayout>
-            <Form fields={fields} onSubmit={submitLogin}/>
+            <Form fields={fields} onSubmit={submitLogin} data-testid='LoginForm'/>
 
         </PageLayout>
     )
