@@ -1,20 +1,20 @@
 import 'App.css';
-import { createBrowserRouter, RouteObject, RouterProvider } from 'react-router-dom'
+import { SessionProvider } from 'Common/Contexts/SessionContext';
+import { CookiesProvider } from 'react-cookie';
+import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import routes from 'routes';
-import Header from 'Components/Header';
 
 function App() {
-  const routesWithHeader: RouteObject[] = [{
-    element: <Header/>,
-    children: routes
-  }]
-
-  const router = createBrowserRouter(routesWithHeader)
+  const router = createBrowserRouter(routes)
 
   return (
-    <div className="App">
-      <RouterProvider router={router}/>
-    </div>
+	<div className="App">
+		<SessionProvider>
+			<CookiesProvider>
+				<RouterProvider router={router}/>
+			</CookiesProvider>
+		</SessionProvider>
+	</div>
   );
 }
 

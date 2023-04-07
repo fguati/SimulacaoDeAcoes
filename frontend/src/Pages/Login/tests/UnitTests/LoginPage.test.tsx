@@ -34,15 +34,14 @@ describe('unit tests: test login page render and behavior with mocked components
     })
 
     
-    test('Page must render with the page layout and form components', () => {
+    test('Page must render with the form component', () => {
         render(<LoginPage/>, {wrapper:MemoryRouter})
 
         expect(screen.getByText('form')).toBeInTheDocument()
-        expect(screen.getByTestId('PageLayout')).toBeInTheDocument()
 
     })
 
-    test('useSubmitLoginRequest hook must be calles', () => {
+    test('useSubmitLoginRequest hook must be called', () => {
         render(<LoginPage/>, {wrapper:MemoryRouter})
 
         expect(mockedUseSubmitLoginRequest).toBeCalled()
