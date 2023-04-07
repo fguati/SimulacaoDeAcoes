@@ -1,7 +1,7 @@
 const { InvalidInputError, UniqueConstraintError, InvalidCredentialsError } = require('../../../src/CustomErrors')
 const UserDAO = require('../../../src/db/ComunicationDB/user.js')
-const { dbGet, dbRun } = require('../../../src/db/dbUtils.js')
-const db = require('../../../src/db/createDB.js')
+const { dbGet, dbRun } = require('../../../src/db/utils/dbutils.js')
+const db = require('../../../src/db/InitiateDB/initiateDB.js')
 
 beforeAll(async () => {
     const testMail = 'emailTeste'

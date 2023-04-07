@@ -1,6 +1,6 @@
 const LoginController = require("../../src/controllers/login")
 const UserDAO = require("../../src/db/ComunicationDB/user")
-const { dbGet, dbRun } = require("../../src/db/dbUtils")
+const { dbGet, dbRun } = require("../../src/db/utils/dbutils")
 const { createMocks } = require('node-mocks-http');
 
 describe('Tests of the coltroller used for the Login route', () => {

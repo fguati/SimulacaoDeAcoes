@@ -1,4 +1,4 @@
-const db = require('../../src/db/createDB.js')
+const db = require('../../src/db/InitiateDB/initiateDB.js')
 const sqlite3 = require('sqlite3').verbose()
 
 

@@ -1,7 +1,7 @@
 const app = require('../../src/app.js')
 const request = require('supertest')
 const UserDao = require('../../src/db/ComunicationDB/user.js')
-const { dbGet } = require('../../src/db/dbUtils.js')
+const { dbGet } = require('../../src/db/utils/dbutils.js')
 
 const validCredentials = {
     nome: "exampleName",

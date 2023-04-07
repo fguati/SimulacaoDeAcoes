@@ -1,5 +1,5 @@
 const { promisify } = require('util');
-const db = require('./createDB.js')
+const db = require('../InitiateDB/initiateDB.js')
 
 const dbAll = promisify(db.all).bind(db);
 const dbRun = promisify(db.run).bind(db);

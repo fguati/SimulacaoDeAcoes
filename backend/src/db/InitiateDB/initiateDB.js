@@ -1,14 +1,10 @@
 const fs = require('fs')
 const sqlite3 = require('sqlite3').verbose()
 
-const SCHEMA_LIST = require('./Schemas')
+const SCHEMA_LIST = require('../Schemas')
+const createDB = require('./createDB')
 
-const dbFilePath = `${__dirname}\\db.sqlite`
-const existBefore = fs.existsSync(dbFilePath)
-
-if(!existBefore){
-    fs.writeFileSync(dbFilePath,'')
-}
+const dbFilePath = createDB('db')
 
 const db = new sqlite3.Database(dbFilePath, (err) => {
     if(err){

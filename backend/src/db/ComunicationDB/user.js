@@ -1,10 +1,9 @@
 const { InvalidCredentialsError } = require('../../CustomErrors')
 const { InvalidInputError } = require('../../CustomErrors')
-const { generateHashedPasswordAndSalt } = require('../../services/hash')
 const { userPropertyList, hasInvalidParam, listInvalidInputs } = require('../../utils')
 
 const checkUniqueConstraintError = require('../../utils/checkUniqueConstraintError.js')
-const { dbAll, dbRun, dbGet } = require('../dbUtils.js')
+const { dbAll, dbRun, dbGet } = require('../utils/dbutils.js')
 
 class UserDAO {
     static async select(property = '*') {
