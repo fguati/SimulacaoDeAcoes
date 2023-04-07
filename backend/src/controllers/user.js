@@ -31,13 +31,13 @@ class UserController {
     }
 
     static async postUser(req, res, next) {
-        const userPropertyList = ['nome', 'email', 'senha']
+        const listOfUserPropertyNames = ['nome', 'email', 'salt', 'hashedPassword']
         try {
             const newUser = req.body
-            const listParams = userPropertyList.map(key => newUser[key])
+            const listParams = listOfUserPropertyNames.map(key => newUser[key])
 
             if(hasInvalidParam(listParams)) {
-                const invalidInputs = listInvalidInputs(newUser, userPropertyList)
+                const invalidInputs = listInvalidInputs(newUser, listOfUserPropertyNames)
                 const invalidInputError = new InvalidInputError('Invalid user information', invalidInputs)
                 return next(invalidInputError)
             }
