@@ -4,7 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "backUpDB": "echo .\\src\\db\\db.sqlite > .\\src\\db\\dbBackUp.sqlite ",
+    "backUpDB": "node .\\src\\db\\ManipulateDBFiles\\Scripts\\backUpDB.js  ",
+    "setupTests": "node .\\src\\db\\ManipulateDBFiles\\Scripts\\setUpDBForTests.js",
+    "restoreBackUp": "node .\\src\\db\\ManipulateDBFiles\\Scripts\\restoreBackUp.js",
     "test": "jest --verbose --silent",
     "test:watch": "jest --watch --verbose --silent",
     "test:coverage": "jest --coverage --verbose --silent",

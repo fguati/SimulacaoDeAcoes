@@ -29,9 +29,6 @@ function populateTestDB(testDBFilePath){
 }
 
 const testDBFilePath = createDB('testDB')
+const dbFilePath = `${dbFileDir}\\db.sqlite`
 populateTestDB(testDBFilePath)
-  
-  
-  
-  
-  
+copyDB(testDBFilePath).to(dbFilePath)
