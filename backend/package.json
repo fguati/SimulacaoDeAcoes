@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "backUpDB": "echo .\\src\\db\\db.sqlite > .\\src\\db\\dbBackUp.sqlite ",
     "test": "jest --verbose --silent",
     "test:watch": "jest --watch --verbose --silent",
     "test:coverage": "jest --coverage --verbose --silent",
