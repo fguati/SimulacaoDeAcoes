@@ -4,9 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "backUpDB": "node .\\src\\db\\ManipulateDBFiles\\Scripts\\backUpDB.js  ",
-    "setupTests": "node .\\src\\db\\ManipulateDBFiles\\Scripts\\setUpDBForTests.js",
-    "restoreBackUp": "node .\\src\\db\\ManipulateDBFiles\\Scripts\\restoreBackUp.js",
+    "copyDB": "node .\\scripts\\copyDBScript.js",
+    "backUpDB": "node .\\scripts\\backUpDB.js  ",
+    "setupTests": "npm run backUpDB && node .\\scripts\\setUpDBForTests.js",
+    "restoreBackUp": "node .\\scripts\\restoreBackUp.js",
     "test": "jest --verbose --silent",
     "test:watch": "jest --watch --verbose --silent",
     "test:coverage": "jest --coverage --verbose --silent",

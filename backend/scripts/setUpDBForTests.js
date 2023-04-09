@@ -1,15 +1,14 @@
 const { dbFileDir } = require('#root/src/utils/globalVariables.js')
-const createDB = require('../createDB.js')
-const copyDB = require('../copyDBto.js')
+const createDB = require('#root/src/db/utils/ManipulateDBFiles/createDB.js')
+const copyDB = require('#root/src/db/utils/ManipulateDBFiles/copyDBto.js')
 const sqlite3 = require('sqlite3').verbose()
 const fs = require('fs');
 
-function populateTestDB(testDBFilePath){
+function populateDBWithTestData(dbFilePath){
     const sqlFilepath = `${dbFileDir}\\populateTestDB.sql`
-    console.log(sqlFilepath)
     const sqlScript = fs.readFileSync(sqlFilepath).toString();
     
-    const db = new sqlite3.Database(testDBFilePath, (err) => {
+    const db = new sqlite3.Database(dbFilePath, (err) => {
         if(err){
             return console.log(`Erro na abertura do db: ${err.message}`)
         }
@@ -28,7 +27,5 @@ function populateTestDB(testDBFilePath){
 
 }
 
-const testDBFilePath = createDB('testDB')
 const dbFilePath = `${dbFileDir}\\db.sqlite`
-populateTestDB(testDBFilePath)
-copyDB(testDBFilePath).to(dbFilePath)
+populateDBWithTestData(dbFilePath)
