@@ -13,7 +13,7 @@ const useSubmitLoginRequest = () => {
         
         const user: IUser = {
             email: target["E-mail"].value,
-            senha: target.Password.value
+            password: target.Password.value
         }
 
         const response = await postForm<IUser>(user).to(route)

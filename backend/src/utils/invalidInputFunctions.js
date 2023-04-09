@@ -2,10 +2,10 @@ function hasInvalidParam(paramList) {
     return paramList.some(param => !param)
 }
 
-function listInvalidInputs(paramObject, inputList) {
-    let resultList = inputList.map((entry) => {
-        const entryValue = paramObject[entry]
-        return !entryValue ? entry :''
+function listInvalidInputs(objectWithInputs, listOfInputNames) {
+    let resultList = listOfInputNames.map((inputName) => {
+        const inputValue = objectWithInputs[inputName]
+        return !inputValue ? inputName :''
     })
 
     resultList = resultList.filter(entry => entry !== '')

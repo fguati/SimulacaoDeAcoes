@@ -12,9 +12,9 @@ const useSubmitSignUp = () =>{
         const target = addProperties<listOfSignUpValues>().toTarget(e.target)
     
         const user: IUser = {
-            nome: target.Username.value,
+            username: target.Username.value,
             email: target["E-mail"].value,
-            senha: target.Password.value
+            password: target.Password.value
         }
     
         const response = await postForm<IUser>(user).to(route)

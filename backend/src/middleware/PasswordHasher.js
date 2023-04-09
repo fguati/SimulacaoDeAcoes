@@ -4,14 +4,14 @@ const { generateHashedPasswordAndSalt } = require("../services/hash")
 class  PasswordHasher {
     static async HashUserPassword(req, res, next) {
         try {
-            if(!req.body.senha) {
-                throw new InvalidInputError('Request has no password', ['senha'])
+            if(!req.body.password) {
+                throw new InvalidInputError('Request has no password', ['password'])
             }
 
-            const { senha } = req.body
-            const { hashedPassword, salt } = generateHashedPasswordAndSalt(senha)
+            const { password } = req.body
+            const { hashed_password, salt } = generateHashedPasswordAndSalt(password)
             req.body.salt = salt
-            req.body.hashedPassword = hashedPassword
+            req.body.hashed_password = hashed_password
             next()
 
         } catch (error) {
