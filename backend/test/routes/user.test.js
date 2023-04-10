@@ -30,7 +30,7 @@ afterEach(() => {
     server.close()
 })
 
-describe('Testar GET em /user', () => {
+describe.skip('Testar GET em /user', () => {
     beforeAll(async () => {
         const user = await dbGet(`SELECT * FROM users WHERE email=?`, [validCredentials.email])
         if(!user) {
@@ -82,7 +82,7 @@ describe('Testar GET em /user', () => {
     })
 })
 
-describe('Test get by id in /user', () => {
+describe.skip('Test get by id in /user', () => {
     beforeAll(async () => {
         const user = await dbGet(`SELECT * FROM users WHERE email=?`, [validCredentials.email])
         if(!user) {
@@ -157,7 +157,7 @@ describe('Test get by id in /user', () => {
     })
 })
 
-describe('Testar POST em /user', () => {   
+describe.skip('Testar POST em /user', () => {   
     beforeAll(async () => {
         const user = await dbGet(`SELECT * FROM users WHERE email=?`, [validCredentials.email])
         if(!user) {

@@ -7,7 +7,6 @@ class  PasswordHasher {
             if(!req.body.password) {
                 throw new InvalidInputError('Request has no password', ['password'])
             }
-
             const { password } = req.body
             const { hashed_password, salt } = generateHashedPasswordAndSalt(password)
             req.body.salt = salt

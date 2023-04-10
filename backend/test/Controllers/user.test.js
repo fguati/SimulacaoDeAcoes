@@ -113,6 +113,7 @@ describe('test the postUser method of the user controller', () =>{
             hashed_password: userToBePosted.hashed_password,
             salt: userToBePosted.salt
         }))
+        await UserDAO.delete(userInDb.id) //retirar depois que estabelecer o DB de testes
 
     })
 
