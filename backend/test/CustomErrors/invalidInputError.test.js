@@ -1,4 +1,5 @@
 const { InvalidInputError } = require('../../src/CustomErrors')
+const BaseError = require('../../src/CustomErrors/BaseError')
 
 describe('Unit tests of the InvalidInputError class', () => {
     
@@ -7,11 +8,12 @@ describe('Unit tests of the InvalidInputError class', () => {
         const inputList = ['test invalid input']
         const erroTeste = new InvalidInputError(message, inputList)
         
-        expect(erroTeste).toBeInstanceOf(Error)
+        expect(erroTeste).toBeInstanceOf(BaseError)
         expect(erroTeste.name).toBe('InvalidInputError')
         expect(erroTeste).toEqual(expect.objectContaining({
             message: expect.any(String),
-            aditionalInfo: expect.stringContaining(`${inputList}`)
+            aditionalInfo: expect.stringContaining(`${inputList}`),
+            statusCode: 422
         }))
 
     })

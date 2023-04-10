@@ -1,4 +1,6 @@
 const { TokenExpiredError } = require('../../src/CustomErrors')
+const BaseError = require('../../src/CustomErrors/BaseError')
+
 
 describe('Unit tests of the Invalid Credentials Error class', () => {
     
@@ -7,10 +9,12 @@ describe('Unit tests of the Invalid Credentials Error class', () => {
         const testExpiration = [1234]
         const testError = new TokenExpiredError(testMessage, testExpiration)
 
-        expect(testError).toBeInstanceOf(Error)
+        expect(testError).toBeInstanceOf(BaseError)
         expect(testError.name).toBe('TokenExpiredError')
         expect(testError.message).toBe(testMessage)
         expect(testError.expiredAt).toBe(testExpiration)
+        expect(testError.statusCode).toBe(401)
+
     })
 
 })

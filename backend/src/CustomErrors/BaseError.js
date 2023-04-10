@@ -14,7 +14,6 @@ class BaseError extends Error {
         if(this.aditionalInfo !== '') {
             responseObject['aditionalInfo'] = this.aditionalInfo
         }
-        console.log(responseObject.name, responseObject.message)
         return res
             .status(this.statusCode)
             .send(JSON.stringify(responseObject))
