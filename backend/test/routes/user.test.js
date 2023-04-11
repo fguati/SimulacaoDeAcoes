@@ -78,8 +78,7 @@ describe('Integration test of GET method in /user/:id route', () => {
     
     it('Must get a response with one user object', async () => {
         const authToken = await login()
-        const user = await UserDao.selectByEmail(validCredentials.email)// trocar para a id do DB (5) após implementar testDB
-        const id = user.id// trocar para a id do DB (5) após implementar testDB
+        const id = 5
         
         const resposta = await request(server)
             .get(`/user/${id}`)
@@ -115,8 +114,7 @@ describe('Integration test of GET method in /user/:id route', () => {
     })
 
     it('Must return an MissingAuthTokenError error if it is not authenticated', async () => {
-        const user = await UserDao.selectByEmail(validCredentials.email)// trocar para a id do DB (5) após implementar testDB
-        const id = user.id// trocar para a id do DB (5) após implementar testDB
+        const id = 5
 
         const resposta = await request(server)
             .get(`/user/${id}`)
@@ -148,7 +146,7 @@ describe('Testar POST em /user', () => {
             .post('/user')
             .set('Cookie', authToken)
             .send(testObjectToBePosted)
-            // .expect(201)
+            .expect(201)
 
         const id = await getObjId(testObjectToBePosted)
         const dbObject = await UserDao.selectById(id)
@@ -159,8 +157,6 @@ describe('Testar POST em /user', () => {
             hashed_password: expect.any(String),
             salt: expect.any(String)
         }))
-
-        await UserDao.delete(id)//remover depois de implementar testDB
 
     })
 

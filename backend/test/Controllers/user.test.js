@@ -1,6 +1,5 @@
 const UserController = require("../../src/controllers/user");
 const UserDAO = require("../../src/db/ComunicationDB/user");
-const { dbGet, dbRun } = require("../../src/db/utils/dbutils");
 const { createMocks } = require('node-mocks-http');
 
 
@@ -113,7 +112,6 @@ describe('test the postUser method of the user controller', () =>{
             hashed_password: userToBePosted.hashed_password,
             salt: userToBePosted.salt
         }))
-        await UserDAO.delete(userInDb.id) //retirar depois que estabelecer o DB de testes
 
     })
 

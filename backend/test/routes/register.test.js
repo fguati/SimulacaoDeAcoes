@@ -30,16 +30,6 @@ describe('Testar POST em /register', () => {
         password: 'testpassword'
     };
 
-    //remove beforeEach after implementing testDB
-    beforeEach(async () => {
-        const id = await getObjId(exampleObj)
-        if(id) {
-            await UserDao.delete(id)
-
-        }
-
-    })
-
     it('must create an object in the the DB', async () => {
         const userObject = exampleObj
         

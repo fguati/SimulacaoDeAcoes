@@ -141,8 +141,8 @@ describe('Unit tests of the insert method of the class responsible for querying 
         }
 
         expect(testFunction).rejects.toThrow(UniqueConstraintError)
-        const idOfInsertedUser = await getId(userToBeInserted) //eliminar depois de implementar test DB
-        await dbRun(`DELETE FROM users WHERE id=?`, [idOfInsertedUser]) //eliminar depois de implementar test DB
+        // const idOfInsertedUser = await getId(userToBeInserted) //eliminar depois de implementar test DB
+        // await dbRun(`DELETE FROM users WHERE id=?`, [idOfInsertedUser]) //eliminar depois de implementar test DB
 
 
     })
@@ -223,18 +223,9 @@ describe('Unit tests of the delete method of the class responsible for querying 
     }
 
     it('must delete created entry', async () => {
-        try {
-            await UserDAO.insert(userToBeDeleted) //Retirar depois de implementar testDB, incluindo o bloco try/catch 
-        } catch (error) {}
-        const idOfInsertedUser = await getId(userToBeDeleted)//Retirar depois de implementar testDB
-        
-        await UserDAO.delete(idOfInsertedUser) //alterar id depois de implementar testDB (id 3 provavelmente)
-    
-        async function testFunction() {
-            await UserDAO.selectById(idOfInsertedUser) //alterar para getObjectById com o id (3) depois de implementar testeDB
-        }
-        
-        await expect(testFunction).rejects.toThrow(InvalidInputError)
+        await UserDAO.delete(3)
+        const result = await getObjectById(3)
+        await expect(result).toBe(undefined)
 
     })
 
