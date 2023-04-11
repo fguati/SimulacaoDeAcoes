@@ -1,9 +1,10 @@
 const { InvalidInputError, InvalidCredentialsError } = require("../CustomErrors");
 const { validateLogin } = require('../services/validate.js');
-const { listInvalidInputs } = require('../utils/invalidInputFunctions.js')
+const { listInvalidInputs, hasInvalidParam } = require('../utils/invalidInputFunctions.js')
 const JWToken = require('../services/tokens.js')
 const { authTokenDurationInSec } = require("../utils/globalVariables")
 
+const inputNamesFromBody = ['email', 'password']
 
 function sendAuthTokenResponse(req, res) {
     let authToken = JWToken.generate(req.body)
@@ -13,7 +14,7 @@ function sendAuthTokenResponse(req, res) {
 }
 
 function sendInvalidInputError(req, next) {
-    const invalidInputList = listInvalidInputs(req.body, ['email', 'senha'])
+    const invalidInputList = listInvalidInputs(req.body, inputNamesFromBody)
     const error = new InvalidInputError('Invalid info submitted',invalidInputList)
     return next(error)
 
@@ -22,13 +23,13 @@ function sendInvalidInputError(req, next) {
 class LoginController {
     static async login(req, res, next) {
         try {
-            const {email, senha} = req.body
+            const {email, password} = req.body
 
-            if(!email || !senha) {
+            if(hasInvalidParam([email, password])) {
                 return sendInvalidInputError(req, next)
             }
 
-            if(await validateLogin(email, senha)) {
+            if(await validateLogin(email, password)) {
                 return sendAuthTokenResponse(req, res)
             }
             

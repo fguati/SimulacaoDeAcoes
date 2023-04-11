@@ -4,15 +4,23 @@ const UserDao = require('../../src/db/ComunicationDB/user.js')
 const { dbGet } = require('../../src/db/utils/dbutils.js')
 
 const validCredentials = {
-    nome: "exampleName",
-    email: "algumExemplo3",
-    senha: "asdasfsa32"
+    username: "validLoginUser",
+    email: "validlogin@user",
+    password: "123"
 }
 
 const testObjectToBePosted = {
-    nome: 'TestObject',
-    email: 'TestEmailNovo@mail.com',
-    senha: 'SenhaHashTeste'
+    username: 'userToTestPOSTRoute',
+    email: 'postuser@routetest',
+    hashed_password: '123',
+    salt: 'testSalt'
+};
+
+let testObjectWithInvalidFields = {
+    username: 'userToTestPOSTRouteWithInvalidFields',
+    email: 'postuserwinvalidfields@routetest',
+    hashed_password: '123',
+    salt: 'testSalt'
 };
 
 async function login() {
@@ -30,23 +38,7 @@ afterEach(() => {
     server.close()
 })
 
-describe('Testar GET em /user', () => {
-    beforeAll(async () => {
-        const user = await dbGet(`SELECT * FROM users WHERE email=?`, [validCredentials.email])
-        if(!user) {
-            await UserDao.insert(validCredentials)
-    
-        }
-        
-    })
-    
-    afterAll(async () => {
-        const user = await dbGet(`SELECT * FROM users WHERE email=?`, [validCredentials.email])
-        if(user) {
-            await UserDao.delete(user.id)
-    
-        }
-    })
+describe('Integration tests of the GET method in the /user route', () => {
 
     it('Must return an list with at least one user', async () => {
         const authToken = await login()
@@ -60,9 +52,9 @@ describe('Testar GET em /user', () => {
         expect(parsedBody.length).toBeGreaterThan(0)
         expect(parsedBody[0]).toEqual(expect.objectContaining({
             id: expect.any(Number),
-            nome: expect.any(String),
+            username: expect.any(String),
             email: expect.any(String),
-            senhaHash: expect.any(String),
+            hashed_password: expect.any(String),
             salt: expect.any(String)
         }))
     })
@@ -82,28 +74,11 @@ describe('Testar GET em /user', () => {
     })
 })
 
-describe('Test get by id in /user', () => {
-    beforeAll(async () => {
-        const user = await dbGet(`SELECT * FROM users WHERE email=?`, [validCredentials.email])
-        if(!user) {
-            await UserDao.insert(validCredentials)
-    
-        }
-        
-    })
-    
-    afterAll(async () => {
-        const user = await dbGet(`SELECT * FROM users WHERE email=?`, [validCredentials.email])
-        if(user) {
-            await UserDao.delete(user.id)
-    
-        }
-    })
+describe('Integration test of GET method in /user/:id route', () => {
     
     it('Must get a response with one user object', async () => {
         const authToken = await login()
-        const user = await UserDao.selectByEmail(validCredentials.email)
-        const id = user.id
+        const id = 5
         
         const resposta = await request(server)
             .get(`/user/${id}`)
@@ -113,16 +88,15 @@ describe('Test get by id in /user', () => {
         const parsedBody = JSON.parse(resposta.text)
         expect(parsedBody).toEqual(expect.objectContaining({
             id: id,
-            nome: validCredentials.nome,
+            username: validCredentials.username,
             email: validCredentials.email,
-            senhaHash: expect.any(String)
+            hashed_password: expect.any(String)
         }))
     })
 
     it('must get an error 422 response from an invalid id', async () => {
         const authToken = await login()
-        const user = await UserDao.selectByEmail(validCredentials.email)
-        const id =` ${user.id}thisiddoesntexist`
+        const id =`thisiddoesntexist`
         
         const resposta = await request(server)
             .get(`/user/${id}`)
@@ -140,8 +114,7 @@ describe('Test get by id in /user', () => {
     })
 
     it('Must return an MissingAuthTokenError error if it is not authenticated', async () => {
-        const user = await UserDao.selectByEmail(validCredentials.email)
-        const id = user.id
+        const id = 5
 
         const resposta = await request(server)
             .get(`/user/${id}`)
@@ -158,26 +131,10 @@ describe('Test get by id in /user', () => {
 })
 
 describe('Testar POST em /user', () => {   
-    beforeAll(async () => {
-        const user = await dbGet(`SELECT * FROM users WHERE email=?`, [validCredentials.email])
-        if(!user) {
-            await UserDao.insert(validCredentials)
     
-        }
-        
-    })
-    
-    afterAll(async () => {
-        const user = await dbGet(`SELECT * FROM users WHERE email=?`, [validCredentials.email])
-        if(user) {
-            await UserDao.delete(user.id)
-    
-        }
-    })
-    
-    async function getObjId({ nome, email }) {
-        let sql = `SELECT id FROM users WHERE nome=? AND email=?`;
-        const result = await dbGet(sql, [nome, email])
+    async function getObjId({ username, email }) {
+        let sql = `SELECT id FROM users WHERE username=? AND email=?`;
+        const result = await dbGet(sql, [username, email])
     
         return result.id
     };
@@ -195,11 +152,11 @@ describe('Testar POST em /user', () => {
         const dbObject = await UserDao.selectById(id)
 
         expect(dbObject).toEqual(expect.objectContaining({
-            nome: testObjectToBePosted.nome,
-            email: testObjectToBePosted.email
+            username: testObjectToBePosted.username,
+            email: testObjectToBePosted.email,
+            hashed_password: expect.any(String),
+            salt: expect.any(String)
         }))
-
-        await UserDao.delete(id)
 
     })
 
@@ -207,8 +164,9 @@ describe('Testar POST em /user', () => {
         const authToken = await login()
         
         let userObject = {
-            email: testObjectToBePosted.email,
-            senhaHash: testObjectToBePosted.senha
+            email: testObjectWithInvalidFields.email,
+            hashed_password: testObjectWithInvalidFields.hashed_password,
+            salt: testObjectWithInvalidFields.salt
         };
 
         let resposta = await request(server)
@@ -220,12 +178,13 @@ describe('Testar POST em /user', () => {
         expect(JSON.parse(resposta.text)).toEqual(expect.objectContaining({
             name: 'InvalidInputError',
             message: expect.any(String),
-            aditionalInfo: expect.stringContaining('nome')
+            aditionalInfo: expect.stringContaining('username')
         }))
 
         userObject = {
-            nome: testObjectToBePosted.nome,
-            senhaHash: testObjectToBePosted.senha
+            username: testObjectWithInvalidFields.username,
+            hashed_password: testObjectWithInvalidFields.hashed_password,
+            salt: testObjectWithInvalidFields.salt
         };
 
         resposta = await request(server)
@@ -241,8 +200,9 @@ describe('Testar POST em /user', () => {
         }))
 
         userObject = {
-            nome: testObjectToBePosted.nome,
-            email: testObjectToBePosted.email
+            username: testObjectWithInvalidFields.username,
+            email: testObjectWithInvalidFields.email,
+            salt: testObjectWithInvalidFields.salt
         };
 
         resposta = await request(server)
@@ -254,13 +214,14 @@ describe('Testar POST em /user', () => {
         expect(JSON.parse(resposta.text)).toEqual(expect.objectContaining({
             name: 'InvalidInputError',
             message: expect.any(String),
-            aditionalInfo: expect.stringContaining('senha')
+            aditionalInfo: expect.stringContaining('hashed_password')
         }))
 
         userObject = {
-            nome: null,
-            email: testObjectToBePosted.email,
-            senhaHash: testObjectToBePosted.senha
+            username: null,
+            email: testObjectWithInvalidFields.email,
+            hashed_password: testObjectWithInvalidFields.hashed_password,
+            salt: testObjectWithInvalidFields.salt
         };
 
         resposta = await request(server)
@@ -272,13 +233,14 @@ describe('Testar POST em /user', () => {
         expect(JSON.parse(resposta.text)).toEqual(expect.objectContaining({
             name: 'InvalidInputError',
             message: expect.any(String),
-            aditionalInfo: expect.stringContaining('nome')
+            aditionalInfo: expect.stringContaining('username')
         }))
 
         userObject = {
-            nome: testObjectToBePosted.nome,
+            username: testObjectWithInvalidFields.username,
             email: null,
-            senhaHash: testObjectToBePosted.senha
+            hashed_password: testObjectWithInvalidFields.hashed_password,
+            salt: testObjectWithInvalidFields.salt
         };
 
         resposta = await request(server)
@@ -294,9 +256,10 @@ describe('Testar POST em /user', () => {
         }))
 
         userObject = {
-            nome: testObjectToBePosted.nome,
-            email: testObjectToBePosted.email,
-            senhaHash: null
+            username: testObjectWithInvalidFields.username,
+            email: testObjectWithInvalidFields.email,
+            hashed_password: null,
+            salt: testObjectWithInvalidFields.salt
         };
 
         resposta = await request(server)
@@ -308,17 +271,23 @@ describe('Testar POST em /user', () => {
         expect(JSON.parse(resposta.text)).toEqual(expect.objectContaining({
             name: 'InvalidInputError',
             message: expect.any(String),
-            aditionalInfo: expect.stringContaining('senha')
+            aditionalInfo: expect.stringContaining('hashed_password')
         }))
     })
 
     it('must receive an error with invalid input if body has a repeated email', async () => {
         const authToken = await login()
+        const repeatedEmailUser = {
+            username: 'POSTuserRouteRepeatedEmailTest',
+            email: 'postuser@routerepeatedemail.test',
+            hashed_password: '123',
+            salt: 'testSalt'
+        }
         
         const resposta = await request(server)
             .post('/user')
             .set('Cookie', authToken)
-            .send(validCredentials)
+            .send(repeatedEmailUser)
             .expect(422)
 
         expect(JSON.parse(resposta.text)).toEqual(expect.objectContaining({

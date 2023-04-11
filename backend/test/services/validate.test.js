@@ -8,7 +8,7 @@ const { checkifValidPassword } = require('#root/src/services/hash.js')
 
 describe('Unit tests of validate login function', () => {
     const saltExample = 'salt'
-    UserDAO.selectByEmail = jest.fn(email => ({ senhaHash: email, salt: saltExample }))
+    UserDAO.selectByEmail = jest.fn(email => ({ hashed_password: email, salt: saltExample }))
     const enteredEmail = 'email'
     const enteredPassword = 'password'
 

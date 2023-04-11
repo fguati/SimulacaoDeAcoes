@@ -25,28 +25,14 @@ describe('Test /login route', () => {
         return resposta
     }
     
-    const exampleData = {
-        nome: "exampleName",
-        email: "algumExemplo3",
-        senha: "asdasfsa32"
+    const validLoginData = {
+        username: "validLoginUser",
+        email: "validlogin@user",
+        password: "123"
     }
     
-    beforeAll(async () => {
-        try {
-            await UserDAO.insert(exampleData) //Used the UserDAO class because it already hashes the password. Errors in the class will cause errors in the test
-        } catch (error) {}
-
-    })
-
-    afterAll(async () => {
-        try {
-            await dbRun(`DELETE FROM users WHERE email=?`, [exampleData.email])
-
-        } catch (error) {}
-    })
-
     it('must return an status 200 and the correct JWT authToken for a valid credentials', async () => {
-        const submittedData = exampleData
+        const submittedData = validLoginData
         
         const token = JWToken.generate(submittedData)
         const JWT = token
@@ -62,7 +48,7 @@ describe('Test /login route', () => {
     it('must return an error response if receives an invalid field', async () => {
         let submittedData = {
             email: null,
-            senha: exampleData.senha
+            password: validLoginData.password
         }
         
         let resposta = await getResponse(server, submittedData)
@@ -75,8 +61,8 @@ describe('Test /login route', () => {
         }))
 
         submittedData = {
-            email: exampleData.email,
-            senha: null
+            email: validLoginData.email,
+            password: null
         }
         
         resposta = await getResponse(server, submittedData)
@@ -89,7 +75,7 @@ describe('Test /login route', () => {
         }))
 
         submittedData = {
-            email: exampleData.email
+            email: validLoginData.email
         }
         
         resposta = await getResponse(server, submittedData)
@@ -102,7 +88,7 @@ describe('Test /login route', () => {
         }))
 
         submittedData = {
-            senha: exampleData.senha
+            password: validLoginData.password
         }
         
         resposta = await getResponse(server, submittedData)
@@ -119,7 +105,7 @@ describe('Test /login route', () => {
     it('must return an error if receives an email or password that does not exist', async () => {
         let submittedData = {
             email: "emailthatdoesntexist",
-            senha: exampleData.senha
+            password: validLoginData.password
         }
         
         let resposta = await getResponse(server, submittedData)
@@ -131,8 +117,8 @@ describe('Test /login route', () => {
         }))
 
         submittedData = {
-            email: exampleData.email,
-            senha: "dfsgsrhsrthbthbrt"
+            email: validLoginData.email,
+            password: "dfsgsrhsrthbthbrt"
         }
         
         resposta = await getResponse(server, submittedData)

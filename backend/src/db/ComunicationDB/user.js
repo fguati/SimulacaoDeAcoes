@@ -56,18 +56,18 @@ class UserDAO {
     }
 
     static async insert(user) {
-        const { nome, email, hashedPassword, salt } = user
-        let sql = `INSERT INTO users (nome, email, senhaHash, salt) VALUES (?, ?, ?, ?)`;
+        const { username, email, hashed_password, salt } = user
+        let sql = `INSERT INTO users (username, email, hashed_password, salt) VALUES (?, ?, ?, ?)`;
         
         try {
-            const listOfArguments = [nome, email, hashedPassword, salt]
+            const listOfArguments = [username, email, hashed_password, salt]
             
             if(hasInvalidParam(listOfArguments)) {
                 const InvalidInputList = listInvalidInputs(user, userPropertyList)
                 throw new InvalidInputError(`Invalid column`, InvalidInputList)
             }
 
-            await dbRun(sql, [nome, email, hashedPassword, salt])
+            await dbRun(sql, [username, email, hashed_password, salt])
             
         } catch (error) {
             checkUniqueConstraintError(error)

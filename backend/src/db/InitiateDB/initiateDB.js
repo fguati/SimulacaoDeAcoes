@@ -2,7 +2,7 @@ const fs = require('fs')
 const sqlite3 = require('sqlite3').verbose()
 
 const SCHEMA_LIST = require('../Schemas')
-const createDB = require('./createDB')
+const createDB = require('../utils/ManipulateDBFiles/createDB')
 
 const dbFilePath = createDB('db')
 

@@ -12,8 +12,8 @@ function hashPassword(password, salt) {
 
 function generateHashedPasswordAndSalt(password) {
     const salt = generateSalt();
-    const hashedPassword = hashPassword(password, salt)
-    return { hashedPassword, salt }
+    const hashed_password = hashPassword(password, salt)
+    return { hashed_password, salt }
 }
 
 function checkifValidPassword(enteredPassword, dbHashedPassword, dbSalt) {

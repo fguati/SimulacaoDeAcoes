@@ -2,7 +2,6 @@ const { UniqueConstraintError } = require('../CustomErrors')
 
 function checkUniqueConstraintError(error) {
     const isSqliteError = error.message.includes('SQLITE_CONSTRAINT')
-
     if (isSqliteError) {
         const isUniqueConstraintError = error.message.includes('UNIQUE')
         const regexColumn = /users.(.*)/

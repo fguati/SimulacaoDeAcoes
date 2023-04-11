@@ -31,7 +31,7 @@ class UserController {
     }
 
     static async postUser(req, res, next) {
-        const listOfUserPropertyNames = ['nome', 'email', 'salt', 'hashedPassword']
+        const listOfUserPropertyNames = ['username', 'email', 'salt', 'hashed_password']
         try {
             const newUser = req.body
             const listParams = listOfUserPropertyNames.map(key => newUser[key])

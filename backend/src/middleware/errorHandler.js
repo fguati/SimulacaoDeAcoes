@@ -6,7 +6,7 @@ function errorHandler(error, req, res, next) {
         return error.sendErrorResponse(res)
     }
 
-    return res.status(500).send(JSON.stringify({code: error.name, message: error.message}))
+    return res.status(500).send(JSON.stringify({name: error.name, message: error.message}))
 }
 
 module.exports = { errorHandler }
