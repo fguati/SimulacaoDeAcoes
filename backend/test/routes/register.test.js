@@ -14,9 +14,9 @@ afterEach(() => {
 
 
 describe('Testar POST em /register', () => {   
-    async function getObjId({ nome, email }) {
-        let sql = `SELECT id FROM users WHERE nome=? AND email=?`;
-        const result = await dbGet(sql, [nome, email])
+    async function getObjId({ username, email }) {
+        let sql = `SELECT id FROM users WHERE username=? AND email=?`;
+        const result = await dbGet(sql, [username, email])
         if(result){
             return result.id
         }
@@ -25,11 +25,12 @@ describe('Testar POST em /register', () => {
     };
 
     const exampleObj = {
-        nome: 'TestObject',
-        email: 'TestEmail1@mail.com',
-        senha: 'SenhaHashTeste'
+        username: 'registerRouteTestHappy',
+        email: 'registerroute@testhappy',
+        password: 'testpassword'
     };
 
+    //remove beforeEach after implementing testDB
     beforeEach(async () => {
         const id = await getObjId(exampleObj)
         if(id) {
@@ -42,7 +43,7 @@ describe('Testar POST em /register', () => {
     it('must create an object in the the DB', async () => {
         const userObject = exampleObj
         
-        const resposta = await request(server)
+        const response = await request(server)
             .post('/register')
             .send(userObject)
             .expect(201)
@@ -51,18 +52,16 @@ describe('Testar POST em /register', () => {
         const dbObject = await UserDao.selectById(id)
 
         expect(dbObject).toEqual(expect.objectContaining({
-            nome: userObject.nome,
+            username: userObject.username,
             email: userObject.email
         }))
-
-        await UserDao.delete(id)
 
     })
 
     it('must receive an error with invalid input if required info is missing or invalid', async () => {
         let userObject = {
-            nome: 'TestObject',
-            senha: 'SenhaHashTeste'
+            username: 'TestObject',
+            password: 'passwordHashTeste'
         };
 
         let resposta = await request(server)
@@ -73,7 +72,7 @@ describe('Testar POST em /register', () => {
         expect(JSON.parse(resposta.text).aditionalInfo).toEqual(expect.stringContaining('email'))
         
         userObject = {
-            nome: 'TestObject',
+            username: 'TestObject',
             email: 'TestEmail@mail.com'
         };
 
@@ -82,10 +81,10 @@ describe('Testar POST em /register', () => {
             .send(userObject)
             .expect(422)
 
-        expect(JSON.parse(resposta.text).aditionalInfo).toEqual(expect.stringContaining('senha'))
+        expect(JSON.parse(resposta.text).aditionalInfo).toEqual(expect.stringContaining('password'))
 
         userObject = {
-            senha: 'SenhaHashTeste',
+            password: 'passwordHashTeste',
             email: 'TestEmail@mail.com'
         };
 
@@ -94,12 +93,12 @@ describe('Testar POST em /register', () => {
             .send(userObject)
             .expect(422)
 
-        expect(JSON.parse(resposta.text).aditionalInfo).toEqual(expect.stringContaining('nome'))
+        expect(JSON.parse(resposta.text).aditionalInfo).toEqual(expect.stringContaining('username'))
 
         userObject = {
-            nome: null,
+            username: null,
             email: 'TestEmail@mail.com',
-            senha: 'SenhaHashTeste'
+            password: 'passwordHashTeste'
         };
 
         resposta = await request(server)
@@ -107,11 +106,11 @@ describe('Testar POST em /register', () => {
             .send(userObject)
             .expect(422)
 
-        expect(JSON.parse(resposta.text).aditionalInfo).toEqual(expect.stringContaining('nome'))
+        expect(JSON.parse(resposta.text).aditionalInfo).toEqual(expect.stringContaining('username'))
 
         userObject = {
-            nome: 'TestObject',
-            senha: 'SenhaHashTeste',
+            username: 'TestObject',
+            password: 'passwordHashTeste',
             email: null
         };
 
@@ -123,9 +122,9 @@ describe('Testar POST em /register', () => {
         expect(JSON.parse(resposta.text).aditionalInfo).toEqual(expect.stringContaining('email'))
         
         userObject = {
-            nome: 'TestObject',
+            username: 'TestObject',
             email: 'TestEmail@mail.com',
-            senha: null
+            password: null
         };
 
         resposta = await request(server)
@@ -133,14 +132,16 @@ describe('Testar POST em /register', () => {
             .send(userObject)
             .expect(422)
 
-        expect(JSON.parse(resposta.text).aditionalInfo).toEqual(expect.stringContaining('senha'))
+        expect(JSON.parse(resposta.text).aditionalInfo).toEqual(expect.stringContaining('password'))
 
     })
 
     it('must receive an error with invalid input if body has a repeated email', async () => {
-        const userObject = exampleObj
-
-        await UserDao.insert(userObject)
+        const userObject = {
+            username: 'RegisterUserRouteRepeatedEmailTest',
+            email: 'registeruser@routerepeatedemail',
+            password: '123'
+        }
 
         const resposta = await request(server)
             .post('/register')
@@ -149,8 +150,6 @@ describe('Testar POST em /register', () => {
 
         expect(JSON.parse(resposta.text).aditionalInfo).toEqual(expect.stringContaining('email'))
 
-        const id = await getObjId(userObject)
-        await UserDao.delete(id)
     })
 
 })

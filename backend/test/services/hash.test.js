@@ -7,7 +7,7 @@ describe('Test the functions used to hash and validate hashed passwords', () => 
         const result = generateHashedPasswordAndSalt(testPassword);
         expect(result).toEqual(expect.objectContaining({
             salt: expect.any(String),
-            hashedPassword: expect.any(String)
+            hashed_password: expect.any(String)
         }))
     })
 
@@ -16,27 +16,27 @@ describe('Test the functions used to hash and validate hashed passwords', () => 
         const object2 = generateHashedPasswordAndSalt(testPassword)
 
         expect(object1.salt).not.toBe(object2.salt)
-        expect(object1.hashedPassword).not.toBe(object2.hashedPassword)
+        expect(object1.hashed_password).not.toBe(object2.hashed_password)
     })
  
     test('check function must return true if entered password matches dbpassword', () => {
         const testPassword = 'test password'
-        const {hashedPassword, salt} = generateHashedPasswordAndSalt(testPassword)
+        const {hashed_password, salt} = generateHashedPasswordAndSalt(testPassword)
 
-        const result = checkifValidPassword(testPassword, hashedPassword, salt)
+        const result = checkifValidPassword(testPassword, hashed_password, salt)
 
         expect(result).toBe(true)
     })
 
     test('check function must return false if salt or password is incorrect', () => {
-        const {hashedPassword, salt} = generateHashedPasswordAndSalt(testPassword)
+        const {hashed_password, salt} = generateHashedPasswordAndSalt(testPassword)
         const incorrectSalt = salt+'1'
         const incorrectPassword = 'incorrect'
 
-        let result = checkifValidPassword(testPassword, hashedPassword, incorrectSalt)
+        let result = checkifValidPassword(testPassword, hashed_password, incorrectSalt)
         expect(result).toBe(false)
 
-        result = checkifValidPassword(incorrectPassword, hashedPassword, salt)
+        result = checkifValidPassword(incorrectPassword, hashed_password, salt)
         expect(result).toBe(false)
         
     })
