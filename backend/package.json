@@ -6,9 +6,10 @@
   "scripts": {
     "copyDB": "node .\\scripts\\copyDBScript.js",
     "backUpDB": "node .\\scripts\\backUpDB.js  ",
-    "setupTests": "npm run backUpDB && node .\\scripts\\setUpDBForTests.js",
+    "populateTestDB": "node .\\scripts\\setUpDBForTests\\setUpDBForTests.js",
+    "setupTests": "npm run backUpDB && npm run populateTestDB",
     "restoreBackUp": "node .\\scripts\\restoreBackUp.js",
-    "test": "jest --verbose --silent",
+    "test": "npm run setupTests && jest --verbose --silent && npm run restoreBackUp",
     "test:watch": "jest --watch --verbose --silent",
     "test:coverage": "jest --coverage --verbose --silent",
     "start": "nodemon .\\src\\server.js"
@@ -21,6 +22,7 @@
     "dotenv-safe": "^8.2.0",
     "jsonwebtoken": "^9.0.0",
     "nodemon": "^2.0.20",
+    "sqlite-async": "^1.2.0",
     "sqlite3": "^5.1.4"
   },
   "devDependencies": {
