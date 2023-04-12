@@ -2,8 +2,8 @@ import LoginPage from "Pages/Login"
 import { render, screen } from "@testing-library/react"
 import { MemoryRouter } from "react-router-dom"
 import '@testing-library/jest-dom'
-import { SessionProvider } from "Common/Contexts/SessionContext"
-import { CookiesProvider } from "react-cookie"
+// import { SessionProvider } from "Common/Contexts/SessionContext"
+// import { CookiesProvider } from "react-cookie"
 
 describe('test login page render of login page', () => {
     
@@ -27,16 +27,16 @@ describe('test login page render of login page', () => {
 })
 
 describe('test integration of login page with backend', () => {
-    function renderLoginPage() {
-        return render(
-            <SessionProvider>
-                <CookiesProvider>
-                    <LoginPage/>
-                </CookiesProvider>
-            </SessionProvider>,
-            {wrapper:MemoryRouter}
-        )
-    }
+    // function renderLoginPage() {
+    //     return render(
+    //         <SessionProvider>
+    //             <CookiesProvider>
+    //                 <LoginPage/>
+    //             </CookiesProvider>
+    //         </SessionProvider>,
+    //         {wrapper:MemoryRouter}
+    //     )
+    // }
 
     test.todo('When submit button is clicked, a request must be made to the correct endpoint in the backend with the data of the form')
     test.todo('When submit button is clicked, if email and password are correct, must receive a success response and set session context to logged in')

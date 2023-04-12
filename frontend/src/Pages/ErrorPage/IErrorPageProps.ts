@@ -3,3 +3,5 @@ interface IErrorPageProps {
     name?: string
     message?: string
 }
+
+export default IErrorPageProps

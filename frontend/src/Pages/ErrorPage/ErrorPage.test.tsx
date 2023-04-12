@@ -3,6 +3,7 @@ import '@testing-library/jest-dom'
 import { createMemoryRouter, RouteObject, RouterProvider } from 'react-router-dom'
 import unknownError from './useErrorHandler/unknownError'
 import ErrorPage from '.'
+import IErrorPageProps from './IErrorPageProps'
 
 function renderErrorPage(props?: IErrorPageProps) {
     const routerConfig:RouteObject[] = [
@@ -19,10 +20,11 @@ function renderErrorPage(props?: IErrorPageProps) {
     )
 }
 
-function getTitleAndMessage() {
+// type param = String | undefined
+function getTitleAndMessage(code:number | undefined, name:string | undefined, message:string | undefined) {
 
-    const title = screen.getByRole('title')
-    const errorMessage = screen.getByRole('message')
+    const title = screen.getByText(`Error ${code}: ${name}`)
+    const errorMessage = screen.getByText(`${message}`)
 
     return {title, errorMessage}
 }
@@ -30,11 +32,12 @@ function getTitleAndMessage() {
 describe('Test behavior of the error page', () => {
     test('Must render unknown error if has no available info', () => {
         renderErrorPage()
-        const {title, errorMessage} = getTitleAndMessage()
+        const {code, name, message} = unknownError
+        const {title, errorMessage} = getTitleAndMessage(code, name, message)
 
-        expect(title.textContent).toEqual(expect.stringContaining(unknownError.code!.toString()))
-        expect(title.textContent).toEqual(expect.stringContaining(unknownError.name!))
-        expect(errorMessage.textContent).toEqual(expect.stringContaining(unknownError.message!))
+        expect(title.textContent).toEqual(expect.stringContaining(code!.toString()))
+        expect(title.textContent).toEqual(expect.stringContaining(name!))
+        expect(errorMessage.textContent).toEqual(expect.stringContaining(message!))
 
     })
 
@@ -46,12 +49,15 @@ describe('Test behavior of the error page', () => {
         }
 
         renderErrorPage(props)
-        const {title, errorMessage} = getTitleAndMessage()
+        const {code, name, message} = props
+        const {title, errorMessage} = getTitleAndMessage(code, name, message)
 
         expect(title.textContent).toEqual(expect.stringContaining(props.code!.toString()))
         expect(title.textContent).toEqual(expect.stringContaining(props.name!))
         expect(errorMessage.textContent).toEqual(expect.stringContaining(props.message!))
 
     })
+
+    test.todo('Must render error page using the information passed through navigation')
 
 })

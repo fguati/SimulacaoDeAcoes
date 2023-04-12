@@ -1,7 +1,7 @@
 import Form from "Components/Form";
 import PageLayout from "Components/PageLayout";
 import IFormField from "Interfaces/IFormField";
-import useSubmitSignUp from "./utils/submitSignUp";
+import useSubmitSignUp from "./utils/useSubmitSignUp";
 
 
 function SignUpPage() {

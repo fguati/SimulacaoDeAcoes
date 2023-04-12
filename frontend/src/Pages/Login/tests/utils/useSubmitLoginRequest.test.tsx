@@ -81,7 +81,7 @@ describe('unit tests of the useSubmitLoginRequest custom hook', () => {
 		await result.current(mockEvent as unknown as React.FormEvent<HTMLFormElement>)
 		expect(mockedPostForm).toBeCalledWith(expect.objectContaining({
 			'email': mockEvent.target['E-mail'].value,
-			'senha': mockEvent.target.Password.value
+			'password': mockEvent.target.Password.value
 		}))
 		expect(mockedToRoute).toBeCalledWith('/login')
 
@@ -93,7 +93,7 @@ describe('unit tests of the useSubmitLoginRequest custom hook', () => {
 		await result.current(mockEvent as unknown as React.FormEvent<HTMLFormElement>)
 		expect(mockResponseHandler).toBeCalledWith(expect.objectContaining({
 			'email': mockEvent.target['E-mail'].value,
-			'senha': mockEvent.target.Password.value
+			'password': mockEvent.target.Password.value
 		}))
 
 	})
@@ -104,7 +104,7 @@ describe('unit tests of the useSubmitLoginRequest custom hook', () => {
 		const returnValue = await result.current(mockEvent as unknown as React.FormEvent<HTMLFormElement>)
 		expect(returnValue).toEqual(expect.objectContaining({
 			'email': mockEvent.target['E-mail'].value,
-			'senha': mockEvent.target.Password.value
+			'password': mockEvent.target.Password.value
 		}))
 		
 	})

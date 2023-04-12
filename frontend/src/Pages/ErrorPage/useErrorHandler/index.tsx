@@ -2,6 +2,7 @@ import { useLocation, useRouteError } from "react-router-dom";
 import IErrorResponse from "Interfaces/IErrorResponse";
 import handleRouteError from "./handleRouteError";
 import unknownError from "./unknownError";
+import IErrorPageProps from "../IErrorPageProps";
 
 function parseErrorResponse(errorResponse: IErrorResponse): IErrorPageProps {
     let {code, name, message, aditionalInfo} = errorResponse
