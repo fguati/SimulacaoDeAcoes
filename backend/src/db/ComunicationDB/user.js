@@ -1,23 +1,24 @@
 const { InvalidCredentialsError } = require('../../CustomErrors')
 const { InvalidInputError } = require('../../CustomErrors')
-const { userPropertyList, hasInvalidParam, listInvalidInputs } = require('../../utils')
-
+const { hasInvalidParam, listInvalidInputs } = require('../../utils')
 const checkUniqueConstraintError = require('../../utils/checkUniqueConstraintError.js')
 const { dbAll, dbRun, dbGet } = require('../utils/dbutils.js')
 
 class UserDAO {
     static async select(property = '*') {
+        const userPropertyList = ['username', 'email', 'hashed_password']
         const resultLimit = 5
-        let sql = `SELECT ${property} FROM users LIMIT ${resultLimit}`
+        let selectSQL = `SELECT ${property} FROM users LIMIT ${resultLimit}`
         
         try {
-            const isInList = userPropertyList.some( item => item === property)
+            const prorIsInList = userPropertyList.some(item => item === property)
 
-            if(!isInList && property !== '*') {
+            if(!prorIsInList && property !== '*') {
                 throw new InvalidInputError(`${property} is not a valid column in the user db`, property)
             }
-            const rows = await dbAll(sql)
-            return rows
+
+            const users = await dbAll(selectSQL)
+            return users
         } catch (error) {
             throw error   
         }
@@ -25,10 +26,10 @@ class UserDAO {
     }
 
     static async selectById(id) {
-        const sql = `SELECT * FROM users WHERE id=?`
+        const selectSQL = `SELECT * FROM users WHERE id=?`
 
         try {
-            const selectedUser = await dbGet(sql, [id])
+            const selectedUser = await dbGet(selectSQL, [id])
             if(selectedUser) {
                 return selectedUser
             }
@@ -40,10 +41,10 @@ class UserDAO {
     }
 
     static async selectByEmail(email) {
-        const sql = `SELECT * FROM users WHERE email=?`
+        const selectSQL = `SELECT * FROM users WHERE email=?`
 
         try {
-            const selectedUser = await dbGet(sql, [email])
+            const selectedUser = await dbGet(selectSQL, [email])
             if(selectedUser) {
                 return selectedUser
             }
@@ -57,8 +58,9 @@ class UserDAO {
 
     static async insert(user) {
         const { username, email, hashed_password, salt } = user
-        let sql = `INSERT INTO users (username, email, hashed_password, salt) VALUES (?, ?, ?, ?)`;
-        
+        let insertSQL = `INSERT INTO users (username, email, hashed_password, salt) VALUES (?, ?, ?, ?)`;
+        const userPropertyList = ['username', 'email', 'hashed_password', 'salt']
+
         try {
             const listOfArguments = [username, email, hashed_password, salt]
             
@@ -67,7 +69,7 @@ class UserDAO {
                 throw new InvalidInputError(`Invalid column`, InvalidInputList)
             }
 
-            await dbRun(sql, [username, email, hashed_password, salt])
+            await dbRun(insertSQL, [username, email, hashed_password, salt])
             
         } catch (error) {
             checkUniqueConstraintError(error)
@@ -77,7 +79,7 @@ class UserDAO {
     }
 
     static async delete(id) {
-        const sql = `DELETE FROM users WHERE id=?`
+        const deleteSQL = `DELETE FROM users WHERE id=?`
         
         try {
             const selectedUser = await dbGet(`SELECT * FROM users WHERE id=?`, [id])
@@ -85,7 +87,7 @@ class UserDAO {
                 throw new InvalidInputError(`User id ${id} not found`, ['id'])
             }
 
-            await dbRun(sql, [id])
+            await dbRun(deleteSQL, [id])
         } catch (error) {
             throw error 
         }
