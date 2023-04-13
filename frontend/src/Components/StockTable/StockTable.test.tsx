@@ -42,34 +42,32 @@ const stockProperties = Object.keys(exampleStockList[0])
 const numberOfColumns = headers.length
 const numberOfRows = exampleStockList.length
 
-function getRandomIntUpTo(max: number) {
-    return Math.floor(Math.random() * (max + 1)) + 1;
-}
-
 describe('Test the correct rendering of the stock table', () => {
-    beforeEach(() => {
-        render(<StockTable stockList={exampleStockList}/>)
-    })
 
     test('must render a table with the correct number of headers and rows', () => {
+        render(<StockTable stockList={exampleStockList}/>)
+
         const renderedTable = screen.getByRole('table')
 
-        expect(renderedTable).toHaveAttribute('cols', '6')
+        expect(renderedTable).toHaveAttribute('cols', numberOfColumns.toString())
         expect(renderedTable).toHaveAttribute('rows', (exampleStockList.length + 1).toString())
     })
 
-    test('the value of any cell selected randomly from the rendered table must match the stock list entered as prop', () => {
+    test('the value of every cell from the rendered table must match the stock list entered as prop', () => {
+        render(<StockTable stockList={exampleStockList}/>)
+        
         const renderedTable = screen.getByRole('table')
+        // eslint-disable-next-line testing-library/no-node-access
         const renderedCells = renderedTable.querySelectorAll('div')
 
         function getValueFromCell(col:number, row: number) {
-            if(row == 1) {
+            if(row === 1) {
                 return headers[col - 1]
             }
 
             const stock = exampleStockList[row - 2]
 
-            if(col == numberOfColumns) {
+            if(col === numberOfColumns) {
                 return (stock.qty * stock.currentPrice).toFixed(2)
             }
 

@@ -10,7 +10,6 @@ const useSubmitLoginRequest = () => {
     
     return async (e:React.FormEvent<HTMLFormElement>) => {
         const target = addProperties<listOfLoginFormValues>().toTarget(e.target)
-        
         const user: IUser = {
             email: target["E-mail"].value,
             password: target.Password.value

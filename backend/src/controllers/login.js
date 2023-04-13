@@ -6,8 +6,9 @@ const { authTokenDurationInSec } = require("../utils/globalVariables")
 
 const inputNamesFromBody = ['email', 'password']
 
-function sendAuthTokenResponse(req, res) {
-    let authToken = JWToken.generate(req.body)
+function sendAuthTokenResponse(user, res) {
+    
+    let authToken = JWToken.generate(user)
     res.set('Authorization', authToken)
     res.setHeader('Set-Cookie', `authToken=${authToken}; Max-Age=${authTokenDurationInSec}; Path=/`)
     return res.status(200).send(JSON.stringify({authToken: authToken}))
@@ -29,8 +30,10 @@ class LoginController {
                 return sendInvalidInputError(req, next)
             }
 
-            if(await validateLogin(email, password)) {
-                return sendAuthTokenResponse(req, res)
+            const userInfo = await validateLogin(email, password)
+
+            if(userInfo) {
+                return sendAuthTokenResponse(userInfo, res)
             }
             
             return next(new InvalidCredentialsError('Invalid Password'))

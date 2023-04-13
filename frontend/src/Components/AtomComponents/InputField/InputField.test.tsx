@@ -5,7 +5,7 @@ import '@testing-library/jest-dom'
 
 describe('testing the Input Field Component', () => {
     const testProps: IInputFieldProps = {
-        currentValue: '',
+        currentValue: 'testValue',
         name: 'testName',
         setValue: jest.fn(),
         inputType:"text",
@@ -13,24 +13,23 @@ describe('testing the Input Field Component', () => {
     }
 
     const childrenByElement = 'Example Child in react'
-    
-    beforeEach(() => {
+        
+    test('must render a label and input correctly', () => {
         render(
             <InputField {...testProps}>
                 {childrenByElement}
             </InputField>
         )
 
-    })
-    
-    test('must render a label and input correctly', () => {
         const field = screen.getByRole('InputField')
-        const input = field.querySelector('input')
-        const label = field.querySelector('label')
-
+        const input = screen.getByDisplayValue(testProps.currentValue)
+        const label = screen.getByText(childrenByElement)
+        
+        expect(field).toBeInTheDocument()
         expect(input).toHaveAttribute('value', testProps.currentValue)
         expect(input).toHaveAttribute('type', testProps.inputType)
         expect(input).toHaveAttribute('name', testProps.name)
+        expect(label).toBeInTheDocument()
 
     })
 })
