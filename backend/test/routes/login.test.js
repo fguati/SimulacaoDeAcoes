@@ -33,8 +33,12 @@ describe('Test /login route', () => {
     
     it('must return an status 200 and the correct JWT authToken for a valid credentials', async () => {
         const submittedData = validLoginData
+        const JWTPayload = {
+            id: 5,
+            username: validLoginData.username
+        }
         
-        const token = JWToken.generate(submittedData)
+        const token = JWToken.generate(JWTPayload)
         const JWT = token
         
         

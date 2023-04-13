@@ -5,8 +5,12 @@ const UserDAO = require("../db/ComunicationDB/user");
 
 async function validateLogin(enteredEmail, enteredPassword) {
     try {
-        const { hashed_password, salt } = await checkIfValidUser(enteredEmail)
-        return checkifValidPassword(enteredPassword, hashed_password, salt)
+        const { id, username, hashed_password, salt } = await checkIfValidUser(enteredEmail)
+        if(checkifValidPassword(enteredPassword, hashed_password, salt)) {
+            return {id, username} 
+        }
+
+        return false
         
     } catch (error) {
         throw error
