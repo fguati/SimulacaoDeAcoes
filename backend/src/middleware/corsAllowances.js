@@ -1,3 +1,4 @@
+//configure app to be able to communicate with frontend
 let allowedHeaders = [
     'Content-Type',
     'Authorization',
