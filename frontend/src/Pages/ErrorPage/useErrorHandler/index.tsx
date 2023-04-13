@@ -16,8 +16,6 @@ function parseErrorResponse(errorResponse: IErrorResponse): IErrorPageProps {
 
 function useErrorHandler(errorPageProps?: IErrorResponse) {
     const stateSentInNav = useLocation().state
-    const parsedState = JSON.parse(stateSentInNav)
-    const errorSentInNav = parsedState as IErrorResponse
     
     const routeError = useRouteError()
 
@@ -29,7 +27,9 @@ function useErrorHandler(errorPageProps?: IErrorResponse) {
         return handleRouteError(routeError) 
     }
 
-    if(errorSentInNav) {
+    if(stateSentInNav) {
+        const parsedState = JSON.parse(stateSentInNav)
+        const errorSentInNav = parsedState as IErrorResponse
         return parseErrorResponse(errorSentInNav)
     }
     
