@@ -1,6 +1,8 @@
 const fs = require('fs')
 
+//Function that copies all the data from one db to another: copyDB(dbToBeCopied).to(dbToReceiveData)
 function copyDB(db) {
+    //returns a function with the purpose of being more readable when used
     return {
         to(backUp) {
             const readStream = fs.createReadStream(db);
