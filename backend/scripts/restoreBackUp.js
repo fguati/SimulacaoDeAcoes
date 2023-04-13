@@ -2,8 +2,8 @@ const { dbFileDir } = require('#root/src/utils/globalVariables.js')
 const createDB = require('#root/src/db/utils/ManipulateDBFiles/createDB.js')
 const copyDB = require('#root/src/db/utils/ManipulateDBFiles/copyDBto.js')
 
-const backUpFilePath = `${dbFileDir}\\dbBackUp.sqlite`
+const backUpDB = `${dbFileDir}\\dbBackUp.sqlite`
 
-const dbFilePath = createDB(`db`)
+const dbToReceibeBackUp = createDB(`db`)
 
-copyDB(backUpFilePath).to(dbFilePath)
+copyDB(backUpDB).to(dbToReceibeBackUp)

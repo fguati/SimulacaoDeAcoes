@@ -1,12 +1,12 @@
 const { dbFileDir } = require('#root/src/utils/globalVariables.js')
 const sqlite3 = require('sqlite3').verbose()
 const createUserTableSQL = require('#root/src/db/Schemas/userSchema.js')
-const populateTestSQL = require('./populateTestDB.js')
+const testDbSql = require('./testDbSql.js')
 
 function populateDBWithTestData(dbFilePath){
-	const dropUserTableSQL = `DROP TABLE IF EXISTS users;`
+	const deleteUserTable = `DROP TABLE IF EXISTS users;`
 
-
+    //conect to the database that will receive the test data
     const db = new sqlite3.Database(dbFilePath, (err) => {
         if(err){
             return console.log(`Erro na abertura do db: ${err.message}`)
@@ -15,9 +15,10 @@ function populateDBWithTestData(dbFilePath){
     })
     
 	db.serialize(() => {
-		db.run(dropUserTableSQL)
+        //delete and re-create the user table in the database to guarantee the ids of the the entries in it will be the ones expected in the tests
+		db.run(deleteUserTable)
 		db.run(createUserTableSQL) 
-		db.run(populateTestSQL)
+		db.run(testDbSql)
 	})
 
 }

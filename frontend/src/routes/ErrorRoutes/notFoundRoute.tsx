@@ -1,4 +1,5 @@
 import ErrorPage from "Pages/ErrorPage";
+import IErrorPageProps from "Pages/ErrorPage/IErrorPageProps";
 import { RouteObject } from "react-router-dom";
 
 const notFoundProps: IErrorPageProps = {

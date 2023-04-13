@@ -1,6 +1,6 @@
+//SQL for creating the DB that will be used in the backend tests. Tests were written already considering the data below and changing, removing or changing the order of the entries would require reviewing the tests
 
-
-const populateTestSQL = `INSERT INTO users (username, email, hashed_password, salt) 
+const testDbSql = `INSERT INTO users (username, email, hashed_password, salt) 
 VALUES  ("Testget", "test@get", "3a02078363bb72fd562ef80a18fed3ff05b1e80622283ea6d85ccb7fdafe8c4f0a56cfae66c8bf4e563c6fe9df230c2242e028257444cb009a778804ee5af8ae", "fcc0b7a1afedba35190f7f30f71e1a17cac0c7690f97c82cf05e8cf267aa439e0f6024ca692be52d75d13c7b5a2775a50d32644b359287ee36642de8b3c8bffc255a46272136cce657f3ed8a6eaf791f162cf3d66411fa73c6d93271a3fa6ce94a9a7ed3d6e8ee4c2f502ccb2c365f4ace8a3d2425b9aba13c0672e306999f87"),
         ("TestSelectByEmail", "test@selectbyemail", "22b807a93b870459e24134565b4e28dd8fec162be68b3dbbcda017bfe80160a6ae3ccbacf399cf839ce8dd4037a501fbaffb4630ea37eaf9f9434741c3b17d6b", "aed6c45d39b7ac02808b261aa1d2c77d5fc266fe0b63491ac225367024f9dda9767e5630f42edcfa4420a14efcb89a05dd6f27583505e3d890e878dab65a5830c0b332c103bf851b34562ad1b32374231971ca71729c7c97b047870abe8a0b289424c1eb420b1f154c700c961369a71615353eaf175e8128c4403413d8ca4d07"),
         ("TestDAODelete", "testDAO@delete", "c1919704fb59beecb35114c6f44ea15860c306a235c7f9c6cdc4cb6a51ba4d2b1c18730714b54f9c66a579357a4e02df62cee25b1ac95ad45bb9c081f401e08a", "ca149aada51bee0f3bd71c7606347e88d3402a9c077b870e45bcedefa1996b65241834a9752de095fd6d9fb78c71318f89d4c90d7336afce4c32ed4a3fb191b36ca194445f143f53042e578917a38ee5b9312807318b27294f5859bded58ab90b4a0a69c84e11973945e1c463af5ea29362e6de4b24598ceedaff43ddd66df03"),
@@ -13,4 +13,4 @@ VALUES  ("Testget", "test@get", "3a02078363bb72fd562ef80a18fed3ff05b1e80622283ea
         ("test10", "test@10", "929722c1083f7ccd87b43555a6fa8cc1f6aa852a89f67cb1daf2e378c09326930ab9ce2db23cd02f66f918e061956a5c26b3c1dd6d79917d063965d8038ac204", "e88093461ac08a379a8d394c9ea17f6fcdadde76d1b226537530bac50ea7f4f1a9f1e621d0f1acfda374d5b133b8e522787e90ac46591f576b4335adf4903c4812aab10ef59f0bb6503e54e7653e9e0cb15a1dc08c3ece97f0550e2eba81a85befc6d6aefae953eaf68fc17a9a3af4e679b802353d5acf391d6f5f3e6033da6d");
 
 `
-module.exports = populateTestSQL
+module.exports = testDbSql
