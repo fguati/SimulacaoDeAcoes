@@ -3,6 +3,7 @@ import InputFieldContainer from "./InputFieldContainer";
 import IInputFieldProps from "./IInputFieldProps";
 import Label from "Components/AtomComponents/Label";
 
+//Component made of an input and its label
 function InputField( {children, name, currentValue, setValue, inputType = 'text'}: IInputFieldProps ) {
     return(
         <InputFieldContainer role={'InputField'}>
