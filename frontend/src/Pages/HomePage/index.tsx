@@ -3,6 +3,7 @@ import StockTable from "Components/StockTable";
 import Title from "Components/AtomComponents/Title";
 import IStock from "Interfaces/IStock";
 
+//temporary mock portfolio data. Will eventually be replaced by data received from the backend API
 const stockList: IStock[] = [
     {
         id: Math.random().toString(),
@@ -27,6 +28,7 @@ const stockList: IStock[] = [
     }
 ]
 
+//Render the landing page for a logged in user. Still in construction.
 function HomePage() {
     return(
         <PageLayout>
