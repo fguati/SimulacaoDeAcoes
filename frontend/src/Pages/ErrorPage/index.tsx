@@ -4,6 +4,10 @@ import Title from "Components/AtomComponents/Title";
 import useErrorHandler from "./useErrorHandler";
 import IErrorPageProps from "./IErrorPageProps";
 
+/**
+ * render an error page, generated from an error response to a http request. It displays
+ * the status code of the response, as well as the status code text and the error message
+ */
 function ErrorPage(props: IErrorPageProps) {
     const {code, name, message} = useErrorHandler(props)
 

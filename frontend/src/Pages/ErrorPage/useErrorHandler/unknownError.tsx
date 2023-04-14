@@ -1,5 +1,6 @@
 import IErrorResponse from "Interfaces/IErrorResponse";
 
+//Object used as default error when no other error type can be identified 
 const unknownError: IErrorResponse = {
     code: 500,
     name: 'Internal Server Error',
