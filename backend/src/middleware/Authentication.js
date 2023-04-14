@@ -15,7 +15,9 @@ class Authentication {
                 return next(error)
             }
 
-            //validate the token. The payload is stored so, in the implementation of future functionalities, it can be added to the res object and sent to the frontend to be cashed
+            /**validate the token. The payload is stored so, in the implementation of future 
+            functionalities, it can be added to the res object and sent to the frontend to be 
+            cashed or to the req object to be user in other middlewares or controllers */
             const payload = JWToken.validateJWT(authToken)
             
             return next()

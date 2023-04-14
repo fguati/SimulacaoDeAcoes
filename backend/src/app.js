@@ -25,8 +25,10 @@ app.use(cookieSettings)
 app.use('/login', loginRoute)
 app.use('/register', signInRoute)
 
-//routes that require auth
+//Authentication middleware
 app.use(Authentication.authToken)
+
+//routes that require auth
 app.use('/user', userRoute)
 
 //error 404 route - for now only applied for routes with auth required
