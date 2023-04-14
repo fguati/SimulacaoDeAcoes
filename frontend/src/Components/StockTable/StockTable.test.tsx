@@ -6,10 +6,10 @@ import IStock from "Interfaces/IStock";
 const propertyToHeadersMap = {
     id: 'id',
     ticker: 'Ticker',
-    companyName: 'Nome',
-    qty: 'Quantidade de Ações',
-    currentPrice: 'Preço Atual',
-    totalValue: 'Valor Total'
+    companyName: 'Company Name',
+    qty: 'Stock quantity',
+    currentPrice: 'Current Price',
+    totalValue: 'Total Value'
 }
 
 const exampleStockList: IStock[] = [

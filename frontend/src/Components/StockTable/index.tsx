@@ -1,49 +1,30 @@
 import IStockTableProps from "./IStockTableProps"
-import StandardCell from "./StandardCell"
-import StyledTable from "./Table"
-import StyledTableHeader from "./Table/StyledTableHeader"
-import TotalValueCell from "./TotalValueCell"
+import StyledTable from "./StyledTable"
+import HeaderRow from "./TableRows/HeaderRow"
+import StockRow from "./TableRows/StockRow"
 
+//renders a table with the stock portfolio received as a list, showing all the information regarding said portfolio 
 function StockTable({ stockList }:IStockTableProps) {
-    const propertyToHeadersMap = {
-        id: 'id',
-        ticker: 'Ticker',
-        companyName: 'Nome',
-        qty: 'Quantidade de Ações',
-        currentPrice: 'Preço Atual',
-        totalValue: 'Valor Total'
-    }
-    
-    const stockProperties = Object.keys(propertyToHeadersMap)
-    const headers = Object.values(propertyToHeadersMap)
-    
-
+    //list of headers of the table
+    const headers = [
+        'id',
+        'Ticker',
+        'Company Name',
+        'Stock quantity',
+        'Current Price',
+        'Total Value'
+    ]
     
     return(
-        <StyledTable rows={stockList.length + 1} cols={6} role={'table'}>
-            {headers.map((header, index) => <StyledTableHeader key={index} col={index + 1}>{header}</StyledTableHeader>)}
+        // the StyledTable component will render the table. Each stock is a row, with one additional for the headers row. Each headers will be one column
+        <StyledTable rows={stockList.length + 1} cols={headers.length} role={'table'}>
+            {/* render headers row */}
+            <HeaderRow headers={headers} />
 
-            {stockList.map((stock, indStock) => {
-                return stockProperties.map((Property, indProperty) => {
-                    if(Property === 'totalValue'){
-                        return <TotalValueCell 
-                            key={`${stock.id}/6`}
-                            indStock={indStock} 
-                            stock={stock} 
-                        />
-                    }
-                    
-                    return <StandardCell 
-                        key={`${stock.id}/${indProperty}`}
-                        Property={Property}
-                        stock={stock}
-                        indProperty={indProperty}
-                        indStock={indStock}
-                    />
-                })
-            })}
-            
-
+            {/* render each stock row */}
+            {stockList.map((stock, indStock) => (
+                <StockRow stock={stock} stockIndex={indStock} key={stock.id}/>
+            ))}
         </StyledTable>
     )
 }
