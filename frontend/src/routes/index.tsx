@@ -8,6 +8,12 @@ import signUpRoute from './OpenRoutes/signUpRoute';
 import loginRoute from './OpenRoutes/loginRoute';
 import Header from 'Components/Header';
 
+/**
+ * The routes object of this file is the one actually used by the router 
+ * of the app. It shows all the main routes (which may have their own children 
+ * routes in their own files) and the route objects that work as functionality
+ * or context providers to some of the routes
+*/
 const routes:RouteObject[] = [
 	{
 		element: <Header/>,
