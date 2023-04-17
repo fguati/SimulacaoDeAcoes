@@ -1,11 +1,8 @@
 import {  RouteObject } from 'react-router-dom'
-import errorRoute from './ErrorRoutes/errorRoute';
-import notFoundRoute from './ErrorRoutes/notFoundRoute';
+import { errorRoute, notFoundRoute } from './ErrorRoutes'
 import ErrorPage from 'Pages/ErrorPage';
-import AuthRequestBranch from './AuthRequiredRoutes/AuthChecker';
-import loggedIndex from './AuthRequiredRoutes/loggedIndex';
-import signUpRoute from './OpenRoutes/signUpRoute';
-import loginRoute from './OpenRoutes/loginRoute';
+import { AuthRequestBranch, loggedIndex } from './AuthRequiredRoutes'
+import { loginRoute, signUpRoute } from './OpenRoutes'
 import Header from 'Components/Header';
 
 /**
