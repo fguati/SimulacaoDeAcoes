@@ -9,6 +9,7 @@ interface Props {
 interface ISessionContext {
     setLogIn?: React.Dispatch<React.SetStateAction<boolean>>
     getLogInStatus?: () => boolean
+    loggedIn?: boolean
 }
 
 /**Session context will keep data relating to the session, 
@@ -46,7 +47,7 @@ const SessionProvider = ({ children }: Props) => {
     }
 
     return (
-        <SessionContext.Provider value={{setLogIn, getLogInStatus}}>
+        <SessionContext.Provider value={{setLogIn, getLogInStatus, loggedIn}}>
             {children}
         </SessionContext.Provider>
     )

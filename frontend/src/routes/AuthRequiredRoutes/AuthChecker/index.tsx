@@ -1,7 +1,7 @@
 import LoginPage from "Pages/Login";
 import { Outlet } from "react-router-dom";
 import { SessionContext } from "Common/Contexts/SessionContext";
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 
 /**
  * Function that acts as middleware, checking whether user is already
@@ -9,8 +9,10 @@ import { useContext } from "react";
  */
 function AuthRequestBranch() {
     //use the session context to check whether user is logged in
-    const { getLogInStatus } = useContext(SessionContext)
-    const loggedIn = getLogInStatus!()
+    const { getLogInStatus, loggedIn } = useContext(SessionContext)
+    useEffect(() => {
+        getLogInStatus!()
+    }, [getLogInStatus, loggedIn])
 
     return(
         loggedIn ? <Outlet/> : <LoginPage/> 

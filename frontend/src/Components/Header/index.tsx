@@ -2,7 +2,7 @@ import StyledLink from "Components/AtomComponents/StyledLink"
 import useLogOut from "utils/logOut";
 import HeaderContainer from "./HeaderContainer"
 import { Outlet } from "react-router-dom";
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import { SessionContext } from "Common/Contexts/SessionContext";
 import LastPageButton from "Components/LastPageButton";
 
@@ -13,8 +13,10 @@ function Header() {
     /**acquire the getter function for the login status from the session context
      * and use it to check whether the user is logged in or not
     */
-    const { getLogInStatus } = useContext(SessionContext)
-    const loggedIn = getLogInStatus!()
+    const { getLogInStatus, loggedIn } = useContext(SessionContext)
+    useEffect(() => {
+        getLogInStatus!()
+    }, [loggedIn, getLogInStatus])
 
     //receives the logout function through the useLogOut custom hook
     const logOut = useLogOut()
