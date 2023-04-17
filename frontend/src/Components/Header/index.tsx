@@ -4,6 +4,7 @@ import HeaderContainer from "./HeaderContainer"
 import { Outlet } from "react-router-dom";
 import { useContext } from "react";
 import { SessionContext } from "Common/Contexts/SessionContext";
+import LastPageButton from "Components/LastPageButton";
 
 /**Header component, that has the login and signup links when the user 
  * is logged out and the log out link when the user is logged in
@@ -21,6 +22,7 @@ function Header() {
     return (
         <>
             <HeaderContainer>
+                <LastPageButton txtColor="clear"/>
                 <StyledLink to='/'>Home</StyledLink>
 
                 {!loggedIn && <nav>
