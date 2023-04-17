@@ -1,12 +1,8 @@
 //importing
 const express = require('express');
 const cookieParser = require('cookie-parser')
-const {router: signInRoute} = require('./routes/register.js')
-const {router: loginRoute} = require('./routes/login.js')
-const {router: userRoute} = require('./routes/user.js')
-const { corsAllowances } = require('./middleware/corsAllowances.js');
-const { cookieSettings } = require('./middleware/cookiesSettings.js');
-const { errorHandler } = require('./middleware/errorHandler.js');
+const { signInRoute, loginRoute, userRoute } = require('./routes')
+const { corsAllowances, cookieSettings, errorHandler} = require('./middleware')
 const { NotFoundError } = require('./CustomErrors/NotFoundError.js');
 const Authentication = require('./middleware/Authentication.js');
 
