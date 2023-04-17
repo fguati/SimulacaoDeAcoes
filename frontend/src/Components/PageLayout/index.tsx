@@ -2,9 +2,9 @@ import IPageLayoutProps from "./IPageLayoutProps";
 
 function PageLayout({children}:IPageLayoutProps) {
     return(
-        <body>
+        <div>
             {children}
-        </body>
+        </div>
 
     )
 }
