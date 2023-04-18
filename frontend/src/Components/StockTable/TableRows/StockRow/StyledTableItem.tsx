@@ -18,6 +18,7 @@ const StyledTableItem = styled.div`
     grid-row: ${(props: IPropsStyledTableCell) => selectProp(props, 'row', 'auto')} / span ${(props: IPropsStyledTableCell) => selectProp(props, 'rowLength', '1')};
     grid-column: ${(props: IPropsStyledTableCell) => selectProp(props, 'column', 'auto')} / span ${(props: IPropsStyledTableCell) => selectProp(props, 'columnLength', '1')};
     text-align: center;
+    padding: var(--default-spacing);
 `
 
 export default StyledTableItem

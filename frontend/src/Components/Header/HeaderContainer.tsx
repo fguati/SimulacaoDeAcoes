@@ -6,7 +6,8 @@ const HeaderContainer = styled.header`
     display: flex;
     justify-content: space-between;
     align-items: center;
-    height: 5vh
+    height: 5vh;
+    margin-bottom: var(--default-spacing);
 `
 
 export default HeaderContainer;
