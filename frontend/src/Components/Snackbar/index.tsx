@@ -9,7 +9,11 @@ interface IPropsSnack {
 function Snackbar({ children, colorPallete = 'neutral' }:IPropsSnack) {
 
     return (
-            <SnackbarContainer colorPallete={colorPallete}>{children}</SnackbarContainer>
+        <SnackbarContainer 
+            colorPallete={colorPallete}
+        >
+            {children}
+        </SnackbarContainer>
     )
 }
 
