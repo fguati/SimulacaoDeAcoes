@@ -4,6 +4,7 @@ import ErrorPage from 'Pages/ErrorPage';
 import { AuthRequestBranch, loggedIndex } from './AuthRequiredRoutes'
 import { loginRoute, signUpRoute } from './OpenRoutes'
 import Header from 'Components/Header';
+import LoggedOffBranch from './OpenRoutes/LogedOffChecker';
 
 /**
  * The routes object of this file is the one actually used by the router 
@@ -26,6 +27,7 @@ const routes:RouteObject[] = [
 					]
 				},
 				{
+					element: <LoggedOffBranch/>,
 					children: [
 						signUpRoute,
 						loginRoute
