@@ -1,3 +1,5 @@
+@import url('./_variables.css');
+
 .App {
   text-align: center;
 }
@@ -36,16 +38,3 @@
     transform: rotate(360deg);
   }
 }
-
-:root {
-  --border-color: #333333;
-  --button-color: #000065;
-  --light-font-color:#FFF;
-  --dark-font-color: #0b1464;
-  --background-color:#000065;
-}
-
-/* * {
-  grid-row: 1;
-} */
-

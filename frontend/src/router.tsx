@@ -1,4 +1,4 @@
-import 'App.css';
+import './styles/App.css';
 import { SessionProvider } from 'Common/Contexts/SessionContext';
 import { CookiesProvider } from 'react-cookie';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
