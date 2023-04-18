@@ -1,7 +1,7 @@
 import styled from "styled-components";
 
 const FormContainer = styled.form`
-    padding: 8px;
+    padding: var(--default-spacing);
 `
 
 export default FormContainer;

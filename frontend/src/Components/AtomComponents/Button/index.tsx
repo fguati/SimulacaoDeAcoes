@@ -5,8 +5,8 @@ const Button = styled.button`
     background-color: var(--button-color);
     border-radius: 5px;
     border-color: var(--button-color);
-    margin: 8px;
-    padding: 8px 32px;
+    margin: var(--default-spacing);
+    padding: var(--default-spacing) var(--xl-spacing);
     cursor: pointer;
 `
 

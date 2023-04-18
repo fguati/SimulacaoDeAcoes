@@ -5,5 +5,12 @@
     --light-font-color:#FFF;
     --dark-font-color: #0b1464;
     --background-color:#000065;
+
+    /* Spacing Variables */
+    --default-spacing: 8px;
+    --xl-spacing: 32px;
+
+    /* Font variables */
+    --large-font-size: 18px;
 }
   

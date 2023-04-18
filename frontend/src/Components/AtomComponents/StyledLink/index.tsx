@@ -3,7 +3,7 @@ import styled from "styled-components";
 
 const StyledLink = styled(Link)`
     color: var(--light-font-color);
-    padding: 8px;
+    padding: var(--default-spacing);
     text-decoration: none;
 `
 
