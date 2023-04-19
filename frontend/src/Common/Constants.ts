@@ -1,6 +1,7 @@
 // import axios from "axios"
 
-const backendURL = 'http://localhost:8000'
+export const backendURL = 'http://localhost:8000'
+export const transitionTime = 1000
 
 //created a base data for requests with axios, centralizing any need to change the base url of the backend
 // export const httpBackEndAPI = axios.create({
@@ -9,5 +10,3 @@ const backendURL = 'http://localhost:8000'
 //         return status < 600;
 //     },
 // })
-
-export default backendURL

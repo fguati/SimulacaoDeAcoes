@@ -1,4 +1,4 @@
-import backendURL from "Common/backEndUrl";
+import {backendURL} from "Common/Constants";
 import BackendRoutes from "Common/Types/BackendRoutes";
 
 //Function that post forms to the backend API. It returns an object with the 'to' method so when used it becomes 'postForm(formName).to(route)', which is more readable
