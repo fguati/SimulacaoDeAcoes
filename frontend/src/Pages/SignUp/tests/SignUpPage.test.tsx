@@ -2,11 +2,16 @@ import SignUpPage from ".."
 import { render, screen } from "@testing-library/react"
 import { MemoryRouter } from "react-router-dom"
 import '@testing-library/jest-dom'
+import { SnackbarProvider } from "Common/Contexts/SnackbarContext"
 
 describe('test page render and unit behavior of sign up page', () => {
     test('Page must render with fields email, password, Confirm Password and Username', () => {
         
-        render(<SignUpPage/>, {wrapper:MemoryRouter})
+        render(
+            <SnackbarProvider>
+                <SignUpPage/>
+            </SnackbarProvider>
+        , {wrapper:MemoryRouter})
 
         const $emailField = screen.queryByLabelText('E-mail')
         const $passwordFields = screen.queryAllByLabelText('Password')

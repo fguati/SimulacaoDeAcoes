@@ -8,11 +8,11 @@ import ReactChildren from "Common/Types/ReactChildren"
 import { BoxColorPalette } from "Common/Types/ColorPalletes"
 import { outScrnSnckBrPosition } from 'Common/Constants'
 
-jest.mock('../SnackbarContainer', () => ({ children, colorPallete, position, onClick }: {children: ReactChildren, colorPallete: BoxColorPalette, position:ISnackPosition, onClick: React.MouseEventHandler<HTMLDivElement> | undefined }) => {
+jest.mock('../SnackbarContainer', () => ({ children, colorPalette, position, onClick }: {children: ReactChildren, colorPalette: BoxColorPalette, position:ISnackPosition, onClick: React.MouseEventHandler<HTMLDivElement> | undefined }) => {
     return(
         <div onClick={onClick}>
             {children}
-            <p>{colorPallete}</p>
+            <p>{colorPalette}</p>
             <p>{position}</p>
         </div>
     )

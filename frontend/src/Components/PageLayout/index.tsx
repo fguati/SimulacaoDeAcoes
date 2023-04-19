@@ -11,7 +11,7 @@ function PageLayout({children}:IPageLayoutProps) {
         <PageContainer>
             <ContentContainer>
                 {children}
-                <button onClick={() => activateSnackbar!()}>Test Snack</button>
+                <button onClick={() => activateSnackbar('failure')}>Test Snack</button>
             </ContentContainer>
             
             <Snackbar>Snack test</Snackbar>

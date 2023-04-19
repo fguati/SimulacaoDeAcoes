@@ -4,13 +4,18 @@ import { MemoryRouter } from "react-router-dom"
 import '@testing-library/jest-dom'
 import { SessionProvider } from "Common/Contexts/SessionContext"
 import { CookiesProvider } from "react-cookie"
+import { SnackbarProvider } from "Common/Contexts/SnackbarContext"
 
 describe('test login page render of login page', () => {
     
     
     test('Page must render with fields email and password and submit button', () => {
         
-        render(<LoginPage/>, {wrapper:MemoryRouter})
+        render(
+            <SnackbarProvider>
+                <LoginPage/>
+            </SnackbarProvider>
+        , {wrapper:MemoryRouter})
 
         const $emailField = screen.queryByLabelText('E-mail')
         const $passwordField = screen.queryByLabelText('Password')
@@ -21,9 +26,6 @@ describe('test login page render of login page', () => {
         expect($submitButton).toHaveAttribute('type', 'submit')
     })
 
-
-
-
 })
 
 describe('test integration of login page with backend', () => {
@@ -31,7 +33,9 @@ describe('test integration of login page with backend', () => {
         return render(
             <SessionProvider>
                 <CookiesProvider>
-                    <LoginPage/>
+                    <SnackbarProvider>
+                        <LoginPage/>
+                    </SnackbarProvider>
                 </CookiesProvider>
             </SessionProvider>,
             {wrapper:MemoryRouter}
