@@ -1,6 +1,4 @@
-import IProps from "./IProps"
-
-const themes = {
+const BoxColorThemes = {
     success: {
         background: '--success-light' ,
         line: '--success-dark'
@@ -15,8 +13,4 @@ const themes = {
     }
 }
 
-const snackThemeSelector = ({colorPallete}:IProps, property: 'background' | 'line') => {
-    return `var(${themes[colorPallete][property]})`
-}
-
-export default snackThemeSelector
+export default BoxColorThemes

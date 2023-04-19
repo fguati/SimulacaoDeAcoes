@@ -1,7 +1,14 @@
 // import axios from "axios"
 
+//Backen API url
 export const backendURL = 'http://localhost:8000'
+
+//Duration of animated transitions
 export const transitionTime = 1000
+
+//Positions of the Snackbar in the screen
+export const botScrnSnckBrPosition = '-5vh'
+export const outScrnSnckBrPosition = '0vh'
 
 //created a base data for requests with axios, centralizing any need to change the base url of the backend
 // export const httpBackEndAPI = axios.create({
