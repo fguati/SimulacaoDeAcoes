@@ -9,7 +9,7 @@ describe('Test the rendering of the snackbar container', () => {
         const testPosition: ISnackPosition = '-5vh'
         
         render(<SnackbarContainer
-            colorPallete="neutral"
+            colorPalette="neutral"
             position={testPosition}
         >test</SnackbarContainer>)
         
