@@ -2,9 +2,9 @@ import { fireEvent, render, screen } from "@testing-library/react"
 import { SnackbarContext, SnackbarProvider } from "Common/Contexts/SnackbarContext"
 import { useContext } from 'react'
 import '@testing-library/jest-dom'
-import { BottomOfScreenPos, OutOfScreenPos } from "Common/Contexts/SnackbarContext/ISnackPosition"
 import { act } from "react-dom/test-utils"
-import { ColorPallete } from "Components/Snackbar/SnackbarContainer/IProps"
+import { botScrnSnckBrPosition, outScrnSnckBrPosition } from 'Common/Constants'
+import { BoxColorPalette } from "Common/Types/ColorPalletes"
 
 describe('Test snackbar context module', () => {
     jest.useFakeTimers();
@@ -15,14 +15,14 @@ describe('Test snackbar context module', () => {
             deactivateSnackbar, 
             activateSnackbar, 
             snackBarPosition, 
-            colorPallete
+            colorPalette
         } = useContext(SnackbarContext)
 
         return(
             <>
                 <div>{String(active)}</div>
                 <div>{snackBarPosition}</div>
-                <div>{colorPallete}</div>
+                <div>{colorPalette}</div>
                 <button onClick={() => activateSnackbar!("failure")}>activate failure</button>
                 <button onClick={() => activateSnackbar!("neutral")}>activate neutral</button>
                 <button onClick={() => activateSnackbar!("success")}>activate success</button>
@@ -40,7 +40,7 @@ describe('Test snackbar context module', () => {
     it('must provide the active, snackBarPosition and colorPallete states with default values false, out of screen and neutral, respectively', () => {
         renderExampleComponent()
         const $active = screen.getByText('false')
-        const $position = screen.getByText(OutOfScreenPos)
+        const $position = screen.getByText(outScrnSnckBrPosition)
         const $pallete = screen.getByText('neutral')
 
         expect($active).toBeInTheDocument()
@@ -57,7 +57,7 @@ describe('Test snackbar context module', () => {
 
         let $pallete = screen.getByText('neutral')
 
-        function testActivateButton(testButton: HTMLElement, pallete: ColorPallete) {
+        function testActivateButton(testButton: HTMLElement, pallete: BoxColorPalette) {
             fireEvent.click(testButton)
             act(() => {
                 jest.runAllTimers()
@@ -73,7 +73,7 @@ describe('Test snackbar context module', () => {
 
         testActivateButton($failureButton, 'failure')
         let $active = screen.getByText('true')
-        let $position = screen.getByText(BottomOfScreenPos)
+        let $position = screen.getByText(botScrnSnckBrPosition)
 
         expect($active).toBeInTheDocument()
         expect($position).toBeInTheDocument()
@@ -93,7 +93,7 @@ describe('Test snackbar context module', () => {
         })
 
         let $active = screen.getByText('true')
-        let $position = screen.getByText(BottomOfScreenPos)
+        let $position = screen.getByText(botScrnSnckBrPosition)
 
         expect($active).toBeInTheDocument()
         expect($position).toBeInTheDocument()
@@ -104,7 +104,7 @@ describe('Test snackbar context module', () => {
         })
 
         $active = screen.getByText('false')
-        $position = screen.getByText(OutOfScreenPos)
+        $position = screen.getByText(outScrnSnckBrPosition)
 
         expect($active).toBeInTheDocument()
         expect($position).toBeInTheDocument()
