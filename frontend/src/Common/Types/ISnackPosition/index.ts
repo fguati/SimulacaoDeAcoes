@@ -1,5 +1,5 @@
-import { SnckBrBotScrnPosition, SnckBrOutScrnPosition } from "Common/Constants"
+import { botScrnSnckBrPosition, outScrnSnckBrPosition } from "Common/Constants"
 
-type ISnackPosition = typeof SnckBrBotScrnPosition | typeof SnckBrOutScrnPosition
+type ISnackPosition = typeof botScrnSnckBrPosition | typeof outScrnSnckBrPosition
 
 export default ISnackPosition
