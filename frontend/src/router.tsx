@@ -1,3 +1,4 @@
+import { SnackbarProvider } from 'Common/Contexts/SnackbarContext';
 import './styles/App.css';
 import { SessionProvider } from 'Common/Contexts/SessionContext';
 import { CookiesProvider } from 'react-cookie';
@@ -12,7 +13,9 @@ function App() {
 	<div className="App">
 		<SessionProvider>
 			<CookiesProvider>
-				<RouterProvider router={router}/>
+				<SnackbarProvider>
+					<RouterProvider router={router}/>
+				</SnackbarProvider>
 			</CookiesProvider>
 		</SessionProvider>
 	</div>
