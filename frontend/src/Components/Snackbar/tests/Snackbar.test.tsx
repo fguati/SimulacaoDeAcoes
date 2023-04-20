@@ -16,7 +16,7 @@ jest.mock('../SnackbarContainer', () => ({ children, colorPalette, position, onC
     )
 })
 
-describe('Tests the behavior of the Snackbar component', () => {
+describe('Unit tests of the behavior of the Snackbar component', () => {
     const mockedSnackbarContext: ISnackbarContext = {
         active: false, 
         deactivateSnackbar: jest.fn(),
@@ -30,7 +30,7 @@ describe('Tests the behavior of the Snackbar component', () => {
         cleanup()
         render(
             <SnackbarContext.Provider value={mockedSnackbarContext}>
-                <Snackbar>test</Snackbar>
+                <Snackbar/>
             </SnackbarContext.Provider>
         )
     }
@@ -38,12 +38,12 @@ describe('Tests the behavior of the Snackbar component', () => {
     it('only renders if the active state provided by its context is true', () => {
         renderSnackBar()
         
-        let $snackbar = screen.queryByText('test')
+        let $snackbar = screen.queryByText(mockedSnackbarContext.snackbarMessage)
         expect($snackbar).not.toBeInTheDocument()
         
         mockedSnackbarContext.active = true
         renderSnackBar()
-        $snackbar = screen.queryByText('test')
+        $snackbar = screen.queryByText(mockedSnackbarContext.snackbarMessage)
         expect($snackbar).toBeInTheDocument()
 
     })
@@ -59,11 +59,10 @@ describe('Tests the behavior of the Snackbar component', () => {
 
     it('must call the deactivateSnackbar funtcion if active state is true or when snackbar is clicked', () => {
         renderSnackBar()
-        const $snackbar = screen.queryByText('test')
+        const $snackbar = screen.queryByText(mockedSnackbarContext.snackbarMessage)
         fireEvent.click($snackbar!)
         expect(mockedSnackbarContext.deactivateSnackbar).toBeCalled()
 
     })
-
 
 })

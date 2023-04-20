@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import IProps from "./IProps";
 import { transitionTime } from "Common/Constants";
-import { BoxColorPalette } from "Common/Types/ColorPalletes";
+import { BoxColorPalette } from "Common/Types/";
 import BoxColorThemes from "Common/BoxColorThemes";
 
 //function to receive snackbar position from props
