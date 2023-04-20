@@ -1,6 +1,6 @@
 import { createContext, useState } from 'react'
 import getCookie from 'utils/getCookie'
-import ReactChildren from 'Common/Types/ReactChildren'
+import { ReactChildren } from 'Common/Types/'
 
 interface Props {
     children: ReactChildren
