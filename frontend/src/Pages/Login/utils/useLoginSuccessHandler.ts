@@ -25,7 +25,6 @@ function useLoginSuccessHandler() {
     function loginSuccessHandler(response: Response, navigation: NavigateFunction) {
         //alerts the user that their login was successful
         activateSnackbar('Login successful', { colorPalette: 'success' })
-        alert('Login feito com suscesso')
 
         //set user login status to true, which is used by other parts of the app through the session context
         setLogIn!(true)
