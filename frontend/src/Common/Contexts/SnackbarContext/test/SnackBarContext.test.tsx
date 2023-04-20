@@ -4,7 +4,7 @@ import { useContext } from 'react'
 import '@testing-library/jest-dom'
 import { act } from "react-dom/test-utils"
 import { botScrnSnckBrPosition, outScrnSnckBrPosition } from 'Common/Constants'
-import { BoxColorPalette } from "Common/Types/ColorPalletes"
+import { BoxColorPalette } from "Common/Types/"
 
 describe('Test snackbar context module', () => {
     jest.useFakeTimers();
@@ -15,7 +15,8 @@ describe('Test snackbar context module', () => {
             deactivateSnackbar, 
             activateSnackbar, 
             snackBarPosition, 
-            colorPalette
+            colorPalette,
+            snackbarMessage
         } = useContext(SnackbarContext)
 
         return(
@@ -23,9 +24,10 @@ describe('Test snackbar context module', () => {
                 <div>{String(active)}</div>
                 <div>{snackBarPosition}</div>
                 <div>{colorPalette}</div>
-                <button onClick={() => activateSnackbar!("failure")}>activate failure</button>
-                <button onClick={() => activateSnackbar!("neutral")}>activate neutral</button>
-                <button onClick={() => activateSnackbar!("success")}>activate success</button>
+                <div>{snackbarMessage}</div>
+                <button onClick={() => activateSnackbar!('fail message', {colorPalette: "failure"})}>activate failure</button>
+                <button onClick={() => activateSnackbar!('other message', {colorPalette: "neutral"})}>activate neutral</button>
+                <button onClick={() => activateSnackbar!('succeded message', {colorPalette: "success"})}>activate success</button>
                 <button onClick={() => deactivateSnackbar!()}>deactivate</button>
             </>
         )
@@ -37,15 +39,17 @@ describe('Test snackbar context module', () => {
         </SnackbarProvider>)
     }
 
-    it('must provide the active, snackBarPosition and colorPallete states with default values false, out of screen and neutral, respectively', () => {
+    it('must provide the active, snackBarPosition, snackbarMessage and colorPallete states with default values false, out of screen and neutral, respectively', () => {
         renderExampleComponent()
         const $active = screen.getByText('false')
         const $position = screen.getByText(outScrnSnckBrPosition)
         const $pallete = screen.getByText('neutral')
+        const $message = screen.getByText('Placeholder', {exact:false})
 
         expect($active).toBeInTheDocument()
         expect($position).toBeInTheDocument()
         expect($pallete).toBeInTheDocument()
+        expect($message).toBeInTheDocument()
 
     })
 
@@ -56,14 +60,17 @@ describe('Test snackbar context module', () => {
         })
 
         let $pallete = screen.getByText('neutral')
+        let $message = screen.getByText('Placeholder', {exact:false})
 
-        function testActivateButton(testButton: HTMLElement, pallete: BoxColorPalette) {
+        function testActivateButton(testButton: HTMLElement, message:string, pallete: BoxColorPalette) {
             fireEvent.click(testButton)
             act(() => {
                 jest.runAllTimers()
             })
             $pallete = screen.getByText(pallete)
             expect($pallete).toBeInTheDocument()
+            $message = screen.getByText(message)
+            expect($message).toBeInTheDocument()
 
         }
 
@@ -71,15 +78,15 @@ describe('Test snackbar context module', () => {
         const $neutralButton = screen.getByText('activate neutral')
         const $successButton = screen.getByText('activate success')
 
-        testActivateButton($failureButton, 'failure')
+        testActivateButton($failureButton, 'fail message', 'failure')
         let $active = screen.getByText('true')
         let $position = screen.getByText(botScrnSnckBrPosition)
 
         expect($active).toBeInTheDocument()
         expect($position).toBeInTheDocument()
 
-        testActivateButton($neutralButton, 'neutral')
-        testActivateButton($successButton, 'success')
+        testActivateButton($neutralButton, 'other message', 'neutral')
+        testActivateButton($successButton, 'succeded message', 'success')
     })
 
     it('must provide the deactivateSnackbar function that changes all the provided states', () => {
@@ -110,5 +117,6 @@ describe('Test snackbar context module', () => {
         expect($position).toBeInTheDocument()
 
     })
+
 
 })

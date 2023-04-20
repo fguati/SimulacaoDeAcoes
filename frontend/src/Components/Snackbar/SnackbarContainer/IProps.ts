@@ -1,5 +1,4 @@
-import { BoxColorPalette } from "Common/Types/ColorPalletes"
-import ISnackPosition from "Common/Types/ISnackPosition"
+import { BoxColorPalette, ISnackPosition } from "Common/Types/"
 
 //Props received by the snackbar container to determine its position in the view and color palette
 interface IProps {

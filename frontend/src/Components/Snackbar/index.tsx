@@ -1,4 +1,4 @@
-import ReactChildren from "Common/Types/ReactChildren"
+import { ReactChildren } from "Common/Types/"
 import SnackbarContainer from "./SnackbarContainer"
 import { useContext, useEffect } from 'react'
 import { SnackbarContext } from "Common/Contexts/SnackbarContext"

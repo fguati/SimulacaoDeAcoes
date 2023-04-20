@@ -1,11 +1,9 @@
 import { cleanup, fireEvent, render, screen } from "@testing-library/react"
 import Snackbar from ".."
-import ISnackPosition from "Common/Types/ISnackPosition"
+import { ISnackPosition, ReactChildren, BoxColorPalette } from "Common/Types/"
 import '@testing-library/jest-dom'
 import 'styles/_variables.css'
 import { ISnackbarContext, SnackbarContext } from "Common/Contexts/SnackbarContext"
-import ReactChildren from "Common/Types/ReactChildren"
-import { BoxColorPalette } from "Common/Types/ColorPalletes"
 import { outScrnSnckBrPosition } from 'Common/Constants'
 
 jest.mock('../SnackbarContainer', () => ({ children, colorPalette, position, onClick }: {children: ReactChildren, colorPalette: BoxColorPalette, position:ISnackPosition, onClick: React.MouseEventHandler<HTMLDivElement> | undefined }) => {
@@ -24,7 +22,8 @@ describe('Tests the behavior of the Snackbar component', () => {
         deactivateSnackbar: jest.fn(),
         activateSnackbar: jest.fn(),
         snackBarPosition: outScrnSnckBrPosition, 
-        colorPalette: 'neutral'
+        colorPalette: 'neutral',
+        snackbarMessage: 'Mocked message'
     }
 
     function renderSnackBar() {
@@ -65,4 +64,6 @@ describe('Tests the behavior of the Snackbar component', () => {
         expect(mockedSnackbarContext.deactivateSnackbar).toBeCalled()
 
     })
+
+
 })

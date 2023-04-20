@@ -1,22 +1,17 @@
-import ReactChildren from 'Common/Types/ReactChildren'
-import { createContext, useState } from 'react'
-import ISnackPosition from '../../Types/ISnackPosition'
-import { transitionTime } from 'Common/Constants'
-import { botScrnSnckBrPosition, outScrnSnckBrPosition } from 'Common/Constants'
-import { BoxColorPalette } from 'Common/Types/ColorPalletes'
-
-//Props interface for the context provider
-interface IProps {
-    children: ReactChildren
-}
+import { createContext } from 'react'
+import { ISnackPosition, BoxColorPalette } from 'Common/Types/'
+import { botScrnSnckBrPosition, outScrnSnckBrPosition, transitionTime } from 'Common/Constants'
+import useSnackbarState from './useSnackbarStates'
+import { IActivateOptions, IProps } from './interfaces'
 
 //Interface for the context to be created
 export interface ISnackbarContext {
     active: boolean
     deactivateSnackbar: () => void
-    activateSnackbar: (pallete?: BoxColorPalette) => void
+    activateSnackbar: (message:string, options?:IActivateOptions) => void
     snackBarPosition: ISnackPosition
     colorPalette: BoxColorPalette
+    snackbarMessage: string
 }
 
 //Create context that will be responsible for handling the snackbar so be rendered and manipulated from anywhere in the app
@@ -24,12 +19,13 @@ const SnackbarContext = createContext<ISnackbarContext>(undefined!)
 
 //Context provider for the snackbar context
 const SnackbarProvider = ({ children }: IProps) => {
-    //state determining whether snackbar will be rendered or not
-    const [active, setActive] = useState(false)
-    //state determining where the snackbar will be in the screen
-    const [snackBarPosition, setSnackbarPosition] = useState<ISnackPosition>(outScrnSnckBrPosition)
-    //state determining the color palette
-    const [colorPalette, setColorPalette] = useState<BoxColorPalette>('neutral')
+    //create all snackbar states
+    const {
+        active, setActive,
+        snackBarPosition, setSnackbarPosition,
+        snackbarMessage, setSnackbarMessage,
+        colorPalette, setColorPalette
+    } = useSnackbarState()
 
     // Function responsible for unmounting the snackbar
     function deactivateSnackbar() {
@@ -43,9 +39,16 @@ const SnackbarProvider = ({ children }: IProps) => {
     }
 
     //Function responsible for rendering snackbar
-    function activateSnackbar(desiredPalette: BoxColorPalette = 'neutral') {
+    function activateSnackbar(message:string, options?:IActivateOptions) {
+        //setting default color pallete to neutral
+        let desiredPalette:BoxColorPalette ='neutral'
+        if(options && options.colorPalette) {
+            desiredPalette = options.colorPalette
+        }
         //Render the snackbar
         setActive(true)
+        //Render the snackbar message
+        setSnackbarMessage(message)
         //Change the snackbar to the color palette entered as argument
         setColorPalette(desiredPalette)
         // Move the snackbar into view, giving it enough time for the transition animation to complete
@@ -55,7 +58,7 @@ const SnackbarProvider = ({ children }: IProps) => {
     }
 
     return (
-        <SnackbarContext.Provider value={{ active, deactivateSnackbar, activateSnackbar, snackBarPosition, colorPalette }}>
+        <SnackbarContext.Provider value={{ active, deactivateSnackbar, activateSnackbar, snackBarPosition, snackbarMessage, colorPalette }}>
             {children}
         </SnackbarContext.Provider>
     )
