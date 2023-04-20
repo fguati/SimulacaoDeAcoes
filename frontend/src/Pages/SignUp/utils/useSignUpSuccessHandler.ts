@@ -1,3 +1,5 @@
+import { SnackbarContext } from "Common/Contexts/SnackbarContext";
+import { useContext } from "react";
 import { useNavigate } from "react-router-dom";
 
 /**
@@ -6,9 +8,11 @@ import { useNavigate } from "react-router-dom";
  */
 const useSignUpSuccessHandler = () => {
     const navigate = useNavigate()
+    const { activateSnackbar } = useContext(SnackbarContext)
     async function signUpSuccessHandler(response:Response) {
-        alert('User registered successfully')
-    
+        //rendering snackbar to give success message
+        activateSnackbar('User registered successfully', {colorPalette: 'success'})
+
         return navigate!('/login')
     }
     
