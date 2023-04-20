@@ -1,0 +1,9 @@
+import styled from "styled-components";
+
+const PageContainer = styled.div`
+    margin: 0 5vw;
+    position: relative;
+    overflow: hidden;
+`
+
+export default PageContainer

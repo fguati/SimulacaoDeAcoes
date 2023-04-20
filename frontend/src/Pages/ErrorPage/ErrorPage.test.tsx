@@ -5,6 +5,7 @@ import unknownError from './useErrorHandler/unknownError'
 import ErrorPage from '.'
 import IErrorPageProps from './IErrorPageProps'
 import { useLocation } from "react-router-dom";
+import { SnackbarProvider } from 'Common/Contexts/SnackbarContext'
 
 jest.mock('react-router-dom', () => {
     const originalModule = jest.requireActual('react-router-dom')
@@ -27,7 +28,9 @@ function renderErrorPage(props?: IErrorPageProps) {
     const router = createMemoryRouter(routerConfig)
 
     return render(
-        <RouterProvider router={router}/>
+        <SnackbarProvider>
+            <RouterProvider router={router}/>
+        </SnackbarProvider>
     )
 }
 

@@ -1,5 +1,5 @@
 import { postForm } from "utils/BackendAPICommunication"
-import backendURL from "Common/backEndUrl";
+import {backendURL} from "Common/Constants";
 
 describe('Tests for the postFormTo method',() => {
     const mockBody = { data: 'some data' };

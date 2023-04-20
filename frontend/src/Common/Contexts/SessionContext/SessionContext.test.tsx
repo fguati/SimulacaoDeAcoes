@@ -1,4 +1,4 @@
-import { SessionContext, SessionProvider } from "../SessionContext";
+import { SessionContext, SessionProvider } from ".";
 import { fireEvent, render, screen } from '@testing-library/react'
 import '@testing-library/jest-dom'
 import { useContext } from "react";
