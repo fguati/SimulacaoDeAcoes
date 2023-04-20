@@ -3,12 +3,14 @@ import Snackbar from ".."
 import { ISnackPosition, ReactChildren, BoxColorPalette } from "Common/Types/"
 import '@testing-library/jest-dom'
 import 'styles/_variables.css'
-import { ISnackbarContext, SnackbarContext } from "Common/Contexts/SnackbarContext"
-import { outScrnSnckBrPosition } from 'Common/Constants'
+import { ISnackbarContext, SnackbarContext, SnackbarProvider } from "Common/Contexts/SnackbarContext"
+import { botScrnSnckBrPosition, outScrnSnckBrPosition, transitionTime } from 'Common/Constants'
+import { useContext } from "react"
+import { act } from "react-dom/test-utils"
 
-jest.mock('../SnackbarContainer', () => ({ children, colorPalette, position, onClick }: {children: ReactChildren, colorPalette: BoxColorPalette, position:ISnackPosition, onClick: React.MouseEventHandler<HTMLDivElement> | undefined }) => {
+jest.mock('../SnackbarContainer', () => ({ children, colorPalette, position, onClick }: { children: ReactChildren, colorPalette: BoxColorPalette, position:ISnackPosition, onClick: React.MouseEventHandler<HTMLDivElement> | undefined }) => {
     return(
-        <div onClick={onClick}>
+        <div onClick={onClick} data-testid ={'snackbar'}>
             {children}
             <p>{colorPalette}</p>
             <p>{position}</p>
@@ -17,6 +19,7 @@ jest.mock('../SnackbarContainer', () => ({ children, colorPalette, position, onC
 })
 
 describe('Unit tests of the behavior of the Snackbar component', () => {
+    jest.useFakeTimers()
     const mockedSnackbarContext: ISnackbarContext = {
         active: false, 
         deactivateSnackbar: jest.fn(),
@@ -62,7 +65,117 @@ describe('Unit tests of the behavior of the Snackbar component', () => {
         const $snackbar = screen.queryByText(mockedSnackbarContext.snackbarMessage)
         fireEvent.click($snackbar!)
         expect(mockedSnackbarContext.deactivateSnackbar).toBeCalled()
+    })
 
+    it('must call deactivateSnackbar after a short interval if snackbar is active', () => {
+        mockedSnackbarContext.active = true
+        renderSnackBar()
+        act(() => {
+            jest.runAllTimers()
+        })
+
+        expect(mockedSnackbarContext.deactivateSnackbar).toBeCalled()
+    })
+
+})
+
+describe('Integration tests between snackbar component and its context', () => {
+    jest.useFakeTimers()
+    const neutralMessage = 'standard message'
+    const failMessage = 'fail message'
+    const successMessage = 'succeded message'
+    
+    function ContextCallerComponent() {
+        const { activateSnackbar, deactivateSnackbar} = useContext(SnackbarContext)
+
+        return(
+            <>
+                <button onClick={() => activateSnackbar!(failMessage, {colorPalette: "failure"})}>{failMessage + 'button'}</button>
+                <button onClick={() => activateSnackbar!(neutralMessage, {colorPalette: "neutral"})}>{neutralMessage + 'button'}</button>
+                <button onClick={() => activateSnackbar!(successMessage, {colorPalette: "success"})}>{successMessage + 'button'}</button>
+                <button onClick={() => deactivateSnackbar!()}>deactivate</button>
+            </>
+        )
+    }
+    
+    function renderSnackBar() {
+        cleanup()
+        render(
+            <SnackbarProvider>
+                <Snackbar/>
+                <ContextCallerComponent/>
+            </SnackbarProvider>
+        )
+    }
+    
+    it('must not render snackbar without changing snackbar active state', () => {
+        renderSnackBar()
+        const $snackbar = screen.queryByTestId('snackbar')
+        expect($snackbar).not.toBeInTheDocument()
+
+    })
+
+    test('snackbar must be rendered after activate snackbar function is called, and its properties must be the ones entered as args', () => {
+        function testActivate(message:string, color:BoxColorPalette) {
+            const $testButton = screen.getByText(message + 'button')
+            fireEvent.click($testButton)
+            act(() => jest.advanceTimersToNextTimer())
+            const $colorSpy = screen.getByText(color)
+            expect($colorSpy).toBeInTheDocument()
+            const $messageSpy = screen.getByText(message)
+            expect($messageSpy).toBeInTheDocument()
+        }
+
+        renderSnackBar()
+
+        testActivate(failMessage, 'failure')
+        act(() => jest.runAllTimers())
+
+        testActivate(neutralMessage, 'neutral')
+        act(() => jest.runAllTimers())
+
+        testActivate(successMessage, 'success')
+
+        const $snackbar = screen.getByTestId('snackbar')
+        expect($snackbar).toBeInTheDocument()
+        const $positionSpy = screen.getByText(botScrnSnckBrPosition)
+        expect($positionSpy).toBeInTheDocument()
+
+    })
+
+    test('snackbar must be unmounted after snackbar component is clicked', () => {
+        renderSnackBar()
+        let $snackbar = screen.queryByTestId('snackbar')
+        expect($snackbar).not.toBeInTheDocument()
+
+        const $activateButton = screen.getAllByText('button', { exact:false })
+        fireEvent.click($activateButton[0])
+        
+        $snackbar = screen.queryByTestId('snackbar')
+        expect($snackbar).toBeInTheDocument()
+
+        const $deactivateButton = screen.getByText('deactivate')
+        fireEvent.click($deactivateButton)
+        act(() => jest.advanceTimersByTime(transitionTime + 1))
+        $snackbar = screen.queryByTestId('snackbar')
+        expect($snackbar).not.toBeInTheDocument()
+
+    })
+
+    test('snackbar must be unmounted after a short interval', () => {
+        renderSnackBar()
+        let $snackbar = screen.queryByTestId('snackbar')
+        expect($snackbar).not.toBeInTheDocument()
+
+        const $activateButton = screen.getAllByText('button', { exact:false })
+        fireEvent.click($activateButton[0])
+        
+        $snackbar = screen.queryByTestId('snackbar')
+        expect($snackbar).toBeInTheDocument()
+
+        act(() => jest.runAllTimers())
+        $snackbar = screen.queryByTestId('snackbar')
+        expect($snackbar).not.toBeInTheDocument()
     })
 
 })
