@@ -1,4 +1,5 @@
 import { SessionContext } from "Common/Contexts/SessionContext";
+import { SnackbarContext } from "Common/Contexts/SnackbarContext";
 import { useContext } from "react";
 import { NavigateFunction, useLocation } from "react-router-dom";
 
@@ -14,6 +15,8 @@ function useLoginSuccessHandler() {
     const location = useLocation()
     //get the setter function that allows us to change the user log in status
     const { setLogIn } = useContext(SessionContext)
+    //get function that renders a snackbar
+    const { activateSnackbar } = useContext(SnackbarContext)
 
     /**
      * handler function for succesful responses received from http requests.
@@ -21,6 +24,7 @@ function useLoginSuccessHandler() {
      */
     function loginSuccessHandler(response: Response, navigation: NavigateFunction) {
         //alerts the user that their login was successful
+        activateSnackbar('Login successful', { colorPalette: 'success' })
         alert('Login feito com suscesso')
 
         //set user login status to true, which is used by other parts of the app through the session context
