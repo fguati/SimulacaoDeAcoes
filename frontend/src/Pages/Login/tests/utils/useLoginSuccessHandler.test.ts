@@ -76,6 +76,11 @@ describe('unit tests of the useLoginSuccessHandler custom hook', () => {
         expect(mockedActivateSnackbar).toBeCalledWith(expect.stringContaining('success'), { colorPalette: 'success' })        
     })
 
-    test.todo('must call setLogin with true')
+    test('must call setLogin with true', () => {
+        const { result } = renderHook(() => useLoginSuccessHandler())
+        result.current(mockResponse, mockNavigation)
+
+        expect(mockedSetLogin).toBeCalled()   
+    })
 
 })
