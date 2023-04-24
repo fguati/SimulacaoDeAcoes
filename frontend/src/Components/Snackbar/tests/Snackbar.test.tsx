@@ -26,7 +26,8 @@ describe('Unit tests of the behavior of the Snackbar component', () => {
         activateSnackbar: jest.fn(),
         snackBarPosition: outScrnSnckBrPosition, 
         colorPalette: 'neutral',
-        snackbarMessage: 'Mocked message'
+        snackbarMessage: 'Mocked message',
+        overwriteDeactivationTimer: jest.fn()
     }
 
     function renderSnackBar() {
