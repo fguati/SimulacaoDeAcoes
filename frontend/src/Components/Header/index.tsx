@@ -1,7 +1,6 @@
 import StyledLink from "Components/AtomComponents/StyledLink"
 import useLogOut from "utils/logOut";
 import HeaderContainer from "./HeaderContainer"
-import { Outlet } from "react-router-dom";
 import { useContext, useEffect } from "react";
 import { SessionContext } from "Common/Contexts/SessionContext";
 import LastPageButton from "Components/LastPageButton";
@@ -33,9 +32,7 @@ function Header() {
                 </nav>}
 
                 {loggedIn && <StyledLink to='/login' onClick={() => logOut()}>Log Out</StyledLink>}
-            </HeaderContainer>
-            
-            <Outlet/>
+            </HeaderContainer> 
         </>
     )
 }

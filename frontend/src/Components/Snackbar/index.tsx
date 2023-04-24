@@ -1,6 +1,7 @@
 import SnackbarContainer from "./SnackbarContainer"
 import { useContext, useEffect } from 'react'
 import { SnackbarContext } from "Common/Contexts/SnackbarContext"
+import { transitionTime } from "Common/Constants"
 
 //Snackbar component that is rendered in the bottom of the screen to give messages. This component is manipulated through the SnackbarContext
 function Snackbar() {
@@ -12,10 +13,10 @@ function Snackbar() {
         if(active) {
             setTimeout(() => {
                 deactivateSnackbar()
-            }, 3000)
+            }, transitionTime * 2)
         }
     }, [active, deactivateSnackbar])
-
+    
     return (
         <>
             {active && 

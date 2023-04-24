@@ -1,7 +1,7 @@
 import { SessionContext } from "Common/Contexts/SessionContext";
 import { SnackbarContext } from "Common/Contexts/SnackbarContext";
 import { useContext } from "react";
-import { NavigateFunction, useLocation } from "react-router-dom";
+import { NavigateFunction } from "react-router-dom";
 
 /**
  * Custom hook that returns a function that handles the responses of 
@@ -11,8 +11,6 @@ import { NavigateFunction, useLocation } from "react-router-dom";
  * cannot be used on the event handlers
  */
 function useLoginSuccessHandler() {
-    //get the location object from the useLocation hook
-    const location = useLocation()
     //get the setter function that allows us to change the user log in status
     const { setLogIn } = useContext(SessionContext)
     //get function that renders a snackbar
@@ -23,19 +21,12 @@ function useLoginSuccessHandler() {
      * It receives the success response only so it can interface with the useResponseHandler custom hook
      */
     function loginSuccessHandler(response: Response, navigation: NavigateFunction) {
+        //set user login status to true, which is how the app knows the user is logged in. Obs: updates state functionally to avoid the stale closure problem
+        setLogIn!(status => true)
+        
         //alerts the user that their login was successful
         activateSnackbar('Login successful', { colorPalette: 'success' })
 
-        //set user login status to true, which is used by other parts of the app through the session context
-        setLogIn!(true)
-
-        //if user was accessing the login page directly, they are redirected to their homepage
-        if(location.pathname === '/login') {
-            return navigation('/')
-        }
-
-        //redirects the user to the route were trying to access before logging in
-        return navigation(0)
     }
 
     return loginSuccessHandler

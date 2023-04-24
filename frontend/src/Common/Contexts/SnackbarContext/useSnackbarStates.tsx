@@ -9,7 +9,7 @@ function useSnackbarState() {
     //state determining where the snackbar will be in the screen
     const [snackBarPosition, setSnackbarPosition] = useState<ISnackPosition>(outScrnSnckBrPosition)
     //state determining the message to be shown in snackbar
-    const [snackbarMessage, setSnackbarMessage] = useState('Placeholder')
+    const [snackbarMessage, setSnackbarMessage] = useState('')
     //state determining the color palette
     const [colorPalette, setColorPalette] = useState<BoxColorPalette>('neutral')
 
