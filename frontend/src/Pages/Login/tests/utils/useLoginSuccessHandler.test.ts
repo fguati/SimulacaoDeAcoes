@@ -33,23 +33,27 @@ describe('unit tests of the useLoginSuccessHandler custom hook', () => {
     const mockResponse = {} as Response
 	const mockedUseContext = useContext as jest.MockedFunction<typeof useContext>
 
+    const mockedSetLogin = jest.fn()
+    const mockedActivateSnackbar = jest.fn()
+
+    const mockLocation: Location = {
+        pathname: '/login',
+        hash: '',
+        key: '',
+        search: '',
+        state: ''
+    };
+
     beforeEach(() => {
         mockedUseContext.mockReturnValue({
-            setLogIn: jest.fn()
+            setLogIn: mockedSetLogin,
+            activateSnackbar: mockedActivateSnackbar
         })
+        
+        mockUseLocation.mockReturnValue(mockLocation)
     })
 
     test('rendered function must call the mockNavigation function with the route "/" if location.pathname return value if "/login"', () => {
-        const mockLocation: Location = {
-            pathname: '/login',
-            hash: '',
-            key: '',
-            search: '',
-            state: ''
-        };
-
-        mockUseLocation.mockReturnValue(mockLocation)
-
         const { result } = renderHook(() => useLoginSuccessHandler())
         result.current(mockResponse, mockNavigation)
 
@@ -57,20 +61,26 @@ describe('unit tests of the useLoginSuccessHandler custom hook', () => {
     })
 
     test('rendered function must call the mockNavigation function with "0" when location.pathname return value diferent of "/login"', () => {
-        const mockLocation: Location = {
-            pathname: '/',
-            hash: '',
-            key: '',
-            search: '',
-            state: ''
-        };
-
-        mockUseLocation.mockReturnValue(mockLocation)
+        mockLocation.pathname = '/'
 
         const { result } = renderHook(() => useLoginSuccessHandler())
         result.current(mockResponse, mockNavigation)
 
         expect(mockNavigation).toBeCalledWith(0)
+    })
+
+    test('rendered function must call activate snackbar with login successful message', () => {
+        const { result } = renderHook(() => useLoginSuccessHandler())
+        result.current(mockResponse, mockNavigation)
+
+        expect(mockedActivateSnackbar).toBeCalledWith(expect.stringContaining('success'), { colorPalette: 'success' })        
+    })
+
+    test('must call setLogin with true', () => {
+        const { result } = renderHook(() => useLoginSuccessHandler())
+        result.current(mockResponse, mockNavigation)
+
+        expect(mockedSetLogin).toBeCalled()   
     })
 
 })

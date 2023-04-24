@@ -17,6 +17,8 @@ export interface ISnackbarContext {
 //Create context that will be responsible for handling the snackbar so be rendered and manipulated from anywhere in the app
 const SnackbarContext = createContext<ISnackbarContext>(undefined!)
 
+SnackbarContext.displayName = 'Snackbar Context'
+
 //Context provider for the snackbar context
 const SnackbarProvider = ({ children }: IProps) => {
     //create all snackbar states
@@ -55,6 +57,7 @@ const SnackbarProvider = ({ children }: IProps) => {
         setTimeout(() => {
             setSnackbarPosition(botScrnSnckBrPosition)
         }, transitionTime / 5)
+
     }
 
     return (

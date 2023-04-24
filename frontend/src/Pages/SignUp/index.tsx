@@ -1,5 +1,4 @@
 import Form from "Components/Form";
-import PageLayout from "Components/PageLayout";
 import IFormField from "Interfaces/IFormField";
 import useSubmitSignUp from "./utils/useSubmitSignUp";
 
@@ -17,10 +16,10 @@ function SignUpPage() {
     ] 
 
     return(
-        <PageLayout >
+        <>
             <Form fields={fields} onSubmit={(e) => submitSignUp(e)}/>
 
-        </PageLayout>
+        </>
     )
 }
 

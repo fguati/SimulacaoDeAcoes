@@ -1,4 +1,3 @@
-import PageLayout from "Components/PageLayout";
 import StockTable from "Components/StockTable";
 import Title from "Components/AtomComponents/Title";
 import IStock from "Interfaces/IStock";
@@ -31,10 +30,10 @@ const stockList: IStock[] = [
 //Render the landing page for a logged in user. Still in construction.
 function HomePage() {
     return(
-        <PageLayout>
+        <>
             <Title>Dashboard</Title>
             <StockTable stockList={stockList}/>
-        </PageLayout>
+        </>
     )
 }
 

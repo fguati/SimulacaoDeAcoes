@@ -1,4 +1,4 @@
-import { createContext, useState } from 'react'
+import { createContext, useCallback, useState } from 'react'
 import getCookie from 'utils/getCookie'
 import { ReactChildren } from 'Common/Types/'
 
@@ -17,6 +17,8 @@ interface ISessionContext {
 */
 const SessionContext = createContext<ISessionContext>({})
 
+SessionContext.displayName = 'SessionContext'
+
 /**
  * Session Provider will provide session data, initially
  * received from local storage, cookies, cache, etc.
@@ -27,7 +29,7 @@ const SessionProvider = ({ children }: Props) => {
      * is determined by whether or not user has an
      * authToken cookie
     */
-    let authCookie = getCookie('authToken')
+    const authCookie = getCookie('authToken')
     const currentlyLoged = authCookie !== ''
     const [loggedIn, setLogIn] = useState(currentlyLoged)
 
@@ -38,13 +40,16 @@ const SessionProvider = ({ children }: Props) => {
      * the cookie changed, the loged in status will have 
      * changed as well
      */
-    function getLogInStatus() {
-        authCookie = getCookie('authToken')
-        if(!authCookie){
-            setLogIn(false)
-        }
-        return loggedIn
-    }
+    const getLogInStatus = useCallback(() => {
+            const authCookie = getCookie('authToken')
+            let returnValue = loggedIn
+            if(!authCookie && loggedIn){
+                setLogIn(false)
+                returnValue = false
+            }
+            return returnValue
+
+        }, [loggedIn])
 
     return (
         <SessionContext.Provider value={{setLogIn, getLogInStatus, loggedIn}}>

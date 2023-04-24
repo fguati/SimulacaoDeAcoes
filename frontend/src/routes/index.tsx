@@ -3,8 +3,8 @@ import { errorRoute, notFoundRoute } from './ErrorRoutes'
 import ErrorPage from 'Pages/ErrorPage';
 import { AuthRequestBranch, loggedIndex } from './AuthRequiredRoutes'
 import { loginRoute, signUpRoute } from './OpenRoutes'
-import Header from 'Components/Header';
 import LoggedOffBranch from './OpenRoutes/LogedOffChecker';
+import PageLayout from 'Components/PageLayout';
 
 /**
  * The routes object of this file is the one actually used by the router 
@@ -14,7 +14,7 @@ import LoggedOffBranch from './OpenRoutes/LogedOffChecker';
 */
 const routes:RouteObject[] = [
 	{
-		element: <Header/>,
+		element: <PageLayout/>,
 		children: [
 			{
 			path: '/',

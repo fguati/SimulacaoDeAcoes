@@ -1,5 +1,4 @@
 import Form from "Components/Form";
-import PageLayout from "Components/PageLayout";
 import IFormField from "Interfaces/IFormField";
 import useSubmitLoginRequest from "./utils/useSubmitLoginRequest";
 
@@ -22,10 +21,10 @@ function LoginPage() {
     const login = useSubmitLoginRequest()
 
     return(
-        <PageLayout>
+        <>
             <Form fields={fields} onSubmit={login} data-testid='LoginForm'/>
 
-        </PageLayout>
+        </>
     )
 }
 
