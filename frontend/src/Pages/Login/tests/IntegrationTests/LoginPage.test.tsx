@@ -12,9 +12,11 @@ describe('test login page render of login page', () => {
     test('Page must render with fields email and password and submit button', () => {
         
         render(
-            <SnackbarProvider>
-                <LoginPage/>
-            </SnackbarProvider>
+            <SessionProvider>
+                <SnackbarProvider>
+                    <LoginPage/>
+                </SnackbarProvider>
+            </SessionProvider>
         , {wrapper:MemoryRouter})
 
         const $emailField = screen.queryByLabelText('E-mail')

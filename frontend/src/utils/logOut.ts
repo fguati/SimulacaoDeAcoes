@@ -19,7 +19,7 @@ function useLogOut() {
         */
         setCookie('authToken', '', {expires: expiredDate})
         //set user login status to logged out
-        setLogIn!(false)
+        setLogIn(false)
     }
 
 }

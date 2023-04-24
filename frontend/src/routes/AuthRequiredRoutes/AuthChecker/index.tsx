@@ -15,7 +15,6 @@ function AuthRequestBranch() {
     const errorMessage = 'Please log in before trying to access this page'
     
     useEffect(() => {
-        console.log('entrou auth use effect', loggedIn) // mantendo esse log para checar as renderizações
         //use the session context to check whether user is logged in
         getLogInStatus!()
     }, [getLogInStatus])

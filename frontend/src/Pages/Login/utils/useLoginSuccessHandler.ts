@@ -22,7 +22,7 @@ function useLoginSuccessHandler() {
      */
     function loginSuccessHandler(response: Response, navigation: NavigateFunction) {
         //set user login status to true, which is how the app knows the user is logged in. Obs: updates state functionally to avoid the stale closure problem
-        setLogIn!(status => true)
+        setLogIn(status => true)
         
         //alerts the user that their login was successful
         activateSnackbar('Login successful', { colorPalette: 'success' })

@@ -14,8 +14,8 @@ describe('Unit tests of the Session Context', () => {
       
         return (<div>
             Logged in: {isLoggedIn.toString()}
-            <button onClick={() => setLogIn!(false)}>Change to False</button>
-            <button onClick={() => setLogIn!(true)}>Change to True</button>
+            <button onClick={() => setLogIn(false)}>Change to False</button>
+            <button onClick={() => setLogIn(true)}>Change to True</button>
         </div>)
     }
 

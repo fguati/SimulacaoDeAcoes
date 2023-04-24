@@ -7,15 +7,15 @@ interface Props {
 }
 
 interface ISessionContext {
-    setLogIn?: React.Dispatch<React.SetStateAction<boolean>>
-    getLogInStatus?: () => boolean
-    loggedIn?: boolean
+    setLogIn: React.Dispatch<React.SetStateAction<boolean>>
+    getLogInStatus: () => boolean
+    loggedIn: boolean
 }
 
 /**Session context will keep data relating to the session, 
  * receiving it initially from local storage sources 
 */
-const SessionContext = createContext<ISessionContext>({})
+const SessionContext = createContext<ISessionContext>(undefined!)
 
 SessionContext.displayName = 'SessionContext'
 
