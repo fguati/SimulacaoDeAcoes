@@ -32,6 +32,7 @@ describe('test the success handler custom hooke for the sign up page', () => {
         deactivateSnackbar: jest.fn(),
         snackbarMessage:'Placeholder',
         snackBarPosition: '-5vh',
+        overwriteDeactivationTimer: jest.fn()
     }
     const mockUseContext = useContext as jest.MockedFunction<typeof useContext>
 

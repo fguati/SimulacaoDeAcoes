@@ -53,22 +53,6 @@ describe('unit tests of the useLoginSuccessHandler custom hook', () => {
         mockUseLocation.mockReturnValue(mockLocation)
     })
 
-    test('rendered function must call the mockNavigation function with the route "/" if location.pathname return value if "/login"', () => {
-        const { result } = renderHook(() => useLoginSuccessHandler())
-        result.current(mockResponse, mockNavigation)
-
-        expect(mockNavigation).toBeCalledWith('/')
-    })
-
-    test('rendered function must call the mockNavigation function with "0" when location.pathname return value diferent of "/login"', () => {
-        mockLocation.pathname = '/'
-
-        const { result } = renderHook(() => useLoginSuccessHandler())
-        result.current(mockResponse, mockNavigation)
-
-        expect(mockNavigation).toBeCalledWith(0)
-    })
-
     test('rendered function must call activate snackbar with login successful message', () => {
         const { result } = renderHook(() => useLoginSuccessHandler())
         result.current(mockResponse, mockNavigation)

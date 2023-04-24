@@ -25,7 +25,8 @@ describe('Testing the component responsible for checking if user is logged in an
         colorPalette: 'neutral',
         deactivateSnackbar: jest.fn(),
         snackbarMessage: '',
-        snackBarPosition: '0vh'
+        snackBarPosition: '0vh',
+        overwriteDeactivationTimer: jest.fn()
     }
     
     function TestComponent() {
