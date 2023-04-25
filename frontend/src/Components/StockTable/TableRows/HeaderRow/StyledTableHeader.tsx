@@ -7,6 +7,7 @@ interface IPropsTableHeaders {
 const StyledTableHeader = styled.div`
     color: var(--standard-font-color);
     background-color: var(--background-no-color);
+    font-weight: 800;
     border: 1px solid var(--border-color);
     grid-row: 1;
     grid-column: ${(props: IPropsTableHeaders) => props.col ? props.col : 'auto'};
