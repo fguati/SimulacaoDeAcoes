@@ -1,6 +1,5 @@
 import styled from "styled-components";
 
-
 const HeaderContainer = styled.header`
     background-color: var(--background-color);
     display: flex;
@@ -8,6 +7,11 @@ const HeaderContainer = styled.header`
     align-items: center;
     height: 5vh;
     margin-bottom: 2vh;
+
+    nav {
+        display: flex;
+        align-items: center;
+    }
 `
 
 export default HeaderContainer;

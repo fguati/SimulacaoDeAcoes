@@ -22,19 +22,20 @@ const SnackbarContainer = styled.div`
     transform: ${snackPosition};
     
     //spacing style
-    padding: var(--default-spacing);
+    padding: var(--font-based-spacing);
     
     //box style
     background-color: ${({colorPalette}:IProps) => snackThemeSelector(colorPalette, 'background')};
     box-sizing: border-box;
     width: 100%;
-    height: 4vh;
+    /* height: 4vh; */
     
     //border style
     border: 2px solid ${({colorPalette}:IProps) => snackThemeSelector(colorPalette, 'line')};
     border-radius: 5px;
 
     //text style
+    line-height: 100%;
     text-align: center;
     color: ${({colorPalette}:IProps) => snackThemeSelector(colorPalette, 'line')};
     display: flex;
@@ -44,6 +45,14 @@ const SnackbarContainer = styled.div`
     //interactive style
     cursor: pointer;
     transition: ${transitionTime}ms;
+
+    @media screen and (min-width: 768px) {
+        font-size: var(--medium-font-size);
+    }
+
+    @media screen and (min-width: 768px) {
+        font-size: var(--large-font-size);
+    }
     
 `
 

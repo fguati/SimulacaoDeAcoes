@@ -2,6 +2,7 @@ import useSignUpSuccessHandler from "Pages/SignUp/utils/useSignUpSuccessHandler"
 import { useNavigate } from "react-router-dom";
 import { useContext } from 'react'
 import { ISnackbarContext } from "Common/Contexts/SnackbarContext";
+import { botScrnSnckBrPosition } from "Common/Constants";
 
 jest.mock('react-router-dom', () => {
     const originalMod = jest.requireActual('react-router-dom')
@@ -31,7 +32,7 @@ describe('test the success handler custom hooke for the sign up page', () => {
         colorPalette:'neutral',
         deactivateSnackbar: jest.fn(),
         snackbarMessage:'Placeholder',
-        snackBarPosition: '-5vh',
+        snackBarPosition: botScrnSnckBrPosition,
         overwriteDeactivationTimer: jest.fn()
     }
     const mockUseContext = useContext as jest.MockedFunction<typeof useContext>
