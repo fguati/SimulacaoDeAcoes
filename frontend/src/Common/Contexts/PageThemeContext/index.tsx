@@ -1,10 +1,11 @@
 import { ReactChildren } from "Common/Types";
 import { createContext, useState } from "react";
+import { PageTheme } from "./types";
 
 //Interface of values and methods provided by the page theme context
 interface IPageContextValues {
-    pageTheme: string
-    setPageTheme: React.Dispatch<React.SetStateAction<string>>
+    pageTheme: PageTheme
+    setPageTheme: React.Dispatch<React.SetStateAction<PageTheme>>
     toggleDarkMode: () => void
 }
 
@@ -15,7 +16,7 @@ PageThemeContext.displayName = 'PageThemeContext'
 //custom context provider
 export function PageThemeContextProvider({children}: {children: ReactChildren}) {
     //state that manages the color themes for the page
-    const [pageTheme, setPageTheme] = useState('')
+    const [pageTheme, setPageTheme] = useState<PageTheme>('')
 
     //function that toggles dark mode on and off
     function toggleDarkMode() {
