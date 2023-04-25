@@ -23,7 +23,7 @@ function parseErrorResponse(errorResponse: IErrorResponse): IErrorPageProps {
  * sent and uses the error info to create the props needed to render an error
  * page
  */
-function useErrorHandler(errorData?: IErrorResponse): IErrorPageProps {
+function useErrorHandler(errorData?: IErrorPageProps): IErrorPageProps {
     //Try to get error info sent when the app redirect the user to the error page
     const stateSentInNav = useLocation().state
     //Try ti get error thrown during routing
@@ -31,7 +31,7 @@ function useErrorHandler(errorData?: IErrorResponse): IErrorPageProps {
 
     //if error data was entered as an argument, create the error page props from it
     if(errorData?.code) {
-        return parseErrorResponse(errorData)
+        return errorData
     }
 
     //if error was caused by a routing error, create the error page props from its info
