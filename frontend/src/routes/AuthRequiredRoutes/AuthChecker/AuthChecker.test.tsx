@@ -13,6 +13,7 @@ describe('Testing the component responsible for checking if user is logged in an
     interface IMockedSessionContext {
         getLogInStatus: () => boolean
         loggedIn: boolean
+        setLogIn: React.Dispatch<React.SetStateAction<boolean>>
     }
 
     const MockedLoginPage = LoginPage as jest.MockedFunction<typeof LoginPage>
@@ -53,7 +54,8 @@ describe('Testing the component responsible for checking if user is logged in an
         MockedLoginPage.mockReturnValue((<p>Mocked Login Page</p>))
         const mockedSessionContext:IMockedSessionContext = {
             getLogInStatus: jest.fn(),
-            loggedIn: false
+            loggedIn: false,
+            setLogIn: jest.fn()
         }
 
         renderAuthBranch(mockedSessionContext)
@@ -66,7 +68,8 @@ describe('Testing the component responsible for checking if user is logged in an
     test('returns outlet if user is logged in', () => {
         const mockedSessionContext:IMockedSessionContext = {
             getLogInStatus: jest.fn(),
-            loggedIn: true
+            loggedIn: true,
+            setLogIn: jest.fn()
         }
 
         renderAuthBranch(mockedSessionContext)

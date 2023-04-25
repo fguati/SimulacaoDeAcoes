@@ -6,6 +6,10 @@ import IErrorPageProps from "Pages/ErrorPage/IErrorPageProps"
 */
 interface IErrorResponse extends IErrorPageProps {
     aditionalInfo?: string
+    code: number
+    name: string
+    message: string
+    
 }
 
 export default IErrorResponse

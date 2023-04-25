@@ -9,7 +9,6 @@ import IErrorPageProps from "./IErrorPageProps";
  */
 function ErrorPage(props: IErrorPageProps) {
     const {code, name, message} = useErrorHandler(props)
-
     return(
         <>
             <Title role={'title'}>{`Error ${code}: ${name}`}</Title>
