@@ -37,3 +37,14 @@
     --desktop-brk-point: 1024px;
 }
 
+.darkMode {
+    /* Color variables */
+    --dark-font-color: #FFF;
+    --standard-font-color: #FFF;
+    
+    --background-color:#222;
+    --background-no-color: #555;
+    
+    /* General color of base background */
+    background-color:#333;
+}
