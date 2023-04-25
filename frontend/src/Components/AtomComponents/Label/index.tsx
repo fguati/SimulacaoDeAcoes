@@ -1,6 +1,7 @@
 import styled from "styled-components";
 
 const Label = styled.label`
+    color: var(--standard-font-color);
     font-size: var(--medium-font-size);
     font-weight: 500;
 

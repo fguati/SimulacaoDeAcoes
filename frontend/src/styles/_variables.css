@@ -1,11 +1,17 @@
 :root {
     /* Color variables */
     --border-color: #333333;
+
     --button-color: #000065;
+
     --light-font-color:#FFF;
     --dark-font-color: #0b1464;
+    --standard-font-color: #222222;
+
     --background-color:#000065;
     --background-light: #D9E1F2;
+    --background-no-color: #FFF;
+
     --success-dark: #006100;
     --success-light: #C6EFCE;
     --failure-dark: #9C0006;

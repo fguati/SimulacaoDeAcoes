@@ -14,6 +14,8 @@ function selectProp(props: IPropsStyledTableCell, attribute: 'row' | 'column' | 
 }
 
 const StyledTableItem = styled.div`
+    color: var(--standard-font-color);
+    background-color: var(--background-no-color);
     border: 1px solid var(--border-color);
     grid-row: ${(props: IPropsStyledTableCell) => selectProp(props, 'row', 'auto')} / span ${(props: IPropsStyledTableCell) => selectProp(props, 'rowLength', '1')};
     grid-column: ${(props: IPropsStyledTableCell) => selectProp(props, 'column', 'auto')} / span ${(props: IPropsStyledTableCell) => selectProp(props, 'columnLength', '1')};
