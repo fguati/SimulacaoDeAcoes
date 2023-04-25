@@ -14,6 +14,14 @@ const BorderlessBtn = styled.button`
     color: ${(props: IProps) => (props.txtColor === 'dark' ? '(--dark-font-color)' : 'var(--light-font-color)')};
     border: none;
     cursor: pointer;
+
+    @media screen and (min-width: 375px){
+        font-size: var(--medium-font-size);
+    }
+
+    @media screen and (min-width: 1024px){
+        font-size: var(--large-font-size);
+    }
 `
 
 export default BorderlessBtn

@@ -1,4 +1,5 @@
 @import url('./_variables.css');
+@import url('./defaultStyles.css');
 
 .App {
   text-align: center;

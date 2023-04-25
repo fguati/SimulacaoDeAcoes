@@ -12,10 +12,20 @@
     --failure-light: #FFC7CE;
 
     /* Spacing Variables */
+    --font-based-spacing: 0.5em;
+    --small-spacing: 4px;
     --default-spacing: 8px;
+    --large-spacing: 16px;
     --xl-spacing: 32px;
 
     /* Font variables */
     --large-font-size: 18px;
+    --medium-font-size: 14px;
+    --default-font-size: 12px;
+
+    /* Breakpoints */
+    --mobile-brk-point: 375px;
+    --table-brk-point: 768px;
+    --desktop-brk-point: 1024px;
 }
   
