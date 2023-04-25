@@ -15,10 +15,12 @@
     --font-based-spacing: 0.5em;
     --small-spacing: 4px;
     --default-spacing: 8px;
+    --medium-spacing: 12px;
     --large-spacing: 16px;
     --xl-spacing: 32px;
 
     /* Font variables */
+    --xl-font-size: 22px;
     --large-font-size: 18px;
     --medium-font-size: 14px;
     --default-font-size: 12px;

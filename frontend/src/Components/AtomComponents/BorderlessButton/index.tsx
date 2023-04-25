@@ -14,6 +14,8 @@ const BorderlessBtn = styled.button`
     color: ${(props: IProps) => (props.txtColor === 'dark' ? '(--dark-font-color)' : 'var(--light-font-color)')};
     border: none;
     cursor: pointer;
+    font-size: var(--default-font-size);
+
 
     @media screen and (min-width: 375px){
         font-size: var(--medium-font-size);

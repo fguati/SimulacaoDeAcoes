@@ -8,6 +8,7 @@ const Button = styled.button`
     margin: var(--default-spacing);
     padding: var(--default-spacing) var(--xl-spacing);
     cursor: pointer;
+    font-size: var(--default-font-size);
 
     @media screen and (min-width: 375px){
         font-size: var(--medium-font-size);
