@@ -12,10 +12,10 @@ function PageLayout() {
     return(
         <div className={pageTheme}>
             <Header/>
+            <DarkModeToggleButton/>
             <PageContainer>
                 <ContentContainer>
                     <Outlet/>
-                    <DarkModeToggleButton/>
                 </ContentContainer>
                 <Snackbar/>
             </PageContainer>
