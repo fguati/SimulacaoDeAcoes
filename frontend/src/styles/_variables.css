@@ -26,6 +26,7 @@
     --xl-spacing: 32px;
 
     /* Font variables */
+    --xxl-font-size: 26px;
     --xl-font-size: 22px;
     --large-font-size: 18px;
     --medium-font-size: 14px;
@@ -36,4 +37,15 @@
     --table-brk-point: 768px;
     --desktop-brk-point: 1024px;
 }
-  
+
+.darkMode {
+    /* Color variables */
+    --dark-font-color: #FFF;
+    --standard-font-color: #FFF;
+    
+    --background-color:#222;
+    --background-no-color: #555;
+    
+    /* General color of base background */
+    background-color:#333;
+}
