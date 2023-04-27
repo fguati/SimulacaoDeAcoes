@@ -1,7 +1,7 @@
 /* eslint-disable testing-library/no-node-access */
 import { render, screen, fireEvent } from '@testing-library/react'
 import IFormField from "Interfaces/IFormField"
-import Form from '.'
+import Form from '..'
 
 describe('Testing the behavior of the form component', () => {
     const testFields: IFormField[] = [
