@@ -4,7 +4,7 @@ import IFormField from "Interfaces/IFormField"
 
 export type FormValidator = (field: IFormField) => boolean
 
-// Campo não pode ser vazio
+// Check whether mandatory field is empty 
 export const fieldIsNotEmpty: FormValidator = (field) => {
     return Boolean(field.value)
 } 
