@@ -10,9 +10,10 @@ describe('Unit tests of the form validator functions', () => {
             value: ''
         }
 
-        const testResult = fieldIsNotEmpty(testField)
+        const testResult = fieldIsNotEmpty(testField.value)
 
-        expect(testResult).toBe(false)
+        expect(testResult.valid).toBe(false)
+        expect(testResult.message).toEqual(expect.any(String))
     })
 
     test('Validator that checks if form fields are not empty should return true if receives a filled field', () => {
@@ -22,8 +23,10 @@ describe('Unit tests of the form validator functions', () => {
             value: 'value'
         }
 
-        const testResult = fieldIsNotEmpty(testField)
+        const testResult = fieldIsNotEmpty(testField.value)
 
-        expect(testResult).toBe(true)
+        expect(testResult.valid).toBe(true)
+        expect(testResult.message).toBe(undefined)
+
     })
 })

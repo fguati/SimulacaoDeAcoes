@@ -6,8 +6,8 @@ import { FormValidator } from "utils/FormValidators";
 // }
 
 //Tests if a validator failed
-const isThisValidatorInvalid = (validator: FormValidator, field: IFormField):boolean => {
-    const valid = validator(field)
+const isThisValidatorInvalid = (validator: FormValidator, value: string | number):boolean => {
+    const { valid } = validator(value)
     const invalid = !valid
     return invalid
 }
@@ -16,7 +16,7 @@ const isThisValidatorInvalid = (validator: FormValidator, field: IFormField):boo
 const isThisFieldValid = (field: IFormField) => {
     if(field.validators && field.validators.length){
         const oneValidatorIsInvalid = field.validators.some(validator => {
-            return isThisValidatorInvalid(validator, field)
+            return isThisValidatorInvalid(validator, field.value)
         })
 
         const thisFieldIsValid = !oneValidatorIsInvalid

@@ -1,12 +1,23 @@
 //Validações Gerais:
 
-import IFormField from "Interfaces/IFormField"
+export interface IValidatorReturn {
+    message?: string
+    valid: boolean
+}
 
-export type FormValidator = (field: IFormField) => boolean
+export type FormValidator = (value: string | number) => IValidatorReturn
 
 // Check whether mandatory field is empty 
-export const fieldIsNotEmpty: FormValidator = (field) => {
-    return Boolean(field.value)
+export const fieldIsNotEmpty: FormValidator = (value) => {
+    const res:IValidatorReturn = {
+        valid: Boolean(value)
+    }
+
+    if(!res.valid) {
+        res.message = "can't be empty"
+    }
+
+    return res
 } 
 
 

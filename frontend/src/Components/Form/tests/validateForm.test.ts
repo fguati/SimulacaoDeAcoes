@@ -4,10 +4,10 @@ import { formIsValid } from "../validateForm"
 
 describe('Test the function that does the field validation', () => {
     const testValidatorFailed: FormValidator = (field) => {
-        return false
+        return {valid: false}
     }
     const testValidatorApproved: FormValidator = (field) => {
-        return true
+        return {valid: true}
     }
 
     const testListOfFormFields: IFormField[] = [
