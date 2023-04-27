@@ -1,11 +1,16 @@
+import { FormValidator } from "utils/FormValidators"
+
 /**
  * Interface that determine which properties are necessary
  * to render an standard input field in a form
  */
+export type FieldValue = string | number
+
 interface IFormField {
     name: string
     type: 'text' | 'password' | 'email'
-    value: string | number
+    value: FieldValue
+    validators?: Array<FormValidator>
 }
 
 export default IFormField

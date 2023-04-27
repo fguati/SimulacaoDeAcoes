@@ -11,6 +11,7 @@ function InputField( {children, name, currentValue, setValue, inputType = 'text'
             <Input 
                 value={currentValue} 
                 onChange={e => setValue(e)}
+                // onBlur={e => validator(e.target.value)}
                 type={inputType}
                 name={name}
                 aria-labelledby={name}

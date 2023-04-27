@@ -3,6 +3,7 @@ import InputField from "Components/AtomComponents/InputField"
 import FormContainer from "./FormContainer"
 import IFormProps from "./IFormProps"
 import useFormFields from "./useFormFields"
+import { isAnyFieldInvalid } from "./validateFields"
 
 /**component for forms. Receives a list of fields, rendered them all as input 
  * fields with the inputs and their labels, and render a submit button as well 
@@ -22,6 +23,8 @@ function Form({fields, onSubmit}:IFormProps) {
         clearForm()
     }
 
+    const submitButtonDisabled = isAnyFieldInvalid(currentFieldValues)
+
     return(
         <FormContainer action="" onSubmit={baseOnSubmit}>
             {currentFieldValues.map((field) => {
@@ -32,13 +35,22 @@ function Form({fields, onSubmit}:IFormProps) {
                         name={name}
                         currentValue={value}
                         setValue={(e) => setFieldValue({value:e.target.value, name, type})}
+                        // onBlur={e => }
                         inputType={type}
                     >
                         {field.name}
                     </InputField>
                 )
             })}
-            <Button type="submit">Submit</Button>
+
+            <Button 
+                type="submit" 
+                disabled={submitButtonDisabled}
+                disabledStyle={submitButtonDisabled}
+            >
+                Submit
+            </Button>
+
         </FormContainer>
     )
 }

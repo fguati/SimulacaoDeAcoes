@@ -16,6 +16,8 @@
     --success-light: #C6EFCE;
     --failure-dark: #9C0006;
     --failure-light: #FFC7CE;
+    --disabled-bg: #888;
+    --disabled-font: #111;
 
     /* Spacing Variables */
     --font-based-spacing: 0.5em;
