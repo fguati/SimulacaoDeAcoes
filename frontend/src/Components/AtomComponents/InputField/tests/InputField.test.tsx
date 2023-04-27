@@ -1,6 +1,6 @@
 import { render, screen } from "@testing-library/react"
-import InputField from "."
-import IInputFieldProps from "./IInputFieldProps"
+import InputField from ".."
+import IInputFieldProps from "../IInputFieldProps"
 import '@testing-library/jest-dom'
 
 describe('testing the Input Field Component', () => {

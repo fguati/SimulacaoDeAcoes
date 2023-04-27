@@ -1,10 +1,10 @@
-import Input from "./StyledInput"
-import InputFieldContainer from "./InputFieldContainer";
+import Input from "./StyledComponents/StyledInput"
+import InputFieldContainer from "./StyledComponents/InputFieldContainer";
 import IInputFieldProps from "./IInputFieldProps";
 import Label from "Components/AtomComponents/Label";
 
 //Component made of an input and its label
-function InputField( {children, name, currentValue, setValue, inputType = 'text'}: IInputFieldProps ) {
+function InputField( {children, name, currentValue, setValue, inputType = 'text', validators = [] }: IInputFieldProps ) {
     return(
         <InputFieldContainer role={'InputField'}>
             <Label id={name}>{children}</Label>

@@ -1,4 +1,5 @@
 import { ReactElement } from 'react'
+import { FormValidator } from 'utils/FormValidators'
 
 interface IInputFieldProps {
     children: ReactElement | string
@@ -6,6 +7,7 @@ interface IInputFieldProps {
     currentValue: string | number
     setValue: (value: React.ChangeEvent<HTMLInputElement>) => void
     inputType?: 'text' | 'email' | 'password'
+    validators?: Array<FormValidator>
 }
 
 export default IInputFieldProps;

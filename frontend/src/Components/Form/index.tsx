@@ -3,7 +3,7 @@ import InputField from "Components/AtomComponents/InputField"
 import FormContainer from "./FormContainer"
 import IFormProps from "./IFormProps"
 import useFormFields from "./useFormFields"
-import { formIsValid } from "./validateFields"
+import { formIsValid } from "./validateForm"
 
 /**component for forms. Receives a list of fields, rendered them all as input 
  * fields with the inputs and their labels, and render a submit button as well 

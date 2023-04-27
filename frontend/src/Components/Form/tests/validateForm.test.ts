@@ -1,6 +1,6 @@
 import IFormField from "Interfaces/IFormField"
 import { FormValidator } from "utils/FormValidators"
-import { formIsValid } from "../validateFields"
+import { formIsValid } from "../validateForm"
 
 describe('Test the function that does the field validation', () => {
     const testValidatorFailed: FormValidator = (field) => {
