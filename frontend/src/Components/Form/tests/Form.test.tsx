@@ -2,6 +2,9 @@
 import { render, screen, fireEvent } from '@testing-library/react'
 import IFormField from "Interfaces/IFormField"
 import Form from '..'
+// import useValidateField from 'Components/AtomComponents/InputField/Functionality/useValidateField'
+
+jest.mock('Components/AtomComponents/InputField/Functionality/useValidateField', () => jest.fn())
 
 describe('Testing the behavior of the form component', () => {
     const testFields: IFormField[] = [
