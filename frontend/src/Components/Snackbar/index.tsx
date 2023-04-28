@@ -14,11 +14,12 @@ function Snackbar() {
             const timerID = setTimeout(() => {
                 deactivateSnackbar()
             }, transitionTime * 2)
-            
+
             //Overwrite deactivation timer so the timer can be cleared by other snackbar calls if needed
             overwriteDeactivationTimer(timerID)
         }
-    }, [active, overwriteDeactivationTimer, deactivateSnackbar])
+        //snackBarMessage must be a dependency so the deactivation timer gets reset if to snackbar call are done in quick succession
+    }, [active, overwriteDeactivationTimer, deactivateSnackbar, snackbarMessage])
     
     return (
         <>
