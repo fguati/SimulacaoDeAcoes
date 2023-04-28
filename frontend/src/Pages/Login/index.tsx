@@ -1,6 +1,7 @@
 import Form from "Components/Form";
 import IFormField from "Interfaces/IFormField";
 import useSubmitLoginRequest from "./utils/useSubmitLoginRequest";
+import { fieldIsNotEmpty } from "utils/FormValidators";
 
 /**
  * Renders the Login Page, with email and password input fields and a
@@ -10,8 +11,8 @@ import useSubmitLoginRequest from "./utils/useSubmitLoginRequest";
 function LoginPage() {
     //fields that will be rendered in the login form
     const fields:IFormField[] = [
-        {name: 'E-mail', type:'email', value:''}, 
-        {name: 'Password', type:'password', value:''}
+        {name: 'E-mail', type:'email', value:'', validators: [fieldIsNotEmpty]}, 
+        {name: 'Password', type:'password', value:'', validators: [fieldIsNotEmpty]}
     ] 
     
     /**
