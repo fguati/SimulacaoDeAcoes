@@ -76,7 +76,15 @@ const SnackbarProvider = ({ children }: IProps) => {
             setSnackbarPosition(botScrnSnckBrPosition)
         }, transitionTime / 5)
 
-    }, [overwriteDeactivationTimer, setActive, setColorPalette, setSnackbarMessage, setSnackbarPosition])
+        //sets snackbar to be deactivated after a short while
+        const timerID = setTimeout(() => {
+            deactivateSnackbar()
+        }, transitionTime * 2)
+
+        //Overwrite deactivation timer so the timer can be cleared by other snackbar calls if needed
+        overwriteDeactivationTimer(timerID)
+
+    }, [overwriteDeactivationTimer, setActive, setColorPalette, setSnackbarMessage, setSnackbarPosition, deactivateSnackbar])
 
     return (
         <SnackbarContext.Provider value={{ active, deactivateSnackbar, activateSnackbar, snackBarPosition, snackbarMessage, colorPalette, overwriteDeactivationTimer }}>
