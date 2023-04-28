@@ -1,10 +1,14 @@
 import styled from "styled-components";
 
+interface IButtonProps {
+    disabledStyle?: boolean
+}
+
 const Button = styled.button`
-    color: var(--light-font-color);
-    background-color: var(--button-color);
+    color: ${(props: IButtonProps) => props.disabledStyle ? 'var(--disabled-font)' : 'var(--light-font-color)'};
+    background-color: ${(props: IButtonProps) => props.disabledStyle ? 'var(--disabled-bg)' : 'var(--button-color)'};
     border-radius: 5px;
-    border-color: var(--button-color);
+    border-color: ${(props: IButtonProps) => props.disabledStyle ? 'var(--disabled-bg)' : 'var(--button-color)'};
     margin: var(--default-spacing);
     padding: var(--default-spacing) var(--xl-spacing);
     cursor: pointer;
@@ -17,6 +21,7 @@ const Button = styled.button`
     @media screen and (min-width: 1024px){
         font-size: var(--large-font-size);
     }
+
 `
 
 export default Button;
