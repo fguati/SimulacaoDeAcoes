@@ -87,9 +87,10 @@ describe('test validators of login page', () => {
         renderLoginPage()
 
         const $emailInput = screen.getByLabelText('E-mail')
+        const $passwordInput = screen.getByLabelText('Password')
         expect($emailInput.textContent).toBe('')
 
-        fireEvent.blur($emailInput)
+        fireEvent.blur($emailInput, {relatedTarget: $passwordInput})
         const $snackbar = screen.getByText('invalid value', {exact: false})
         expect($snackbar.textContent).toEqual(expect.stringContaining('E-mail'))
         expect($snackbar.textContent).toEqual(expect.stringContaining('empty'))
@@ -99,9 +100,10 @@ describe('test validators of login page', () => {
         renderLoginPage()
 
         const $passwordInput = screen.getByLabelText('Password')
+        const $emailInput = screen.getByLabelText('E-mail')
         expect($passwordInput.textContent).toBe('')
 
-        fireEvent.blur($passwordInput)
+        fireEvent.blur($passwordInput, {relatedTarget: $emailInput})
         const $snackbar = screen.getByText('invalid value', {exact: false})
         expect($snackbar.textContent).toEqual(expect.stringContaining('Password'))
         expect($snackbar.textContent).toEqual(expect.stringContaining('empty'))
