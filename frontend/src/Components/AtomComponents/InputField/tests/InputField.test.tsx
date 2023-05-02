@@ -44,13 +44,17 @@ describe('testing the Input Field Component', () => {
         const {name, currentValue, validators} = testProps
         
         render(
-            <InputField {...testProps}>
-                {childrenByElement}
-            </InputField>
+            <>
+                <InputField {...testProps}>
+                    {childrenByElement}
+                </InputField>
+                <input role="focusTarget"/>
+            </>
         );
     
         const inputField = screen.getByRole("textbox");
-        fireEvent.blur(inputField);
+        const focusTarget = screen.getByRole('focusTarget')
+        fireEvent.blur(inputField, { relatedTarget: focusTarget });
     
         expect(mockedValidateField).toHaveBeenCalledTimes(1);
         expect(mockedValidateField).toHaveBeenCalledWith(name, currentValue, validators);

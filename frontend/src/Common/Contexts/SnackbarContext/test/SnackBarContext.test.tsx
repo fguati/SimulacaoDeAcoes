@@ -25,9 +25,9 @@ describe('Test snackbar context module', () => {
                 <div>{snackBarPosition}</div>
                 <div>{colorPalette}</div>
                 <div>{snackbarMessage}</div>
-                <button onClick={() => activateSnackbar!('fail message', {colorPalette: "failure"})}>activate failure</button>
-                <button onClick={() => activateSnackbar!('other message', {colorPalette: "neutral"})}>activate neutral</button>
-                <button onClick={() => activateSnackbar!('succeded message', {colorPalette: "success"})}>activate success</button>
+                <button onClick={() => activateSnackbar('fail message', {colorPalette: "failure"})}>activate failure</button>
+                <button onClick={() => activateSnackbar('other message', {colorPalette: "neutral"})}>activate neutral</button>
+                <button onClick={() => activateSnackbar('succeded message', {colorPalette: "success"})}>activate success</button>
                 <button onClick={() => deactivateSnackbar!()}>deactivate</button>
             </>
         )
@@ -65,7 +65,7 @@ describe('Test snackbar context module', () => {
         function testActivateButton(testButton: HTMLElement, message:string, pallete: BoxColorPalette) {
             fireEvent.click(testButton)
             act(() => {
-                jest.runAllTimers()
+                jest.advanceTimersToNextTimer()
             })
             $pallete = screen.getByText(pallete)
             expect($pallete).toBeInTheDocument()
@@ -96,7 +96,7 @@ describe('Test snackbar context module', () => {
 
         fireEvent.click($failureButton)
         act(() => {
-            jest.runAllTimers()
+            jest.advanceTimersToNextTimer()
         })
 
         let $active = screen.getByText('true')

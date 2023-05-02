@@ -68,16 +68,6 @@ describe('Unit tests of the behavior of the Snackbar component', () => {
         expect(mockedSnackbarContext.deactivateSnackbar).toBeCalled()
     })
 
-    it('must call deactivateSnackbar after a short interval if snackbar is active', () => {
-        mockedSnackbarContext.active = true
-        renderSnackBar()
-        act(() => {
-            jest.runAllTimers()
-        })
-
-        expect(mockedSnackbarContext.deactivateSnackbar).toBeCalled()
-    })
-
 })
 
 describe('Integration tests between snackbar component and its context', () => {
@@ -169,6 +159,23 @@ describe('Integration tests between snackbar component and its context', () => {
         expect($snackbar).not.toBeInTheDocument()
 
         const $activateButton = screen.getAllByText('button', { exact:false })
+        fireEvent.click($activateButton[0])
+        
+        $snackbar = screen.queryByTestId('snackbar')
+        expect($snackbar).toBeInTheDocument()
+
+        act(() => jest.runAllTimers())
+        $snackbar = screen.queryByTestId('snackbar')
+        expect($snackbar).not.toBeInTheDocument()
+    })
+
+    test('snackbar must be unmounted after a short interval, even if 2 calls are made in quick succession', () => {
+        renderSnackBar()
+        let $snackbar = screen.queryByTestId('snackbar')
+        expect($snackbar).not.toBeInTheDocument()
+
+        const $activateButton = screen.getAllByText('button', { exact:false })
+        fireEvent.click($activateButton[0])
         fireEvent.click($activateButton[0])
         
         $snackbar = screen.queryByTestId('snackbar')
