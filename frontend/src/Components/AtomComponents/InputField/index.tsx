@@ -8,13 +8,19 @@ import useValidateField from "./Functionality/useValidateField";
 function InputField( {children, name, currentValue, setValue, inputType = 'text', validators = [] }: IInputFieldProps ) {
     const validateField = useValidateField()
     
+    function handleBlur(event: React.FocusEvent<HTMLInputElement, Element>) {
+        if(event.relatedTarget?.tagName){
+            return validateField(name, currentValue, validators)
+        }
+    }
+
     return(
         <InputFieldContainer role={'InputField'}>
             <Label id={name}>{children}</Label>
             <Input 
                 value={currentValue} 
                 onChange={e => setValue(e)}
-                onBlur={e => validateField(name, currentValue, validators)}
+                onBlur={e => handleBlur(e)}
                 type={inputType}
                 name={name}
                 aria-labelledby={name}
