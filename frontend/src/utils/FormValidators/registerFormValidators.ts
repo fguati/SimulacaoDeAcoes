@@ -33,7 +33,6 @@ export const passwordMatchesRequirements:FormValidator = (password) => {
 
     //checks if matches pattern
     const validPassword = regexPasswordPattern.test(passwordString)
-    console.log(validPassword)
 
     //initialize return value with valid having the value of the check
     const res: IValidatorReturn = {
@@ -49,5 +48,25 @@ export const passwordMatchesRequirements:FormValidator = (password) => {
     return res
 }
 
-// Confirmar Password:
-// valor do campo igual ao do campo password
+//Checks whether password and confirm password fields have the same value
+export const passwordFieldMatchesConfirmePassword: FormValidator = (confirmPasswordValue) => {
+    //get value from password field (hack: must be done via query selector due to field state no being available at form level)
+    const $passwordField = document.querySelector('[aria-labelledby="Password"]') as HTMLInputElement;
+    const passwordValue = $passwordField.value
+
+    //check if password and confirm password values match
+    const validConfirmPassword = (confirmPasswordValue === passwordValue)
+
+    //initialize return value object
+    const res: IValidatorReturn = {
+        valid: validConfirmPassword
+    }
+    //check for failed validation
+    if(!validConfirmPassword){
+        //load error message on return value
+        res.message = 'must have the same value as the Password field'
+    }
+
+    return res
+}
+

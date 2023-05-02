@@ -1,5 +1,5 @@
 import IFormField from "Interfaces/IFormField"
-import { emailFieldIsCorrectlyFormatted, fieldIsNotEmpty, entederedValueIsWithinLength, passwordMatchesRequirements } from ".."
+import { emailFieldIsCorrectlyFormatted, fieldIsNotEmpty, entederedValueIsWithinLength, passwordMatchesRequirements, passwordFieldMatchesConfirmePassword } from ".."
 
 describe('Unit tests of the form validator functions', () => {
     
@@ -203,6 +203,48 @@ describe('Unit tests of the form validator functions', () => {
         }
 
         let testResult = passwordMatchesRequirements(testField.value)
+
+        expect(testResult.valid).toBe(true)
+        expect(testResult.message).toEqual(undefined)
+    })
+
+    test('Confirm password validator must return false if password does not match confirm password', () => {
+        const testField: IFormField = {
+            name: 'Test Field',
+            type: 'password',
+            value: 'abc'
+        }
+
+        const mockQuerySelector = jest.spyOn(document, 'querySelector');
+        mockQuerySelector.mockImplementation(() => {
+            const inputElement = document.createElement('input');
+            inputElement.setAttribute('aria-labelledby', 'Password');
+            inputElement.value = 'notMatchingValue'
+            return inputElement;
+        });
+
+        let testResult = passwordFieldMatchesConfirmePassword(testField.value)
+
+        expect(testResult.valid).toBe(false)
+        expect(testResult.message).toEqual(expect.any(String))
+        
+    })
+    test('Confirm password validator must return true if password matches confirm password', () => {
+        const testField: IFormField = {
+            name: 'Test Field',
+            type: 'password',
+            value: 'abc'
+        }
+
+        const mockQuerySelector = jest.spyOn(document, 'querySelector');
+        mockQuerySelector.mockImplementation(() => {
+            const inputElement = document.createElement('input');
+            inputElement.setAttribute('aria-labelledby', 'Password');
+            inputElement.value = 'abc'
+            return inputElement;
+        });
+
+        let testResult = passwordFieldMatchesConfirmePassword(testField.value)
 
         expect(testResult.valid).toBe(true)
         expect(testResult.message).toEqual(undefined)
