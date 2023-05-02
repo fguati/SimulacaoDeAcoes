@@ -1,5 +1,5 @@
 import { fieldIsNotEmpty, entederedValueIsWithinLength } from "./globalValidators"
-import { emailFieldIsCorrectlyFormatted } from './registerFormValidators'
+import { emailFieldIsCorrectlyFormatted, passwordMatchesRequirements} from './registerFormValidators'
 
 //Validator types and interfaces
 export interface IValidatorReturn {
@@ -13,5 +13,6 @@ export type FormValidator = (value: string | number) => IValidatorReturn
 export {
     fieldIsNotEmpty,
     emailFieldIsCorrectlyFormatted,
-    entederedValueIsWithinLength
+    entederedValueIsWithinLength,
+    passwordMatchesRequirements
 }

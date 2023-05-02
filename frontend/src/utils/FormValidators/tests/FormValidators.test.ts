@@ -1,5 +1,5 @@
 import IFormField from "Interfaces/IFormField"
-import { emailFieldIsCorrectlyFormatted, fieldIsNotEmpty, entederedValueIsWithinLength } from ".."
+import { emailFieldIsCorrectlyFormatted, fieldIsNotEmpty, entederedValueIsWithinLength, passwordMatchesRequirements } from ".."
 
 describe('Unit tests of the form validator functions', () => {
     
@@ -147,6 +147,62 @@ describe('Unit tests of the form validator functions', () => {
         
         lengthRange = {maxLength: 20}
         testResult = entederedValueIsWithinLength(lengthRange)(testField.value)
+
+        expect(testResult.valid).toBe(true)
+        expect(testResult.message).toEqual(undefined)
+    })
+
+    test('Password validator must reject entries that dont meet password requirements', () => {
+        const testField: IFormField = {
+            name: 'Test Field',
+            type: 'password',
+            value: 'abc'
+        }
+
+        let testResult = passwordMatchesRequirements(testField.value)
+
+        expect(testResult.valid).toBe(false)
+        expect(testResult.message).toEqual(expect.any(String))
+
+        testField.value = 'ABC'
+        testResult = passwordMatchesRequirements(testField.value)
+
+        expect(testResult.valid).toBe(false)
+        expect(testResult.message).toEqual(expect.any(String))
+
+        testField.value = '###'
+        testResult = passwordMatchesRequirements(testField.value)
+
+        expect(testResult.valid).toBe(false)
+        expect(testResult.message).toEqual(expect.any(String))
+
+        testField.value = 'ABCd'
+        testResult = passwordMatchesRequirements(testField.value)
+
+        expect(testResult.valid).toBe(false)
+        expect(testResult.message).toEqual(expect.any(String))
+
+        testField.value = 'ab#'
+        testResult = passwordMatchesRequirements(testField.value)
+
+        expect(testResult.valid).toBe(false)
+        expect(testResult.message).toEqual(expect.any(String))
+
+        testField.value = 'AB#'
+        testResult = passwordMatchesRequirements(testField.value)
+
+        expect(testResult.valid).toBe(false)
+        expect(testResult.message).toEqual(expect.any(String))
+    })
+
+    test('Password validator must accept entries that do meet password requirements', () => {
+        const testField: IFormField = {
+            name: 'Test Field',
+            type: 'password',
+            value: 'aB!4'
+        }
+
+        let testResult = passwordMatchesRequirements(testField.value)
 
         expect(testResult.valid).toBe(true)
         expect(testResult.message).toEqual(undefined)
