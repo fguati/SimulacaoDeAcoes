@@ -1,5 +1,3 @@
-import { fieldIsNotEmpty, entederedValueIsWithinLength } from "./globalValidators"
-import { emailFieldIsCorrectlyFormatted, passwordMatchesRequirements, passwordFieldMatchesConfirmePassword} from './registerFormValidators'
 
 //Validator types and interfaces
 export interface IValidatorReturn {
@@ -10,10 +8,6 @@ export interface IValidatorReturn {
 export type FormValidator = (value: string | number) => IValidatorReturn
 
 //Export Validators
-export {
-    fieldIsNotEmpty,
-    emailFieldIsCorrectlyFormatted,
-    entederedValueIsWithinLength,
-    passwordMatchesRequirements,
-    passwordFieldMatchesConfirmePassword
-}
+export * from "./globalValidators"
+export * from './registerFormValidators'
+
