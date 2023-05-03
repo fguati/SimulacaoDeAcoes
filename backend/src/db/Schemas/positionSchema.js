@@ -6,7 +6,8 @@ const POSITION_SCHEMA = `
     stock_ticker VARCHAR(12) NOT NULL,
     stock_qty INTEGER NOT NULL,
     stock_avg_price REAL,
-    FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
+    FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE,
+    CONSTRAINT unique_user_stock UNIQUE (user_id, stock_ticker)
   );
   `
 

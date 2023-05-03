@@ -1,3 +1,5 @@
+const { InvalidInputError } = require("../CustomErrors")
+
 /**receives a list of values that will be entered as arguments in 
  * a function or method and checks if any of them in invalid.
  * Used to validate data received through forms
@@ -23,4 +25,11 @@ function listInvalidInputs(objectWithInputs, listOfInputNames) {
     return resultList
 }
 
-module.exports = { hasInvalidParam, listInvalidInputs }
+function checkInvalidInputsErrors(listOfArguments, objectWithInputs, listOfInputNames) {
+    if(hasInvalidParam(listOfArguments)) {
+        const InvalidInputList = listInvalidInputs(objectWithInputs, listOfInputNames)
+        throw new InvalidInputError(`Invalid column`, InvalidInputList)
+    }
+}
+
+module.exports = { hasInvalidParam, listInvalidInputs, checkInvalidInputsErrors }

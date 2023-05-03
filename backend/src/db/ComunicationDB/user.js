@@ -1,7 +1,6 @@
 const { InvalidCredentialsError } = require('../../CustomErrors')
 const { InvalidInputError } = require('../../CustomErrors')
-const { hasInvalidParam, listInvalidInputs } = require('../../utils')
-const checkUniqueConstraintError = require('../../utils/checkUniqueConstraintError.js')
+const { checkUniqueConstraintError, checkInvalidInputsErrors } = require('../../utils')
 const { dbAll, dbRun, dbGet } = require('../utils/dbutils.js')
 
 class UserDAO {
@@ -64,10 +63,7 @@ class UserDAO {
         try {
             const listOfArguments = [username, email, hashed_password, salt]
             
-            if(hasInvalidParam(listOfArguments)) {
-                const InvalidInputList = listInvalidInputs(user, userPropertyList)
-                throw new InvalidInputError(`Invalid column`, InvalidInputList)
-            }
+            checkInvalidInputsErrors(listOfArguments, user,userPropertyList)
 
             await dbRun(insertSQL, [username, email, hashed_password, salt])
             
