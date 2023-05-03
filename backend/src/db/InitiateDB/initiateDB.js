@@ -15,13 +15,16 @@ const db = new sqlite3.Database(dbFilePath, (err) => {
 
 //Run sql to create any table still not in the database.
 db.serialize(() => {
-    // db.run('PRAGMA foreign_keys=ON',(err) => {
-    //     return console.log(`Erro no FK do db: ${err.message}`)
-    // })
+    db.run('PRAGMA foreign_keys=ON',(err) => {
+        if(err){
+            return console.log(`Erro no FK do db: ${err.message}`)
+        }
+    })
+
     SCHEMA_LIST.forEach(SchemaItem => {
         db.run(SchemaItem, (err) => {
             if(err){
-                return console.log(`Erro na criação da tabela do usuario: ${err}`)
+                return console.log(`Erro na criação da tabela: ${err}`)
             }
         })
     })
