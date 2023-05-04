@@ -1,4 +1,4 @@
-const { UniqueConstraintError, NotFoundError } = require('../CustomErrors')
+const { NotFoundError } = require('../CustomErrors')
 
 /**receives an error, throw a new one in the not found class
  * if the received one that is an sqlite foreign key constraint error. Makes use
@@ -11,13 +11,13 @@ function checkForeignKeyError(error, customMessage = null) {
     if (isSqliteError) {
 
         //checks if the error is due to foreign key constraint
-        const isUniqueConstraintError = error.message.includes('FOREIGN KEY')
+        const isForeignKeyConstraintError = error.message.includes('FOREIGN KEY')
 
         //uses sqlite error message by default, but overrides it if custom message is entered
         const errorMessage = customMessage ? customMessage : error.message
 
         //throws the not found error
-        if(isUniqueConstraintError) {
+        if(isForeignKeyConstraintError) {
             throw new NotFoundError(errorMessage)
         }
     }
