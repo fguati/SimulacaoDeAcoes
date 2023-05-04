@@ -68,7 +68,7 @@ class UserDAO {
             await dbRun(insertSQL, [username, email, hashed_password, salt])
             
         } catch (error) {
-            checkUniqueConstraintError(error)
+            checkUniqueConstraintError(error, 'users')
             
             throw error
         }
