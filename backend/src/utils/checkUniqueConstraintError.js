@@ -5,20 +5,19 @@ const { UniqueConstraintError } = require('../CustomErrors')
  * of the standard error message of sqlite in order to do it: 
  * "Error: SQLITE_CONSTRAINT: UNIQUE constraint failed: <table_name>.<column_name>"
 */
-function checkUniqueConstraintError(error) {
+function checkUniqueConstraintError(error, tableName) {
     //checks if error is an sqlite error
     const isSqliteError = error.message.includes('SQLITE_CONSTRAINT')
     if (isSqliteError) {
 
         //checks if the error is due to unique constraints
         const isUniqueConstraintError = error.message.includes('UNIQUE')
-
-        //finds which columns violated the unique constraint to generate the error
-        const regexColumn = /users.(.*)/
-        const errorColumn = error.message.match(regexColumn)[1]
-
+        
         //throws the unique constraint error
         if(isUniqueConstraintError) {
+            //finds which columns violated the unique constraint to generate the error
+            const regexColumn = new RegExp(`${tableName}.(.*)`)
+            const errorColumn = error.message.match(regexColumn)[1]
             throw new UniqueConstraintError(errorColumn)
         }
     }
