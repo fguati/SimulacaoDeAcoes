@@ -2,8 +2,13 @@ const { NotFoundError, InvalidInputError } = require("../../CustomErrors");
 const { checkUniqueConstraintError, checkInvalidInputsErrors, checkForeignKeyError, checkNotNullSqlError } = require("../../utils");
 const { dbRun, dbAll } = require("../utils/dbutils");
 
+/**
+ * Class that manages the stock position table on the database. This table has each users position
+ * in each of its stocks as an entry 
+ */
 class positionDAO {
 
+    //method that insert a new stock position on the database
     static async insert(position) {
         //sql for inserting position in db
         const sql = `INSERT INTO stock_positions (user_id, stock_ticker, stock_qty, stock_avg_price) VALUES (?, ?, ?, ?)`
@@ -32,6 +37,7 @@ class positionDAO {
         }
     }
 
+    //method that insert a new stock position on the database, but identify the user by its email instead of id
     static async insertByEmail(positionWEmail){
         //sql for the insert using the user email to query for the user id
         const sql = `
@@ -66,12 +72,13 @@ class positionDAO {
         }
     }
 
-    static async selectByUserId(userId, stockTicker = null) {
+    //method that searches for all positions of an user in the db through its id. Can optionally filter results by stock ticker
+    static async selectByUserId(userId, stockTickerFilter = null) {
         //base sql for select by id
         const userIdSql = `SELECT * FROM stock_positions WHERE user_id=?`
 
         //check if stockTicker was received and add it to sql if it was
-        const stockTIckerSql = stockTicker ? ` AND stock_ticker=?;` : ';'
+        const stockTIckerSql = stockTickerFilter ? ` AND stock_ticker=?;` : ';'
         const sql = userIdSql + stockTIckerSql 
 
         //throw error if userId was not entered
@@ -80,7 +87,7 @@ class positionDAO {
         }
 
         //make sql query
-        const sqlParameters = stockTicker ? [userId, stockTicker] : [userId] 
+        const sqlParameters = stockTickerFilter ? [userId, stockTickerFilter] : [userId] 
         const result = await dbAll(sql, sqlParameters)
 
         //throw error if result is empty
@@ -89,7 +96,7 @@ class positionDAO {
         }
 
         //return list of positions if query doesnt have stock ticker and just the found position if it has
-        return stockTicker ? result[0] : result
+        return stockTickerFilter ? result[0] : result
         
     }
 
