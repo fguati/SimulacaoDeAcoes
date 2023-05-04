@@ -134,9 +134,9 @@ describe('Test insert queries on positions table', () => {
 
 })
 
-describe.skip('Test insert position queries that use user Email instead of id', () => {
+describe('Test insert position queries that use user Email instead of id', () => {
     const positionToBeInserted = {
-        email: 'insertPosition@byEmail.test',
+        email: 'createPosition@byEmail.test',
         stock_ticker: 'B3SA3',
         stock_qty: 10,
         stock_avg_price: 10.50
@@ -266,5 +266,62 @@ describe.skip('Test insert position queries that use user Email instead of id', 
         }
 
         expect(testFunction).rejects.toThrow(NotFoundError)
+    })
+})
+
+describe('Test select by user id queries on positions table', () => {
+    test('must return a list of positions with the entered user_id, if called without a stock ticker argument', async () => {
+        const queriedPositions = await positionDAO.selectByUserId(1)
+
+        expect(queriedPositions).toEqual(expect.arrayContaining([expect.objectContaining({
+            user_id: 1,
+            stock_ticker: expect.any(String),
+            stock_qty: expect.any(Number),
+            stock_avg_price: expect.any(Number)
+        })]))
+        expect(queriedPositions.length).toBeGreaterThanOrEqual(1)
+
+        queriedPositions.forEach(pos => {
+            expect(pos).toEqual(expect.objectContaining({
+                user_id: 1,
+                stock_ticker: expect.any(String),
+                stock_qty: expect.any(Number),
+                stock_avg_price: expect.any(Number)
+            }))
+        })
+    })
+
+    test('must return position with the entered user_id and stock ticker', async () => {
+        const queriedPosition = await positionDAO.selectByUserId(1, "LEVE3")
+        expect(queriedPosition).toEqual(expect.objectContaining({
+            user_id: 1,
+            stock_ticker: "LEVE3",
+            stock_qty: expect.any(Number),
+            stock_avg_price: expect.any(Number)
+        }))
+
+    })
+
+    test('must throw invalid input error if userId was not entered', async () => {
+        let testUser = null
+        
+        async function testFunction() {
+            await positionDAO.selectByUserId(testUser)
+        }
+
+        expect(testFunction).rejects.toThrow(InvalidInputError)
+
+        testUser = ''
+        expect(testFunction).rejects.toThrow(InvalidInputError)
+
+    })
+
+    test('must throw not found error if searched id does not exist on stock_positions table', async () => {
+        async function testFunction() {
+            await positionDAO.selectByUserId(999999999999)
+        }
+
+        expect(testFunction).rejects.toThrow(NotFoundError)
+
     })
 })

@@ -1,5 +1,6 @@
-const { checkUniqueConstraintError, checkInvalidInputsErrors, checkForeignKeyError } = require("../../utils");
-const { dbRun } = require("../utils/dbutils");
+const { NotFoundError, InvalidInputError } = require("../../CustomErrors");
+const { checkUniqueConstraintError, checkInvalidInputsErrors, checkForeignKeyError, checkNotNullSqlError } = require("../../utils");
+const { dbRun, dbAll } = require("../utils/dbutils");
 
 class positionDAO {
 
@@ -22,7 +23,7 @@ class positionDAO {
 
         } catch (error) {
             //check if error was caused by user already having the stock to be inserted
-            checkUniqueConstraintError(error)
+            checkUniqueConstraintError(error, 'stock_positions')
             //check if error was caused by user_id not being found in users table (Foreign key constraint)
             checkForeignKeyError(error, 'User not found on database')
 
@@ -55,15 +56,43 @@ class positionDAO {
 
         } catch (error) {
             //check if error is due to position already existing in DB
-            checkUniqueConstraintError(error)
+            checkUniqueConstraintError(error, 'stock_positions')
 
             //check if error is due to user with entered email not existing in db
-            checkForeignKeyError(error, 'Entered email was not found in database')
+            checkNotNullSqlError(error, 'Entered email was not found in database', NotFoundError)
 
             //throw the error so it can be caught on the controller layer
             throw error
         }
     }
+
+    static async selectByUserId(userId, stockTicker = null) {
+        //base sql for select by id
+        const userIdSql = `SELECT * FROM stock_positions WHERE user_id=?`
+
+        //check if stockTicker was received and add it to sql if it was
+        const stockTIckerSql = stockTicker ? ` AND stock_ticker=?;` : ';'
+        const sql = userIdSql + stockTIckerSql 
+
+        //throw error if userId was not entered
+        if(!userId) {
+            throw new InvalidInputError("selectByUserId method must receive the desired user's id as an argument", ['user_id'])
+        }
+
+        //make sql query
+        const sqlParameters = stockTicker ? [userId, stockTicker] : [userId] 
+        const result = await dbAll(sql, sqlParameters)
+
+        //throw error if result is empty
+        if(result === []) {
+            throw new NotFoundError('Requested user not fount in database')
+        }
+
+        //return list of positions if query doesnt have stock ticker and just the found position if it has
+        return stockTicker ? result[0] : result
+        
+    }
+
 }
 
 module.exports = positionDAO
