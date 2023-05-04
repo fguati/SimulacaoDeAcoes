@@ -15,11 +15,11 @@ VALUES  ("Testget", "test@get", "3a02078363bb72fd562ef80a18fed3ff05b1e80622283ea
 `
 
 const positionDbSql = `INSERT INTO stock_positions (user_id, stock_ticker, stock_qty, stock_avg_price) 
-VALUES  ("1", "WEGE3", 10, 17.93),
-VALUES  ("2", "B3SA3", 25, 42.95),
-VALUES  ("3", "EGIE3", 125, 31.94);
+VALUES  ("1", "LEVE3", 10, 17.93),
+        ("1", "FLRY3", 70, 107.93),
+        ("1", "ITSA4", 12, 7.93),
+        ("2", "B3SA3", 25, 42.95),
+        ("3", "EGIE3", 125, 31.94);
 
 `
-
-const testDbSql = userDbSql + positionDbSql
-module.exports = testDbSql
+module.exports = { userDbSql, positionDbSql}

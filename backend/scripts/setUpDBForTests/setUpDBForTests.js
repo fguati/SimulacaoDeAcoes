@@ -2,7 +2,7 @@ const { dbFileDir } = require('#root/src/utils/globalVariables.js')
 const sqlite3 = require('sqlite3').verbose()
 const createUserTableSQL = require('#root/src/db/Schemas/userSchema.js')
 const createPositionsTableSQL = require('#root/src/db/Schemas/positionSchema.js')
-const testDbSql = require('./testDbSql.js')
+const { positionDbSql, userDbSql } = require('./testDbSql.js')
 
 function populateDBWithTestData(dbFilePath){
 	const deleteUserTable = `DROP TABLE IF EXISTS users;`
@@ -22,7 +22,8 @@ function populateDBWithTestData(dbFilePath){
 		db.run(createUserTableSQL) 
 		db.run(deletePositionsTable)
 		db.run(createPositionsTableSQL) 
-		db.run(testDbSql)
+		db.run(userDbSql)
+		db.run(positionDbSql)
 	})
 
 }
