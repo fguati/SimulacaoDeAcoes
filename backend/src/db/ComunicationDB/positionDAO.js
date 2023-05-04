@@ -6,7 +6,7 @@ const { dbRun, dbAll } = require("../utils/dbutils");
  * Class that manages the stock position table on the database. This table has each users position
  * in each of its stocks as an entry 
  */
-class positionDAO {
+class PositionDAO {
 
     //method that insert a new stock position on the database
     static async insert(position) {
@@ -102,4 +102,4 @@ class positionDAO {
 
 }
 
-module.exports = positionDAO
+module.exports = PositionDAO

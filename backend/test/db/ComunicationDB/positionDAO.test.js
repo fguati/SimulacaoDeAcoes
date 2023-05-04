@@ -1,5 +1,5 @@
 const { dbGet } = require("../../../src/db/utils/dbutils")
-const positionDAO = require('../../../src/db/ComunicationDB/positionDAO.js')
+const PositionDAO = require('../../../src/db/ComunicationDB/PositionDAO.js')
 const { InvalidInputError, UniqueConstraintError, NotFoundError } = require("../../../src/CustomErrors")
 
 describe('Test insert queries on positions table', () => {
@@ -17,7 +17,7 @@ describe('Test insert queries on positions table', () => {
     }
     
     test('Correctly insert position on table', async () => {
-        await positionDAO.insert(positionToBeInserted)
+        await PositionDAO.insert(positionToBeInserted)
 
         const dbPosition = await getPositionFromDB(positionToBeInserted.user_id, positionToBeInserted.stock_ticker)
 
@@ -28,7 +28,7 @@ describe('Test insert queries on positions table', () => {
 
     it('must throw an InvalidInputError if has a missing or invalid mandatory field', async () => {
         async function testFunction() {
-            await positionDAO.insert(missingInputObj)
+            await PositionDAO.insert(missingInputObj)
         }
 
         //missing user
@@ -111,7 +111,7 @@ describe('Test insert queries on positions table', () => {
 
     it('must throw an UniqueConstraintError if has an user with a repeated stock', async () => {
         async function testFunction() {
-            await positionDAO.insert(positionToBeInserted)
+            await PositionDAO.insert(positionToBeInserted)
         }
 
         expect(testFunction).rejects.toThrow(UniqueConstraintError)
@@ -126,7 +126,7 @@ describe('Test insert queries on positions table', () => {
         }
 
         async function testFunction() {
-            await positionDAO.insert(positionWithInvalidUser)
+            await PositionDAO.insert(positionWithInvalidUser)
         }
 
         expect(testFunction).rejects.toThrow(NotFoundError)
@@ -149,7 +149,7 @@ describe('Test insert position queries that use user Email instead of id', () =>
     }
 
     test('insert by email method must succesfully create an entry on the DB', async () => {
-        await positionDAO.insertByEmail(positionToBeInserted)
+        await PositionDAO.insertByEmail(positionToBeInserted)
 
         const dbPosition = await getPositionFromDB(positionToBeInserted.email, positionToBeInserted.stock_ticker)
 
@@ -164,7 +164,7 @@ describe('Test insert position queries that use user Email instead of id', () =>
     it('must throw an InvalidInputError if has a missing or invalid mandatory field', async () => {
         
         async function testFunction() {
-            await positionDAO.insertByEmail(missingInputObj)
+            await PositionDAO.insertByEmail(missingInputObj)
         }
 
         //missing user
@@ -247,7 +247,7 @@ describe('Test insert position queries that use user Email instead of id', () =>
 
     it('must throw an UniqueConstraintError if has an user with a repeated stock', async () => {
         async function testFunction() {
-            await positionDAO.insertByEmail(positionToBeInserted)
+            await PositionDAO.insertByEmail(positionToBeInserted)
         }
 
         expect(testFunction).rejects.toThrow(UniqueConstraintError)
@@ -262,7 +262,7 @@ describe('Test insert position queries that use user Email instead of id', () =>
         }
 
         async function testFunction() {
-            await positionDAO.insertByEmail(positionWithInvalidUser)
+            await PositionDAO.insertByEmail(positionWithInvalidUser)
         }
 
         expect(testFunction).rejects.toThrow(NotFoundError)
@@ -271,7 +271,7 @@ describe('Test insert position queries that use user Email instead of id', () =>
 
 describe('Test select by user id queries on positions table', () => {
     test('must return a list of positions with the entered user_id, if called without a stock ticker argument', async () => {
-        const queriedPositions = await positionDAO.selectByUserId(1)
+        const queriedPositions = await PositionDAO.selectByUserId(1)
 
         expect(queriedPositions).toEqual(expect.arrayContaining([expect.objectContaining({
             user_id: 1,
@@ -292,7 +292,7 @@ describe('Test select by user id queries on positions table', () => {
     })
 
     test('must return position with the entered user_id and stock ticker', async () => {
-        const queriedPosition = await positionDAO.selectByUserId(1, "LEVE3")
+        const queriedPosition = await PositionDAO.selectByUserId(1, "LEVE3")
         expect(queriedPosition).toEqual(expect.objectContaining({
             user_id: 1,
             stock_ticker: "LEVE3",
@@ -306,7 +306,7 @@ describe('Test select by user id queries on positions table', () => {
         let testUser = null
         
         async function testFunction() {
-            await positionDAO.selectByUserId(testUser)
+            await PositionDAO.selectByUserId(testUser)
         }
 
         expect(testFunction).rejects.toThrow(InvalidInputError)
@@ -318,7 +318,7 @@ describe('Test select by user id queries on positions table', () => {
 
     test('must throw not found error if searched id does not exist on stock_positions table', async () => {
         async function testFunction() {
-            await positionDAO.selectByUserId(999999999999)
+            await PositionDAO.selectByUserId(999999999999)
         }
 
         expect(testFunction).rejects.toThrow(NotFoundError)
