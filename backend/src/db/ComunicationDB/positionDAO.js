@@ -1,6 +1,6 @@
 const { NotFoundError, InvalidInputError } = require("../../CustomErrors");
 const { checkUniqueConstraintError, checkInvalidInputsErrors, checkForeignKeyError, checkNotNullSqlError } = require("../../utils");
-const { dbRun, dbAll } = require("../utils/dbutils");
+const { dbRun, dbAll, dbGet } = require("../utils/dbutils");
 
 /**
  * Class that manages the stock position table on the database. This table has each users position
@@ -133,6 +133,24 @@ class PositionDAO {
         //return list of positions if query doesnt have stock ticker and just the found position if it has
         return stockTickerFilter ? queryResult[0] : queryResult
             
+    }
+
+    //method that deletes a position by its id
+    static async deleteByPositionId(id) {
+        //check if id was entered
+        if(!id) {
+            throw new InvalidInputError('Please enter the id of the position to be deleted', ['id'])
+        }
+        //delete sql with deleted entry id as return value
+        const sql = `DELETE FROM stock_positions WHERE id=? RETURNING id`
+
+        //run sql, geting its return value to check if deletion was successful
+        const deletedItem = await dbGet(sql, [id])
+
+        //check if return value has the same id as entered id to see if deletion was successful
+        if(deletedItem.id != id){
+            throw new NotFoundError('Couldnt find the entered id to delete')
+        }
     }
 
 }

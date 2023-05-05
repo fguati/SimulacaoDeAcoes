@@ -1,4 +1,4 @@
-const { dbGet } = require("../../../src/db/utils/dbutils")
+const { dbGet, dbAll } = require("../../../src/db/utils/dbutils")
 const PositionDAO = require('../../../src/db/ComunicationDB/PositionDAO.js')
 const { InvalidInputError, UniqueConstraintError, NotFoundError } = require("../../../src/CustomErrors")
 
@@ -402,6 +402,33 @@ describe('Test select by email queries to the stocl positions table', () => {
 
         async function testFunction() {
             await PositionDAO.selectByUserEmail(testEmail, testStock)
+        }
+
+        expect(testFunction).rejects.toThrow(NotFoundError)
+    })
+})
+
+describe('Test the delete method for the positionDAO class', () => {
+    test('must successfully delete an entry', async () => {
+        await PositionDAO.deleteByPositionId(9)
+
+        const test = await dbAll('SELECT * from stock_positions WHERE id=9')
+
+        expect(test).toEqual([])
+    })
+
+    test('must throw invalid input error if id is not entered', async () => {
+        async function testFunction() {
+            await PositionDAO.deleteByPositionId(null)
+        }
+
+        expect(testFunction).rejects.toThrow(InvalidInputError)
+
+    })
+
+    test('must throw not found error if entered id does not exist', async () => {
+        async function testFunction() {
+            await PositionDAO.deleteByPositionId(99999999999)
         }
 
         expect(testFunction).rejects.toThrow(NotFoundError)
