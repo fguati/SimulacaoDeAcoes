@@ -434,3 +434,164 @@ describe('Test the delete method for the positionDAO class', () => {
         expect(testFunction).rejects.toThrow(NotFoundError)
     })
 })
+
+describe('Test the updateByStockAndEmail method for the positionsDAO class', () => {
+    const positionToUpdate = {
+        userEmail: 'user@WithPositionToUpdate.com',
+        stockTicker: 'LEVE3',
+        stockQty: 200,
+        stockAvgPrice: 273.48
+    }
+
+    it('updates an existing position', async () => {
+
+        await PositionDAO.updateByStockAndEmail(positionToUpdate)
+
+        const positionOnDb = await dbGet(`
+            SELECT * FROM stock_positions
+                     WHERE stock_ticker=?
+                     AND user_id=(
+                        SELECT id FROM users WHERE email=?
+                     )
+        `, [positionToUpdate.stockTicker, positionToUpdate.userEmail])
+
+        expect(positionOnDb).toEqual(expect.objectContaining({
+            id: expect.any(Number),
+            user_id: expect.any(Number),
+            stock_ticker: positionToUpdate.stockTicker,
+            stock_qty: positionToUpdate.stockQty,
+            stock_avg_price: positionToUpdate.stockAvgPrice
+        }))
+    })
+
+    it('throws invalid input error if any of the inputs is missing or invalid', async () => {
+        async function testFunction() {
+            await PositionDAO.updateByStockAndEmail(missingInputObj)
+        }
+
+        //missing email
+        let missingInputObj = {
+            stockTicker: positionToUpdate.stockTicker, 
+            stockQty: positionToUpdate.stockQty, 
+            stockAvgPrice: positionToUpdate.stockAvgPrice
+        };
+
+        expect(testFunction).rejects.toThrow(InvalidInputError)
+        
+        //missing ticker
+        missingInputObj = {
+            userEmail: positionToUpdate.email,
+            stock_qty: positionToUpdate.stock_qty,
+            stock_avg_price: positionToUpdate.stock_avg_price
+        };
+
+        expect(testFunction).rejects.toThrow(InvalidInputError)
+
+        //missing qty
+        missingInputObj = {
+            userEmail: positionToUpdate.userEmail,
+            stockTicker: positionToUpdate.stockTicker, 
+            stockAvgPrice: positionToUpdate.stockAvgPrice
+        };
+
+        expect(testFunction).rejects.toThrow(InvalidInputError)
+
+        //missing average price
+        missingInputObj = {
+            userEmail: positionToUpdate.userEmail,
+            stockTicker: positionToUpdate.stockTicker, 
+            stockQty: positionToUpdate.stockQty, 
+        };
+
+        expect(testFunction).rejects.toThrow(InvalidInputError)
+        
+        //invalid email
+        missingInputObj = {
+            userEmail: null,
+            stockTicker: positionToUpdate.stockTicker, 
+            stockQty: positionToUpdate.stockQty, 
+            stockAvgPrice: positionToUpdate.stockAvgPrice
+        };
+
+        expect(testFunction).rejects.toThrow(InvalidInputError)
+        
+        //invalid ticker
+        missingInputObj = {
+            userEmail: positionToUpdate.userEmail,
+            stockTicker: null, 
+            stockQty: positionToUpdate.stockQty, 
+            stockAvgPrice: positionToUpdate.stockAvgPrice
+        };
+
+        expect(testFunction).rejects.toThrow(InvalidInputError)
+        
+        //invalid qty
+        missingInputObj = {
+            userEmail: positionToUpdate.userEmail,
+            stockTicker: positionToUpdate.stockTicker, 
+            stockQty: null, 
+            stockAvgPrice: positionToUpdate.stockAvgPrice
+        };
+
+        expect(testFunction).rejects.toThrow(InvalidInputError)
+        
+        //invalid average price
+        missingInputObj = {
+            userEmail: positionToUpdate.userEmail,
+            stockTicker: positionToUpdate.stockTicker, 
+            stockQty: positionToUpdate.stockQty, 
+            stockAvgPrice: null
+        };
+
+        expect(testFunction).rejects.toThrow(InvalidInputError)
+        
+    })
+
+    it('throws invalid input error if stock_qty is not an integer', async () => {
+        const invalidData = {
+            userEmail: 'user@WithPositionToUpdate.com',
+            stockTicker: 'LEVE3',
+            stockQty: 200.01,
+            stockAvgPrice: 273.48
+        }
+        
+        async function testFunction() {
+            await PositionDAO.updateByStockAndEmail(invalidData)
+        }
+
+        expect(testFunction).rejects.toThrow(InvalidInputError)
+    })
+
+    it('throws invalid input error if stock_avg_price is not a number', async () => {
+        const invalidData = {
+            userEmail: 'user@WithPositionToUpdate.com',
+            stockTicker: 'LEVE3',
+            stockQty: 200,
+            stockAvgPrice: '273.48'
+        }
+        
+        async function testFunction() {
+            await PositionDAO.updateByStockAndEmail(invalidData)
+        }
+
+        expect(testFunction).rejects.toThrow(InvalidInputError)
+    })
+    
+    it('throws a not found error if position is not found', async () => {
+        let notFoundData = {
+            userEmail: 'user@withnostocks.email',
+            stockTicker: 'LEVE3',
+            stockQty: 200,
+            stockAvgPrice: 273.48
+        }
+        
+        async function testFunction() {
+            await PositionDAO.updateByStockAndEmail(notFoundData)
+        }
+
+        expect(testFunction).rejects.toThrow(NotFoundError)
+
+        notFoundData.email = 'emailThatDoesntExistInDB@test.com'
+        expect(testFunction).rejects.toThrow(NotFoundError)
+    })
+})

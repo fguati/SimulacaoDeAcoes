@@ -1,5 +1,5 @@
 const { NotFoundError, InvalidInputError } = require("../../CustomErrors");
-const { checkUniqueConstraintError, checkInvalidInputsErrors, checkForeignKeyError, checkNotNullSqlError } = require("../../utils");
+const { checkUniqueConstraintError, checkInvalidInputsErrors, checkForeignKeyError, checkNotNullSqlError, hasInvalidParam } = require("../../utils");
 const { dbRun, dbAll, dbGet } = require("../utils/dbutils");
 
 /**
@@ -148,10 +148,49 @@ class PositionDAO {
         const deletedItem = await dbGet(sql, [id])
 
         //check if return value has the same id as entered id to see if deletion was successful
-        if(deletedItem.id != id){
+        if(!deletedItem || deletedItem.id != id){
             throw new NotFoundError('Couldnt find the entered id to delete')
         }
     }
+
+    //method that updates a position, finding it by its stock ticker and the email of its user
+    static async updateByStockAndEmail(positionWithEmailToUpdate) {
+        //make list of arguments from position entered
+        const {userEmail, stockTicker, stockQty, stockAvgPrice} = positionWithEmailToUpdate
+        const inputParamaterList = [userEmail, stockTicker, stockQty, stockAvgPrice]
+        const columnNames = ['userEmail', 'stock', 'stockQty', 'stockAvgPrice']
+
+        //check if there were any invalid inputs
+        checkInvalidInputsErrors(inputParamaterList, positionWithEmailToUpdate, columnNames)
+        
+        //check that stock quantity is and integer
+        if (!Number.isInteger(stockQty)) {
+            throw new InvalidInputError('Invalid input parameters',[stockQty]);
+        }
+
+        //check that the entered average price is a number
+        if (isNaN(stockAvgPrice)) {
+            throw new InvalidInputError('Invalid input parameters', [stockAvgPrice]);
+        }
+        
+        //sql for the update, returning the id as a way to check that the query is actuallty being run
+        const sql = `
+            UPDATE  stock_positions
+            SET     stock_qty = ?,
+                    stock_avg_price = ?
+            WHERE   stock_ticker = ?
+            AND     user_id = (SELECT id FROM users WHERE email = ?)
+            RETURNING id;
+        `;
+        
+        //run sql query, storing its return value in a variable to check that query was run
+        const result = await dbGet(sql, [stockQty, stockAvgPrice, stockTicker, userEmail]);
+        
+        //check if the query actually updated the table. If not, it means the position was not found
+        if (!result) {
+            throw new NotFoundError('Stock position not found');
+        }
+      } 
 
 }
 
