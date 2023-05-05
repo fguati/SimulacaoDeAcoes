@@ -316,12 +316,94 @@ describe('Test select by user id queries on positions table', () => {
 
     })
 
-    test('must throw not found error if searched id does not exist on stock_positions table', async () => {
+    test('must return an empty list if selected user has no stock positions', async () => {
+        const queriedPositions = await PositionDAO.selectByUserId(10) //id 10 is the id of the user in the test DB that has no entries on the stock positions table
+
+        expect(queriedPositions).toEqual([])
+    })
+
+})
+
+describe('Test select by email queries to the stocl positions table', () => {
+    test('must return a list of positions with the id of the user with the entered email, if called without a stock ticker argument', async () => {
+        const queriedPositions = await PositionDAO.selectByUserEmail('testSelectPostition@byUser.Email')
+
+        expect(queriedPositions).toEqual(expect.arrayContaining([expect.objectContaining({
+            user_id: 9,
+            stock_ticker: expect.any(String),
+            stock_qty: expect.any(Number),
+            stock_avg_price: expect.any(Number)
+        })]))
+
+        expect(queriedPositions.length).toBeGreaterThanOrEqual(1)
+
+        queriedPositions.forEach(pos => {
+            expect(pos).toEqual(expect.objectContaining({
+                user_id: 9,
+                stock_ticker: expect.any(String),
+                stock_qty: expect.any(Number),
+                stock_avg_price: expect.any(Number)
+            }))
+        })
+    })
+
+    test('must return position with the id of the user with the entered email and the entered stock ticker', async () => {
+        const queriedPosition = await PositionDAO.selectByUserEmail('testSelectPostition@byUser.Email', 'LEVE3')
+        expect(queriedPosition).toEqual(expect.objectContaining({
+            user_id: 9,
+            stock_ticker: "LEVE3",
+            stock_qty: expect.any(Number),
+            stock_avg_price: expect.any(Number)
+        }))
+
+    })
+
+    test('must throw invalid input error if user email was not entered', async () => {
+        let testUser = null
+        
         async function testFunction() {
-            await PositionDAO.selectByUserId(999999999999)
+            await PositionDAO.selectByUserEmail(testUser)
+        }
+
+        expect(testFunction).rejects.toThrow(InvalidInputError)
+
+        testUser = ''
+        expect(testFunction).rejects.toThrow(InvalidInputError)
+    })
+
+    test('must throw not found error if searched email is not in users table', async () =>{
+        const testEmail = 'emailThatNeverExisted@inDB.SelectPositionByEmailTest'
+
+        async function testFunction() {
+            const result = await PositionDAO.selectByUserEmail(testEmail)
         }
 
         expect(testFunction).rejects.toThrow(NotFoundError)
 
+        async function testFunctionWithStockFilter() {
+            const result = await PositionDAO.selectByUserEmail(testEmail, 'LEVE3')
+        }
+
+        expect(testFunctionWithStockFilter).rejects.toThrow(NotFoundError)
+
+    })
+
+    test('must return an empty list if searched email belongs to a user with no stocks', async () => {
+        const testEmail = 'user@withnostocks.email'
+
+        const result = await PositionDAO.selectByUserEmail(testEmail)
+
+        expect(result).toEqual([])
+    })
+
+    test('must throw not found error if user dont have the searched stock', async () => {
+        const testEmail = 'testSelectPostition@byUser.Email'
+        const testStock = 'HGLG11'
+
+        async function testFunction() {
+            await PositionDAO.selectByUserEmail(testEmail, testStock)
+        }
+
+        expect(testFunction).rejects.toThrow(NotFoundError)
     })
 })

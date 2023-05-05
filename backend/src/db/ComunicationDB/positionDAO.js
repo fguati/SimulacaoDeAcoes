@@ -90,14 +90,49 @@ class PositionDAO {
         const sqlParameters = stockTickerFilter ? [userId, stockTickerFilter] : [userId] 
         const result = await dbAll(sql, sqlParameters)
 
-        //throw error if result is empty
-        if(result === []) {
-            throw new NotFoundError('Requested user not fount in database')
-        }
-
         //return list of positions if query doesnt have stock ticker and just the found position if it has
         return stockTickerFilter ? result[0] : result
         
+    }
+
+    //method that searches for all positions of an user in the db through its email. Can optionally filter results by stock ticker
+    static async selectByUserEmail(userEmail, stockTickerFilter = null) {
+        //base sql for select positions by user email. Uses right join so we get a result if an user exists but have no stocks 
+        const userByEmailsql = `
+            SELECT stock_positions.*, users.email 
+            FROM stock_positions
+            RIGHT JOIN users ON stock_positions.user_id = users.id 
+            WHERE users.email = ?
+        `
+
+        //optional sql for filtering by stock ticker
+        const optionalFilterByStockSql = stockTickerFilter ? ' AND stock_positions.stock_ticker = ?' : ';'
+
+        //combine full sql
+        const sqlQuery = userByEmailsql + optionalFilterByStockSql
+
+        //check if email was entered
+        if(!userEmail) {
+            throw new InvalidInputError('User email must be entered for this method to be called', ['email'])
+        }
+        
+        //run sql query
+        const sqlParameters = stockTickerFilter ? [userEmail, stockTickerFilter] : [userEmail]
+        let queryResult = await dbAll(sqlQuery, sqlParameters)
+        
+        //if email was found in the db a list with at least one result for the user email will be returned. Therefore if the list returned by the query is empty, the user email was not found, or was found but doesnt have the filtered stock
+        if(queryResult.length === 0) {
+            throw new NotFoundError('Could not find the searched data in our database')
+        }
+
+        //check if user has any stocks and if not, return an empty list. As is currently, an user without stocks return a list with 1 entry that has stock position id null
+        if(queryResult[0].id === null) {
+            return []
+        }
+
+        //return list of positions if query doesnt have stock ticker and just the found position if it has
+        return stockTickerFilter ? queryResult[0] : queryResult
+            
     }
 
 }
