@@ -141,9 +141,6 @@ describe('Unit tests of the insert method of the class responsible for querying 
         }
 
         expect(testFunction).rejects.toThrow(UniqueConstraintError)
-        // const idOfInsertedUser = await getId(userToBeInserted) //eliminar depois de implementar test DB
-        // await dbRun(`DELETE FROM users WHERE id=?`, [idOfInsertedUser]) //eliminar depois de implementar test DB
-
 
     })
 

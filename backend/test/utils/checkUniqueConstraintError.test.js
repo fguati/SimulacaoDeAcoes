@@ -6,7 +6,7 @@ describe('Unit tests for the checkUniqueConstraintError function', () => {
         const testError = new Error('SQLITE_CONSTRAINT UNIQUE users ...')
 
         function testFunction() {
-            return checkUniqueConstraintError(testError)
+            return checkUniqueConstraintError(testError, 'users')
         }
 
         expect(testFunction).toThrowError(UniqueConstraintError)
