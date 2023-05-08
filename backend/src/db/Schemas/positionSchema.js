@@ -1,4 +1,4 @@
-//schema for the stock positions table in the db. Contains the user id, its username, email (that must be unique to each user), and the password already hashed and with its salt
+//schema for the stock positions table in the db. Contains and id (primary key), the user id (foreign key associated with users table), the ticker of the stock (which along the user id should identify this position and, thefore, be unique), and the stock position and average price 
 const POSITION_SCHEMA = `
   CREATE TABLE IF NOT EXISTS stock_positions (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
