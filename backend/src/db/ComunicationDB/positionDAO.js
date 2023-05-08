@@ -1,5 +1,5 @@
 const { NotFoundError, InvalidInputError } = require("../../CustomErrors");
-const { checkUniqueConstraintError, checkInvalidInputsErrors, checkForeignKeyError, checkNotNullSqlError, hasInvalidParam } = require("../../utils");
+const { checkUniqueConstraintError, checkInvalidInputsErrors, checkForeignKeyError, checkNotNullSqlError } = require("../../utils");
 const { dbRun, dbAll, dbGet } = require("../utils/dbutils");
 
 /**
