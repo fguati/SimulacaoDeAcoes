@@ -158,7 +158,7 @@ class PositionDAO {
         //make list of arguments from position entered
         const {userEmail, stockTicker, stockQty, stockAvgPrice} = positionWithEmailToUpdate
         const inputParamaterList = [userEmail, stockTicker, stockQty, stockAvgPrice]
-        const columnNames = ['userEmail', 'stock', 'stockQty', 'stockAvgPrice']
+        const columnNames = ['userEmail', 'stockTicker', 'stockQty', 'stockAvgPrice']
 
         //check if there were any invalid inputs
         checkInvalidInputsErrors(inputParamaterList, positionWithEmailToUpdate, columnNames)
@@ -190,7 +190,49 @@ class PositionDAO {
         if (!result) {
             throw new NotFoundError('Stock position not found');
         }
-      } 
+    }
+    
+    //method that inserts a position in the table if it doesn't exists already and updates it if it does
+    static async insertOrUpdate(positionWithEmailToUpdate) {
+        //sql query
+        const sql = `
+            INSERT OR REPLACE INTO stock_positions (user_id, stock_ticker, stock_qty, stock_avg_price) 
+            VALUES (
+                (SELECT id from users WHERE email=?), 
+                ?, ?, ?
+            );
+        `
+        //make list of arguments from position entered
+        const {userEmail, stockTicker, stockQty, stockAvgPrice} = positionWithEmailToUpdate
+        const inputParamaterList = [userEmail, stockTicker, stockQty, stockAvgPrice]
+        const columnNames = ['userEmail', 'stockTicker', 'stockQty', 'stockAvgPrice']
+
+        //check if there were any invalid inputs
+        checkInvalidInputsErrors(inputParamaterList, positionWithEmailToUpdate, columnNames)
+
+        //check that stock quantity is an integer
+        if (!Number.isInteger(stockQty)) {
+            throw new InvalidInputError('Invalid input parameters',[stockQty]);
+        }
+
+        //check that the entered average price is a number
+        if (isNaN(stockAvgPrice)) {
+            throw new InvalidInputError('Invalid input parameters', [stockAvgPrice]);
+        }
+
+        try {
+            //run sql
+            await dbGet(sql, inputParamaterList)
+            
+        } catch (error) {
+            //check if email entered exists in the database
+            checkNotNullSqlError(error, "Entered user was not found in our database", NotFoundError)
+
+            //throw error to be caught at controller layer
+            throw error
+        }
+
+    }
 
 }
 
