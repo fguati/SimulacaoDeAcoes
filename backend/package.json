@@ -12,7 +12,8 @@
     "test": "npm run setupTests && jest --verbose --silent && wait-on && npm run restoreBackUp",
     "test:watch": "jest --watch --verbose --silent",
     "test:coverage": "jest --coverage --verbose --silent",
-    "start": "nodemon .\\src\\server.js"
+    "start": "nodemon .\\src\\server.js",
+    "runTestFile": "npm run populateTestDB && jest --verbose"
   },
   "author": "",
   "license": "ISC",
