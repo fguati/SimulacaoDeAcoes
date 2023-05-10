@@ -1,13 +1,14 @@
-const { InvalidInputError, NotFoundError } = require("../../CustomErrors")
-const { checkInvalidInputsErrors, checkForeignKeyError } = require("../../utils")
-const { dbGet } = require("../utils/dbutils")
-
+const { InvalidInputError, NotFoundError } = require("../../../CustomErrors")
+const { checkInvalidInputsErrors, checkForeignKeyError } = require("../../../utils")
+const { dbGet, dbAll } = require("../../utils/dbutils")
+const { validateFilters, createSqlFilterForSelect } = require("./utils")
 
 /**
  * Class responsible for comunication with DB to manipulate the negotiations table, that stores
  * data related with each stock negotiation made by users
  */
 class NegotiationDAO {
+    
     //method for inserting a new entry in negotiation table by directly providing all data
     static async insert(negotiationToBeInserted) {
         //List of accepeted negotiation types
@@ -53,6 +54,37 @@ class NegotiationDAO {
             throw error
         }
     } 
+
+    //method for getting multiple entries from the negotiation table, with optional filters
+    static async select(filters = null) {        
+        //base select sql
+        let baseSQL = `SELECT * FROM negotiations `
+        
+        // //Prepare to create filter setup
+        let valuesToFilterList
+        let filterSQL = ''
+
+        //Handle filters if entered
+        if(filters) {
+            //validate filters entered
+            await validateFilters(filters)
+
+            //get filter sql and list of arguments
+            const filterSqlAndArgs = createSqlFilterForSelect(filters)
+            filterSQL = filterSqlAndArgs.filterSQL 
+            valuesToFilterList = filterSqlAndArgs.valuesToFilterList   
+        }
+        
+        // build final sql
+        const sql = baseSQL + filterSQL + ';'
+
+        //run sql
+        const result = await dbAll(sql, valuesToFilterList)
+
+        //return result from query
+        return result
+    }
+
 }
 
 module.exports = NegotiationDAO
