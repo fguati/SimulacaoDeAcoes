@@ -39,6 +39,7 @@ VALUES  ("14", "TAEE11", 100, 10.45, "BUY"),
         ("14", "LEVE3", 100, 10.45, "SELL"),
         ("15", "ALZR11", 100, 10.45, "BUY"),
         ("15", "TAEE11", 100, 10.45, "BUY"),
-        ("15", "XPML11", 100, 10.45, "SELL");
+        ("15", "XPML11", 100, 10.45, "SELL"),
+        ("14", "BBSE3", 27, 23.47, "SELL") --negotiation that will be updated;
 `
 module.exports = { userDbSql, positionDbSql, negotiationDbSql }

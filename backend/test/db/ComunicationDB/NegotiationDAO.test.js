@@ -351,3 +351,136 @@ describe('Test the select by id method of the negotiationDAO class', () => {
         await expect(testFunction).rejects.toThrow(NotFoundError)
     })
 })
+
+describe('Test the update method of the NegotiationDAO class', () => {
+    it('updates the negotiation in db to the same values entered in the argument', async () => {
+        const negotiationToUpdate = {
+            id: 6,
+            userId: 15,
+            stockTicker: 'BBAS3',
+            negotiatedQty: 72,
+            negotiatedPrice: 23.74,
+            negotiationType: 'BUY',
+            negotiationDate: '2023-05-09'
+        }
+        const {id, userId, stockTicker, negotiatedQty, negotiatedPrice, negotiationType, negotiationDate } = negotiationToUpdate
+        let negotiationFromDB = await dbGet('SELECT * FROM negotiations WHERE id=?', [id])
+
+        expect(negotiationFromDB.user_id).not.toBe(userId)
+        expect(negotiationFromDB.stock_ticker).not.toBe(stockTicker)
+        expect(negotiationFromDB.negotiated_qty).not.toBe(negotiatedQty)
+        expect(negotiationFromDB.negotiated_price).not.toBe(negotiatedPrice)
+        expect(negotiationFromDB.negotiation_type).not.toBe(negotiationType)
+        expect(negotiationFromDB.negotiation_date).not.toBe(negotiationDate)
+
+        await NegotiationDAO.update(negotiationToUpdate)
+        negotiationFromDB = await dbGet('SELECT * FROM negotiations WHERE id=?', [id])
+
+        expect(negotiationFromDB).toEqual(expect.objectContaining({
+            user_id: userId,
+            stock_ticker: stockTicker,
+            negotiated_qty: negotiatedQty,
+            negotiated_price: negotiatedPrice,
+            negotiation_type: negotiationType,
+            negotiation_date: negotiationDate
+        }))
+        
+    })
+
+    it('throws invalid input error if argument does not have the id of the negotiation to be updated', async () => {
+        function testFunction(testNegotiation) {
+            return async () =>{
+                await NegotiationDAO.update(testNegotiation)
+            }
+        }
+
+        const negotiationToUpdate = {
+            userId: 15,
+            stockTicker: 'BBAS3',
+            negotiatedQty: 72,
+            negotiatedPrice: 23.74,
+            negotiationType: 'BUY',
+            negotiationDate: '2023-05-09'
+        }
+
+        await expect(testFunction(negotiationToUpdate)).rejects.toThrow(InvalidInputError)
+
+    })
+
+    it('throws invalid input error if argument has no properties besides id', async () => {
+        function testFunction(testNegotiation) {
+            return async () =>{
+                await NegotiationDAO.update(testNegotiation)
+            }
+        }
+
+        const negotiationToUpdate = {
+            id: 6
+        }
+
+        await expect(testFunction(negotiationToUpdate)).rejects.toThrow(InvalidInputError)
+    })
+
+    it('throws not found error if entered id is not in db', async () => {
+        function testFunction(testNegotiation) {
+            return async () =>{
+                await NegotiationDAO.update(testNegotiation)
+            }
+        }
+
+        const negotiationToUpdate = {
+            id: 99999999999,
+            userId: 15,
+            stockTicker: 'BBAS3',
+            negotiatedQty: 72,
+            negotiatedPrice: 23.74,
+            negotiationType: 'BUY',
+            negotiationDate: '2023-05-09'
+        }
+
+        await expect(testFunction(negotiationToUpdate)).rejects.toThrow(NotFoundError)
+
+    })
+
+    it('throws not found error if entered user id is not in db', async () => {
+        function testFunction(testNegotiation) {
+            return async () =>{
+                await NegotiationDAO.update(testNegotiation)
+            }
+        }
+
+        const negotiationToUpdate = {
+            id: 6,
+            userId: 99999999999,
+            stockTicker: 'BBAS3',
+            negotiatedQty: 72,
+            negotiatedPrice: 23.74,
+            negotiationType: 'BUY',
+            negotiationDate: '2023-05-09'
+        }
+
+        await expect(testFunction(negotiationToUpdate)).rejects.toThrow(NotFoundError)
+    })
+
+    it('throws invalid input error if argument has invalid properties', async () => {
+        const negotiationToUpdate = {
+            unexistingArg: 'test',
+            id: 6,
+            userId: 15,
+            stockTicker: 'BBAS3',
+            negotiatedQty: 72,
+            negotiatedPrice: 23.74,
+            negotiationType: 'BUY',
+            negotiationDate: '2023-05-09'
+        }
+
+        function testFunction(testNegotiation) {
+            return async () =>{
+                await NegotiationDAO.update(testNegotiation)
+            }
+        }
+
+        await expect(testFunction(negotiationToUpdate)).rejects.toThrow(InvalidInputError)
+        
+    })
+})
