@@ -64,4 +64,47 @@ function createSqlFilterForSelect(filters) {
     return { filterSQL, valuesToFilterList }
 }
 
-module.exports = { validateFilters, createSqlFilterForSelect}
+//create sql string and list of arguments to the update method
+function createSqlAndArgsForUpdate(negotiationEntries) {
+    //object that maps the properties of the entered negotiation object to the columns of the negotiations table in the db
+    const propToColMap = {
+        id: 'id', 
+        userId: 'user_id', 
+        stockTicker: 'stock_ticker', 
+        negotiatedQty: 'negotiated_qty', 
+        negotiatedPrice: 'negotiated_price', 
+        negotiationType: 'negotiation_type', 
+        negotiationDate: 'negotiation_date' 
+    }
+
+    //create fixed componets of the sql query string. Return value is set so it can be checked whether negotiation was found in db
+    const baseUpdateSQL = `UPDATE negotiations SET `
+    const filterSQL = `WHERE id=?`
+    const returnValueSQL = 'RETURNING id'
+
+    //lists of sql updates
+    const listOfSqlUpdates = []
+    const sqlQueryArgumentList = []
+
+    //go through each query and add an sql query and argument to the lists of sql updates to each
+    negotiationEntries.forEach(entry => {
+        //get the column that must be updated in the negotiations table in the db
+        const [propToUpdate, updatedValue] = entry
+        const columnToUpdate = propToColMap[propToUpdate]
+
+        //throw invalid input error if negotiation object arg has property that is invalid
+        if(!columnToUpdate) throw new InvalidInputError('One of the properties to update is invalid', [propToUpdate])
+        
+        //update lists
+        listOfSqlUpdates.push(`${columnToUpdate}=?`)
+        sqlQueryArgumentList.push(updatedValue)
+    })
+
+    //use list of sql update strings and fixed sql components to build final sql
+    const allUpdatesSQL = listOfSqlUpdates.join(', ')
+    const sql = baseUpdateSQL + allUpdatesSQL + filterSQL + returnValueSQL
+
+    return { sql, sqlQueryArgumentList }
+}
+
+module.exports = { validateFilters, createSqlFilterForSelect, createSqlAndArgsForUpdate }
