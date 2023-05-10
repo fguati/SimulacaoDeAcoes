@@ -13,7 +13,9 @@ VALUES  ("Testget", "test@get", "3a02078363bb72fd562ef80a18fed3ff05b1e80622283ea
         ("userWithNoStocks", "user@withnostocks.email", "929722c1083f7ccd87b43555a6fa8cc1f6aa852a89f67cb1daf2e378c09326930ab9ce2db23cd02f66f918e061956a5c26b3c1dd6d79917d063965d8038ac204", "e88093461ac08a379a8d394c9ea17f6fcdadde76d1b226537530bac50ea7f4f1a9f1e621d0f1acfda374d5b133b8e522787e90ac46591f576b4335adf4903c4812aab10ef59f0bb6503e54e7653e9e0cb15a1dc08c3ece97f0550e2eba81a85befc6d6aefae953eaf68fc17a9a3af4e679b802353d5acf391d6f5f3e6033da6d"),
         ('userWithPositionToDelete', 'userWithPosition@toBeDeleted.com', "0365ce6a8b4aaad5176ff92b79a3f6727d4e3f76882cf7a4f657adb47e994de60a9ab380be37de9a4d2aa94efbbd2c103e91bd224d2981bd7e42f782786d7897", "d5614bb4d829b68841b57579d0435db4064c90029306942b82157becc3d99fd31694ff1125ed94826a9a6854c86fdc56868601e4ebe6b7d8160bdbd1fd06f56f42ad2d57d7d03ad1eaa581d67a5a522efd4f088b0943b0c8a94b6e9d9cd2a3eab9e3caa5494b777e5da05fefc0f0855fd29dc25ffdda1620bb8fe969bdd1330a"),
         ('userWithPositionToUpdate', 'user@WithPositionToUpdate.com', '471fc71e43bf535e7bd16bce291687fa248506cc93a5ba1f0bfe1369d923948410a13e6cd51ccdce71bf63941e96f89eb648b7230fec231fcab287caa8a70482', 'f720e0911464e933d853b466f811054860d6de2be3db6a44ee08a73a7974808ef70bbb85abc673b90746342315f294178fd07d4ec2913e8501beab21638ebb47a71a23757205154d62fa1491ac1dfb6a660ddfb6f90d66febfec2776a068b635b82f1416607a462b63230a984634ba6c098b1c3c907d09ebf9d353ff87a32fdd'),
-        ('userToHaveUpdateError', 'user@WithErrorUpdatePosition.com', '123', '123');
+        ('userToHaveUpdateError', 'user@WithErrorUpdatePosition.com', '123', '123'),
+        ('userWithNegotiationHistory', 'user@withNegotiationHistory.com', '13', '123'),
+        ('alternateUserWithNegotiationHistory', 'alternanteUser@withNegotiationHistory.com', '13', '123');
 
 `
 
@@ -31,4 +33,14 @@ VALUES  ("1", "LEVE3", 10, 17.93),
         ("13", "LEVE3", 1, 1.00);  
 
 `
-module.exports = { userDbSql, positionDbSql}
+
+const negotiationDbSql = `INSERT INTO negotiations (user_id, stock_ticker, negotiated_qty, negotiated_price, negotiation_type)
+VALUES  ("14", "TAEE11", 100, 10.45, "BUY"),
+        ("14", "LEVE3", 100, 10.45, "SELL"),
+        ("15", "ALZR11", 100, 10.45, "BUY"),
+        ("15", "TAEE11", 100, 10.45, "BUY"),
+        ("15", "XPML11", 100, 10.45, "SELL"),
+        ("14", "BBSE3", 27, 23.47, "SELL"), --negotiation that will be updated,
+        ("14", "BBSE3", 27, 23.47, "SELL") --negotiation that will be deleted: id 7;
+`
+module.exports = { userDbSql, positionDbSql, negotiationDbSql }
