@@ -484,3 +484,24 @@ describe('Test the update method of the NegotiationDAO class', () => {
         
     })
 })
+
+describe('Test the delete method of the negotiationDAO class', () => {
+    it('deletes a negotiation from the database', async () => {
+        const testId = 7
+        let testNegotiationDB = await dbGet(`SELECT * FROM negotiations WHERE id=?`, [testId])
+        expect(testNegotiationDB).toEqual(expect.objectContaining({id: testId}))
+
+        await NegotiationDAO.delete(testId)
+
+        testNegotiationDB = await dbGet(`SELECT * FROM negotiations WHERE id=?`, [testId])
+        expect(testNegotiationDB).toBe(undefined)
+    })
+
+    it('throws a not found error if id is not in the negotiations table', async () => {
+        async function testFunction() {
+            await NegotiationDAO.delete(9999999999999)
+        }
+
+        await expect(testFunction).rejects.toThrow(NotFoundError)
+    })
+})

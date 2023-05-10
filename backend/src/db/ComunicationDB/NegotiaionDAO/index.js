@@ -138,6 +138,19 @@ class NegotiationDAO {
 
     }
 
+    //method for deleting negotiations
+    static async delete(id) {
+        //sql
+        const sql = `DELETE FROM negotiations WHERE id=? RETURNING id`
+
+        //run sql
+        const result = await dbGet(sql, [id])
+
+        //throw not found error if id is not in database
+        if(!result) throw new NotFoundError('Negotion not found')
+
+    }
+
 }
 
 module.exports = NegotiationDAO
