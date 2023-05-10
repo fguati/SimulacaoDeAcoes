@@ -85,6 +85,20 @@ class NegotiationDAO {
         return result
     }
 
+    //methdo for selecting a specific negotiation by its id
+    static async selectById(id) {
+        //sql
+        const sql = `SELECT * FROM negotiations WHERE id=?`
+
+        //run sql
+        const result = await dbGet(sql, [id])
+
+        //throw not found error if id is not in database
+        if(!result) throw new NotFoundError('Negotion not found')
+
+        return result
+    }
+
 }
 
 module.exports = NegotiationDAO

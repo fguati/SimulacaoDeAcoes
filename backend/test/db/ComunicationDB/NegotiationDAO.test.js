@@ -321,3 +321,33 @@ describe('Test the select method and all its optional filters in the negotiation
         await expect(testFunction).rejects.toThrow(InvalidInputError)
     })
 })
+
+describe('Test the select by id method of the negotiationDAO class', () => {
+    it('returns a negotiation from the database', async () => {
+        const testID = 1
+        const startTestDate = new Date()
+        const testNegotiation = await NegotiationDAO.selectById(testID)
+        const dbEntryCreationDate = new Date(testNegotiation.negotiation_date)
+
+        expect(testNegotiation).toEqual(expect.objectContaining({
+            user_id: 14, 
+            stock_ticker: 'TAEE11', 
+            negotiated_qty: 100, 
+            negotiated_price: 10.45, 
+            negotiation_type: 'BUY'
+        }))
+
+        expect(dbEntryCreationDate.getTime()).toBeGreaterThan(startTestDate.getTime())
+        expect(dbEntryCreationDate.getDate()).toBe(startTestDate.getDate())
+        expect(dbEntryCreationDate.getMonth()).toBe(startTestDate.getMonth())
+        expect(dbEntryCreationDate.getFullYear()).toBe(startTestDate.getFullYear())
+    })
+
+    it('throws a not found error if id is not in the negotiations table', async () => {
+        async function testFunction() {
+            await NegotiationDAO.selectById(9999999999999)
+        }
+
+        await expect(testFunction).rejects.toThrow(NotFoundError)
+    })
+})
