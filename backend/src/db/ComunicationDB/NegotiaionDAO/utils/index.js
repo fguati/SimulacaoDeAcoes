@@ -34,45 +34,21 @@ function createSqlFilterForSelect(filters) {
 
     //function that add filters sqls and values to the lists that will later be used to render the filter sql
     function addFilterToSetup(filterKey) {
-        //determine to which column of the database table the filter will be applied through the use of a map
-        const filterKeySqlColumnMap = {
-            userId: 'user_id',
-            userEmail: 'user_id',
-            stockTicker: 'stock_ticker',
-            negotiationType: 'negotiation_type',
-            startDate: 'negotiation_date',
-            endDate: 'negotiation_date'
+        //determine to which sql filter will be applied through the use of a map
+        const filterSqlQueryMap = {
+            userId: 'user_id=?',
+            userEmail: 'user_id=(SELECT id FROM users WHERE email=?)',
+            stockTicker: 'stock_ticker=?',
+            negotiationType: 'negotiation_type=?',
+            startDate: 'negotiation_date>=?',
+            endDate: 'negotiation_date<=?'
         }
-        const columnToBeFiltered = filterKeySqlColumnMap[filterKey]
-
-        //check if the filter being applied is one of the ones that require a specific sql query
-        const specialFiltersKeys = ['startDate', 'endDate', 'userEmail']
-        const filterIsSpecial = specialFiltersKeys.some(specialKey => specialKey === filterKey)
         
         //add value to be userd in filter in list that will be used as arguments for running the sql
         valuesToFilterList.push(filters[filterKey])
         
         //add sql strings to standard filters
-        if(!filterIsSpecial) {
-            filterSqlList.push(`${columnToBeFiltered}=?`)
-        }
-
-        //check for start date filters
-        if(filters.startDate) {
-            //start date filter sql
-            filterSqlList.push(`${columnToBeFiltered}>=?`)
-        }
-        //check for end date filters
-        if(filters.endDate) {
-            //end date filter sql
-            filterSqlList.push(`${columnToBeFiltered}<=?`)
-
-        }
-        //check for user email filters
-        if(filters.userEmail) {
-            //userEmail filter sql
-            filterSqlList.push(`${columnToBeFiltered}=(SELECT id FROM users WHERE email=?)`)
-        }
+        filterSqlList.push(filterSqlQueryMap[filterKey])
 
     }
 
