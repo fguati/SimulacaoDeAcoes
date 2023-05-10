@@ -9,7 +9,7 @@
     "populateTestDB": "node .\\scripts\\setUpDBForTests\\setUpDBForTests.js",
     "setupTests": "npm run backUpDB && npm run populateTestDB",
     "restoreBackUp": "node .\\scripts\\restoreBackUp.js",
-    "test": "npm run populateTestDB && jest --verbose --silent && wait-on && npm run restoreBackUp",
+    "test": "npm run setupTests && jest --verbose --silent && wait-on && npm run restoreBackUp",
     "test:watch": "jest --watch --verbose --silent",
     "test:coverage": "jest --coverage --verbose --silent",
     "start": "nodemon .\\src\\server.js",
