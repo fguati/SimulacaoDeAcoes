@@ -74,7 +74,7 @@ class UserDAO {
 
     static async updateBalance(userId, fundsChange) {
         //sql
-        const sql = `UPDATE users SET user_balance = user_balance + ${fundsChange} WHERE id = ? RETURNING id;`
+        const sql = `UPDATE users SET user_balance = user_balance + ${fundsChange} WHERE id = ? RETURNING id, user_balance;`
         
         try {
             //run sql
@@ -82,6 +82,9 @@ class UserDAO {
 
             //throw not found error if id is not in db
             if(!userDB) throw new NotFoundError('User id not found in our database')
+
+            return userDB.user_balance
+            
         } catch (error) {
             //throw invalid input error if change would make balance negative
             const isNegativeBalanceError = error.message.includes("SQLITE_CONSTRAINT: CHECK constraint failed: user_balance >= 0")

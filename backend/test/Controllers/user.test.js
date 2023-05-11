@@ -216,3 +216,117 @@ describe('test the postUser method of the user controller', () =>{
 
     })
 })
+
+describe('test the moveFunds method of the user controller class', () => {
+    it('must receive a success response with the new balance in the body', async () => {
+        const { req, res, next } = mockReqResNext()
+        const testUserId = 17
+        const testFundsToDeposit = 200
+        const testFundsToWithdraw = -100
+        req.body = {
+            payloadJWT: {
+                id: testUserId,
+            },
+            funds: testFundsToDeposit
+        }
+
+        let response = await UserController.moveFunds(req, res, next)
+        expect(response.statusCode).toBe(200)
+
+        let responseBody = JSON.parse(response.body)
+
+        expect(responseBody).toEqual(expect.objectContaining({
+            balance: testFundsToDeposit
+        }))
+
+        req.body.funds = testFundsToWithdraw
+        response = await UserController.moveFunds(req, res, next)
+        expect(response.statusCode).toBe(200)
+
+        responseBody = JSON.parse(response.body)
+
+        expect(responseBody).toEqual(expect.objectContaining({
+            balance: testFundsToDeposit + testFundsToWithdraw
+        }))
+
+    })
+
+    it('must return a failure response if the funds to be moved were not sent or had invalid value', async () => {
+        const { req, res, next } = mockReqResNext()
+        const testUserId = 17
+        req.body = {
+            payloadJWT: {
+                id: testUserId,
+            }
+        }
+
+        let response = await UserController.moveFunds(req, res, next)
+        expect(response.statusCode).toBe(422)
+
+        expect(response).toEqual(expect.objectContaining({
+            name: 'InvalidInputError',
+            message: expect.any(String),
+            aditionalInfo: expect.stringContaining('funds')
+        }))
+        
+        req.body.funds = 'invalid'
+
+        response = await UserController.moveFunds(req, res, next)
+        expect(response.statusCode).toBe(422)
+
+        expect(response).toEqual(expect.objectContaining({
+            name: 'InvalidInputError',
+            message: expect.any(String),
+            aditionalInfo: expect.stringContaining('funds')
+        }))
+    })
+
+    it('must return a failure response if the user id was not sent', async () => {
+        const { req, res, next } = mockReqResNext()
+        req.body = {
+            payloadJWT: {
+            },
+            funds: 100
+        }
+
+        let response = await UserController.moveFunds(req, res, next)
+        expect(response.statusCode).toBe(422)
+
+        expect(response).toEqual(expect.objectContaining({
+            name: 'InvalidInputError',
+            message: expect.any(String),
+            aditionalInfo: expect.stringContaining('id')
+        }))
+        
+        req.body.payloadJWT.id = null
+
+        response = await UserController.moveFunds(req, res, next)
+        expect(response.statusCode).toBe(422)
+
+        expect(response).toEqual(expect.objectContaining({
+            name: 'InvalidInputError',
+            message: expect.any(String),
+            aditionalInfo: expect.stringContaining('id')
+        }))
+    })
+
+    it('must return a 404 failure response if the user id in the payload is not in the database', async () => {
+        const { req, res, next } = mockReqResNext()
+        req.body = {
+            payloadJWT: {
+                id: 9999999
+            },
+            funds: 100
+        }
+
+        let response = await UserController.moveFunds(req, res, next)
+        expect(response.statusCode).toBe(404)
+
+        expect(response).toEqual(expect.objectContaining({
+            name: 'NotFoundError',
+            message: expect.any(String),
+        }))
+        
+    })
+})
+
