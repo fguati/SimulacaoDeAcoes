@@ -8,5 +8,6 @@ router.get('/', UserController.getAll)
 router.get('/:id', UserController.getOneById)
 
 router.post('/', UserController.postUser)
+router.post('/deposit', UserController.moveFunds)
 
 module.exports = { router }

@@ -6,7 +6,7 @@ const JWToken = require('#root/src/services/tokens.js')
 function mockReqResNext() {
     const { req, res } = createMocks();
     const next = jest.fn()
-
+    // req.body = {}
     res.status = (code) => {
         res.statusCode = code    
         return res
@@ -29,7 +29,10 @@ function mockReqResNext() {
 describe('unit tests for Authentication middleware class', () => {
     
     //mocking external dependencies: their unit tests are conducted in their own test files
-    JWToken.validateJWT = jest.fn(token => token)
+    const returnOfValidateJWT = 'payload' 
+    const mockValidate = jest.fn()
+    mockValidate.mockReturnValue(returnOfValidateJWT)
+    JWToken.validateJWT = mockValidate
     
     it('must call validateJWT method if receives authToken through cookie', async () => {
         const { req, res, next } = mockReqResNext() 
@@ -38,16 +41,29 @@ describe('unit tests for Authentication middleware class', () => {
             authToken: 'exampleToken'
         }
 
-        const response = await Authentication.authToken(req, res, next)
+        await Authentication.authToken(req, res, next)
 
         expect(JWToken.validateJWT).toBeCalledWith(req.cookies.authToken)
         expect(next).toBeCalledTimes(1)
     })
 
+    it('must store the return of the validateJWT method in the body of the req object', async () => {
+        const { req, res, next } = mockReqResNext() 
+        
+        req.cookies = {
+            authToken: 'exampleToken'
+        }
+
+        await Authentication.authToken(req, res, next)
+
+        expect(req.body.payloadJWT).toEqual(returnOfValidateJWT)
+        
+    })
+
     it('must call next with a MissingAuthTokenError if authToken is not received throough cookies', async () => {
         const { req, res, next } = mockReqResNext() 
 
-        const response = await Authentication.authToken(req, res, next)
+        await Authentication.authToken(req, res, next)
 
         expect(next).toBeCalledWith(expect.any(MissingAuthTokenError))
 

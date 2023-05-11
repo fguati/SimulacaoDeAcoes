@@ -50,6 +50,32 @@ class UserController {
         }
     }
 
+    //method that deposits or withdraws funds from user balance
+    static async moveFunds(req, res, next) {
+        try {
+            //get user id from jwt payload
+            const { id } = req.body.payloadJWT
+
+            //check if user id was sent in jwt payload in the req body
+            if(!id) throw new InvalidInputError('User id was not sent in http request', ['id'])
+
+            //get funds moved from request body
+            const { funds } = req.body
+
+            //check if request body has the value of funds to be deposited or withdrawn
+            if(isNaN(funds)) throw new InvalidInputError('Valid funds to be moved were not sent in http request', ['funds'])
+
+            //send operation to database
+            const balance = await UserDAO.updateBalance(id, funds)
+            //send success response
+            return res.status(200).send(JSON.stringify({ balance }))
+            
+        } catch (error) {
+            //send error to error treating middleware
+            return next(error)
+        }
+    }
+
 }
 
 module.exports = UserController;

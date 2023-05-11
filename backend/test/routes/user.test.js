@@ -2,6 +2,7 @@ const app = require('../../src/app.js')
 const request = require('supertest')
 const UserDao = require('../../src/db/ComunicationDB/user.js')
 const { dbGet } = require('../../src/db/utils/dbutils.js')
+const { authTokenDurationInSec } = require('../../src/utils/globalVariables.js')
 
 const validCredentials = {
     username: "validLoginUser",
@@ -22,6 +23,8 @@ let testObjectWithInvalidFields = {
     hashed_password: '123',
     salt: 'testSalt'
 };
+
+let server;
 
 async function login() {
     
@@ -137,12 +140,12 @@ describe('Testar POST em /user', () => {
         const result = await dbGet(sql, [username, email])
     
         return result.id
-    };
+    }
 
     it('must create an object in the the DB', async () => {
         const authToken = await login()
         
-        const resposta = await request(server)
+        await request(server)
             .post('/user')
             .set('Cookie', authToken)
             .send(testObjectToBePosted)
@@ -296,6 +299,137 @@ describe('Testar POST em /user', () => {
             aditionalInfo: expect.stringContaining('email')
         }))
 
+    })
+
+
+})
+
+describe('Integration tests of the /user/depostit route', () => {
+
+    const testUserCredentials = {
+        username: "testDepositFundsRoute",
+        email: "depositFunds@routeTest.com",
+        password: "aA*12345678"
+    }
+
+    const loginDeposit = async () => {
+        const resposta = await request(server).post('/login').send(testUserCredentials)
+        const authToken = resposta.headers['set-cookie']
+        return authToken
+    }
+
+    it('must return a success response with the balance in its body', async () => {
+        
+        const authToken = await loginDeposit()
+        const valueToDeposit = 200
+        const valueToWithdraw = -100
+
+        let resposta = await request(server)
+            .post(`/user/deposit`)
+            .set('Content-Type', 'application/json')
+            .set('Cookie', authToken)
+            .send({ funds: valueToDeposit })
+            .expect(200)
+        let parsedBody = JSON.parse(resposta.text)
+        expect(parsedBody).toEqual(expect.objectContaining({
+            balance: valueToDeposit
+        }))
+
+        resposta = await request(server)
+            .post(`/user/deposit`)
+            .set('Content-Type', 'application/json')
+            .set('Cookie', authToken)
+            .send({ funds: valueToWithdraw })
+            .expect(200)
+        parsedBody = JSON.parse(resposta.text)
+        expect(parsedBody).toEqual(expect.objectContaining({
+            balance: valueToDeposit + valueToWithdraw
+        }))
+
+
+    })
+
+    it('must return a failure response if the funds to be moved were not sent or had invalid value', async () => {
+        const authToken = await loginDeposit()
+
+        let resposta = await request(server)
+            .post('/user/deposit')
+            .set('Cookie', authToken)
+            .send({})
+            .expect(422)
+
+        expect(JSON.parse(resposta.text)).toEqual(expect.objectContaining({
+            name: 'InvalidInputError',
+            message: expect.any(String),
+            aditionalInfo: expect.stringContaining('funds')
+        }))
+
+        resposta = await request(server)
+            .post('/user/deposit')
+            .set('Cookie', authToken)
+            .send({funds: 'null'})
+            .expect(422)
+
+        expect(JSON.parse(resposta.text)).toEqual(expect.objectContaining({
+            name: 'InvalidInputError',
+            message: expect.any(String),
+            aditionalInfo: expect.stringContaining('funds')
+        }))
+    })
+
+    it('must return a failure response if the move would lead to negative balance', async () => {
+        const authToken = await loginDeposit()
+        const invalidWithdraw = -10000000000
+
+        let resposta = await request(server)
+            .post('/user/deposit')
+            .set('Cookie', authToken)
+            .send({ funds: invalidWithdraw })
+            .expect(422)
+
+        expect(JSON.parse(resposta.text)).toEqual(expect.objectContaining({
+            name: 'InvalidInputError',
+            message: expect.any(String),
+            aditionalInfo: expect.stringContaining('funds')
+        }))
+    })
+
+    it('must return a MissingAuthTokenError error if it is not authenticated', async () => {
+        const depositValue = 500
+
+        let resposta = await request(server)
+            .post('/user/deposit')
+            .set('Cookie', 'invalidToken')
+            .send({ funds: depositValue })
+            .expect(401)
+
+        const parsedBody = JSON.parse(resposta.text)
+
+        expect(parsedBody).toEqual(expect.objectContaining({
+            name: 'MissingAuthTokenError',
+            message: expect.any(String)
+        }))
+    })
+
+    it('must return a failure response if it is authToken is expired', async () => {
+        jest.useFakeTimers();
+        const authToken = await loginDeposit()
+        jest.advanceTimersByTime(authTokenDurationInSec * 1000 + 1)
+        const valueToDeposit = 200
+
+        let resposta = await request(server)
+            .post(`/user/deposit`)
+            .set('Content-Type', 'application/json')
+            .set('Cookie', authToken)
+            .send({ funds: valueToDeposit })
+            .expect(401)
+        
+        let parsedBody = JSON.parse(resposta.text)
+
+        expect(parsedBody).toEqual(expect.objectContaining({
+            name: 'TokenExpiredError',
+            message: expect.any(String)
+        }))
     })
 
 })

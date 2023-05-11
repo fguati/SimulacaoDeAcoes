@@ -1,6 +1,6 @@
-const { InvalidInputError, UniqueConstraintError, InvalidCredentialsError } = require('../../../src/CustomErrors')
+const { InvalidInputError, UniqueConstraintError, InvalidCredentialsError, NotFoundError } = require('../../../src/CustomErrors')
 const UserDAO = require('../../../src/db/ComunicationDB/user.js')
-const { dbGet, dbRun } = require('../../../src/db/utils/dbutils.js')
+const { dbGet } = require('../../../src/db/utils/dbutils.js')
 
 describe('Unit tests of select queries to users table in DB', () => {
     it('must return a list of objects with properties username, email, hashes_password when has no arguments', async () => {
@@ -63,7 +63,6 @@ describe('Unit tests of select by id queries to users table in DB', ()=> {
 })
 
 describe('Unit tests of select by email queries to users table in DB', ()=> {
-    const selectSQL = `SELECT email FROM users LIMIT 1`
     
     it('must return an object with username, email and hashed_password properties', async () => {
         const testEmail = 'test@selectbyemail'
@@ -109,7 +108,7 @@ describe('Unit tests of the insert method of the class responsible for querying 
         const resultado = await dbGet(sql, [username, email])
     
         return resultado.id
-    };
+    }
 
     async function getObjectById(id) {
         let sql = `SELECT * FROM users WHERE id=?`;
@@ -198,19 +197,6 @@ describe('Unit tests of the insert method of the class responsible for querying 
 })
 
 describe('Unit tests of the delete method of the class responsible for querying the user table in the DB', () => {
-    const userToBeDeleted = {
-        username: 'TestDAODelete',
-        email: 'testDAO@delete',
-        hashed_password: 'c1919704fb59beecb35114c6f44ea15860c306a235c7f9c6cdc4cb6a51ba4d2b1c18730714b54f9c66a579357a4e02df62cee25b1ac95ad45bb9c081f401e08a',
-        salt: 'ca149aada51bee0f3bd71c7606347e88d3402a9c077b870e45bcedefa1996b65241834a9752de095fd6d9fb78c71318f89d4c90d7336afce4c32ed4a3fb191b36ca194445f143f53042e578917a38ee5b9312807318b27294f5859bded58ab90b4a0a69c84e11973945e1c463af5ea29362e6de4b24598ceedaff43ddd66df03'
-    };
-
-    async function getId({ username, email }) {
-        let sql = `SELECT id FROM users WHERE username=? AND email=?`;
-        const resultado = await dbGet(sql, [username, email])
-    
-        return resultado.id
-    };
 
     async function getObjectById(id) {
         let sql = `SELECT * FROM users WHERE id=?`;
@@ -232,5 +218,45 @@ describe('Unit tests of the delete method of the class responsible for querying 
         }
 
         expect(testFunction).rejects.toThrow(InvalidInputError)
+    })
+})
+
+describe('Unit tests for the updateBalance method of the userDAO class', () => {
+    it('must update the balance with the entered value, be it positive or negative', async () => {
+        const testId = 16 // id of user for balance tests in test db
+        async function getUserBalance() {
+            const balance = await dbGet(`SELECT user_balance FROM users WHERE id=?`, [testId])
+            return balance.user_balance
+        }
+
+        const depositTest = 100
+        await UserDAO.updateBalance(testId, depositTest)
+        let balanceDB = await getUserBalance()
+        expect(balanceDB).toBe(depositTest)
+
+        const withdrawTest = -50
+        await UserDAO.updateBalance(testId, withdrawTest)
+        balanceDB = await getUserBalance()
+        expect(balanceDB).toBe(depositTest + withdrawTest)
+        
+    })
+
+    it('must throw not found error if user id is not in db', async () => {
+        async function testFunction() {
+            const invalidId = 9999999999999
+            await UserDAO.updateBalance(invalidId, 1)
+        }
+
+        await expect(testFunction).rejects.toThrow(NotFoundError)
+    })
+
+    it('must throw invalid input error if change would make balance negative', async () => {
+        async function testFunction() {
+            const invalidId = 16 // id of user for balance tests in test db
+            const testInvalidWithdraw = -10000000
+            await UserDAO.updateBalance(invalidId, testInvalidWithdraw)
+        }
+
+        await expect(testFunction).rejects.toThrow(InvalidInputError)
     })
 })

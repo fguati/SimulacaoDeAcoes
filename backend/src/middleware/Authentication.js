@@ -19,6 +19,7 @@ class Authentication {
             functionalities, it can be added to the res object and sent to the frontend to be 
             cashed or to the req object to be user in other middlewares or controllers */
             const payload = JWToken.validateJWT(authToken)
+            req.body.payloadJWT = payload
             
             return next()
             

@@ -6,7 +6,7 @@ const USERS_SCHEMA = `
     email VARCHAR(255) NOT NULL UNIQUE,
     hashed_password VARCHAR(255) NOT NULL,
     salt VARCHAR(255) NOT NULL,
-    user_balance REAL DEFAULT 0
+    user_balance REAL DEFAULT 0 CHECK(user_balance >= 0)
   );
   `
 
