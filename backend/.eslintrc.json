@@ -11,6 +11,7 @@
     "parserOptions": {
         "ecmaVersion": "latest"
     },
+    "plugins": ["jest"],
     "rules": {
     }
 }

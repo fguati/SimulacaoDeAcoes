@@ -15,7 +15,8 @@ VALUES  ("Testget", "test@get", "3a02078363bb72fd562ef80a18fed3ff05b1e80622283ea
         ('userWithPositionToUpdate', 'user@WithPositionToUpdate.com', '471fc71e43bf535e7bd16bce291687fa248506cc93a5ba1f0bfe1369d923948410a13e6cd51ccdce71bf63941e96f89eb648b7230fec231fcab287caa8a70482', 'f720e0911464e933d853b466f811054860d6de2be3db6a44ee08a73a7974808ef70bbb85abc673b90746342315f294178fd07d4ec2913e8501beab21638ebb47a71a23757205154d62fa1491ac1dfb6a660ddfb6f90d66febfec2776a068b635b82f1416607a462b63230a984634ba6c098b1c3c907d09ebf9d353ff87a32fdd'),
         ('userToHaveUpdateError', 'user@WithErrorUpdatePosition.com', '123', '123'),
         ('userWithNegotiationHistory', 'user@withNegotiationHistory.com', '13', '123'),
-        ('alternateUserWithNegotiationHistory', 'alternanteUser@withNegotiationHistory.com', '13', '123');
+        ('alternateUserWithNegotiationHistory', 'alternanteUser@withNegotiationHistory.com', '13', '123'),
+        ('userToTestBalanceChanges', 'user@ToTestBalanceChanges.com', 'efb97a92dda086b5b252119dac0c17caefe2ea0be9aa7dadc1dea46eb980b3db8e625703036d06023796d9a2b29f64558ebce4a93686e4c60970d1efe9d8851f', '23e6699dc40684bfdad15f0b577287022ee84cd337f53c74712e887518d06ac30f62fbbbd29402291fad39bdc623d0a4ea417a9f92a3eff19d3ba14fb31445ad75904614131dc1b97d2333cb004aa4e5d92615a1cc30912c07d4b97a393d059d7ad94a4a9d721580c00289d79463d59a4d26a8b89a74b5cf5a341aeabe8b4d6d');
 
 `
 
