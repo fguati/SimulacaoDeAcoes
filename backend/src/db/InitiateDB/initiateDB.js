@@ -2,7 +2,6 @@ const process = require('node:process');
 const sqlite3 = require('sqlite3').verbose()
 const SCHEMA_LIST = require('../Schemas')
 const createDB = require('../utils/ManipulateDBFiles/createDB');
-const copyDB = require('../utils/ManipulateDBFiles/copyDBto');
 
 //Create the file for the sqlite database, in case it doesn't already exists, and store its filepath in a constant for later use
 const dbFilePath = createDB('db')
@@ -33,9 +32,6 @@ db.serialize(() => {
 
 })
 
-//Create a backup of the db everytime it connects
-const backUpDB = createDB('dbBackUp')
-copyDB(dbFilePath).to(backUpDB)
 
 //Logs the exit of the db and back up the db
 process.on('SIGINT',() => {
@@ -44,8 +40,6 @@ process.on('SIGINT',() => {
             return console.log(err.message)
         }
 
-        const backUpDBAfterDisconnect = createDB('dbBackUpAfterLastDisconnect')
-        copyDB(dbFilePath).to(backUpDBAfterDisconnect)
         console.log('Disconnected to db')
         process.exit(0)
     })
