@@ -310,6 +310,26 @@ describe('test the moveFunds method of the user controller class', () => {
         }))
     })
 
+    it('must return a failure response if the move would lead to negative balance', async () => {
+        const { req, res, next } = mockReqResNext()
+        const testUserId = 17
+        req.body = {
+            payloadJWT: {
+                id: testUserId,
+            },
+            funds: -10000000000000000
+        }
+
+        let response = await UserController.moveFunds(req, res, next)
+        expect(response.statusCode).toBe(422)
+
+        expect(response).toEqual(expect.objectContaining({
+            name: 'InvalidInputError',
+            message: expect.any(String),
+            aditionalInfo: expect.stringContaining('funds')
+        }))
+    })
+
     it('must return a 404 failure response if the user id in the payload is not in the database', async () => {
         const { req, res, next } = mockReqResNext()
         req.body = {
