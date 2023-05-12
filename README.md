@@ -75,6 +75,7 @@ Users get a dashboard summarizing their
 React with TypeScript for the frontend
 Express Node.js for the backend
 Sqlite3 for the database
+API https://brapi.dev/ for quoting market data (documentation in https://brapi.dev/docs)
 <!-- WebSocket for real-time updates -->
 
 # Getting Started
