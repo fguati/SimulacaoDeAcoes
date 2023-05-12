@@ -73,7 +73,7 @@ class FinanceAPIFetcher {
 
         } catch (error) {
             //check if error was a not found one
-            if(error.response.status === 404) throw new NotFoundError(`Ticker ${tickerList[0]} not found`)
+            if(error.response.status === 404) throw new NotFoundError(`Stock not found`)
             
             //throw error to be caught at controller layer
             throw error
