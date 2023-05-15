@@ -89,6 +89,7 @@ class PositionDAO {
         //make sql query
         const sqlParameters = stockTickerFilter ? [userId, stockTickerFilter] : [userId] 
         const result = await dbAll(sql, sqlParameters)
+        console.log(result)
 
         //return list of positions if query doesnt have stock ticker and just the found position if it has
         return stockTickerFilter ? result[0] : result
