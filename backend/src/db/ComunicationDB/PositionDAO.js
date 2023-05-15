@@ -89,7 +89,6 @@ class PositionDAO {
         //make sql query
         const sqlParameters = stockTickerFilter ? [userId, stockTickerFilter] : [userId] 
         const result = await dbAll(sql, sqlParameters)
-        console.log(result)
 
         //return list of positions if query doesnt have stock ticker and just the found position if it has
         return stockTickerFilter ? result[0] : result
@@ -154,6 +153,15 @@ class PositionDAO {
         }
     }
 
+    //method that deletes positions by user id and ticker if the position exists
+    static async deleteIfExists(userId, stockTicker) {
+        //delete sql
+        const sql = `DELETE FROM stock_positions WHERE user_id=? AND stock_ticker=?`
+
+        //run sql
+        await dbRun(sql, [userId, stockTicker])
+    }
+
     //method that updates a position, finding it by its stock ticker and the email of its user
     static async updateByStockAndEmail(positionWithEmailToUpdate) {
         //make list of arguments from position entered
@@ -196,18 +204,13 @@ class PositionDAO {
     //method that inserts a position in the table if it doesn't exists already and updates it if it does
     static async insertOrUpdate(positionWithEmailToUpdate) {
         //sql query
-        const sql = `
-            INSERT OR REPLACE INTO stock_positions (user_id, stock_ticker, stock_qty, stock_avg_price) 
-            VALUES (
-                (SELECT id from users WHERE email=?), 
-                ?, ?, ?
-            );
-        `
+        const sql = `INSERT OR REPLACE INTO stock_positions (user_id, stock_ticker, stock_qty, stock_avg_price) VALUES (?, ?, ?, ?);`
+        
         //make list of arguments from position entered
-        const {userEmail, stockTicker, stockQty, stockAvgPrice} = positionWithEmailToUpdate
-        const inputParamaterList = [userEmail, stockTicker, stockQty, stockAvgPrice]
-        const columnNames = ['userEmail', 'stockTicker', 'stockQty', 'stockAvgPrice']
-
+        const {userId, stockTicker, stockQty, stockAvgPrice} = positionWithEmailToUpdate
+        const inputParamaterList = [userId, stockTicker, stockQty, stockAvgPrice]
+        const columnNames = ['userId', 'stockTicker', 'stockQty', 'stockAvgPrice']
+        
         //check if there were any invalid inputs
         checkInvalidInputsErrors(inputParamaterList, positionWithEmailToUpdate, columnNames)
 
@@ -226,8 +229,8 @@ class PositionDAO {
             await dbGet(sql, inputParamaterList)
             
         } catch (error) {
-            //check if email entered exists in the database
-            checkNotNullSqlError(error, "Entered user was not found in our database", NotFoundError)
+            //check if user entered exists in the database
+            checkForeignKeyError(error, "Entered user was not found in our database")
 
             //throw error to be caught at controller layer
             throw error

@@ -19,7 +19,9 @@ VALUES  ("Testget", "test@get", "3a02078363bb72fd562ef80a18fed3ff05b1e80622283ea
         ('userToTestBalanceChanges', 'user@ToTestBalanceChanges.com', 'efb97a92dda086b5b252119dac0c17caefe2ea0be9aa7dadc1dea46eb980b3db8e625703036d06023796d9a2b29f64558ebce4a93686e4c60970d1efe9d8851f', '23e6699dc40684bfdad15f0b577287022ee84cd337f53c74712e887518d06ac30f62fbbbd29402291fad39bdc623d0a4ea417a9f92a3eff19d3ba14fb31445ad75904614131dc1b97d2333cb004aa4e5d92615a1cc30912c07d4b97a393d059d7ad94a4a9d721580c00289d79463d59a4d26a8b89a74b5cf5a341aeabe8b4d6d'),
         ('userBalanceControllerTest', 'UserBalance@Controller.com', '9e725ac94613124a16d5096082bd2fef12242ff8aca2d77ebb93cb00e1980e9b78960668ba6fb7700f2196e86a5fed3936f55d0a8c1e352c01aa15591d266af0', 'ecbbc36a356b494f64c4cf77fa302739291d40d021bcce512f929a61889b67cec0646731a5d07fa5694bcdeb16f468b6d5a701cbf5798b8870fa6e9b89b5f878ea5f62cfc244c180f7c7aeb43f8cc2f82e915744f9a7ee3b4a4b603eff15294525c72ef2d09b462a0be968b80ddd0eb0c1f3e70253f9c23f0b814031122a0b77'),
         ('testDepositFundsRoute', 'depositFunds@routeTest.com', 'fd506281c9b034e5f9d587a7e3f56c924734e900f4c831c228b2d1c76ee785aacb253241301bbd7cce9fa45dc2e576e2db12e6d5c4b5dcc757c714d328bb7515', '6d7864d82902474233a5b17ea0af7c2379b1de812760f3d6d08d5b915d25570286460bff19682c74bb87b73ed9ad53452aae404b8398fa775430f2395ed718d26b40253a9e0ce329c9cb5b40e1f2f29190dba68aa953632a418d8ae6d44770bace723c4f75c34dbf0c2fc1a167299a865ba302a607623dfa8559c8e05882db63'),
-        ('userWithPositions', 'userWithPositions@testPositionModel.com', '123', '123');
+        ('userWithPositions', 'userWithPositions@testPositionModel.com', '123', '123'),
+        ('userThatWillBuyNewPosition', 'userBuy@newPositions.com', '123', '123'),
+        ('userToTestPositionModelErrorHandling', 'postiotionModel@errorTest.com', '123', '123');
 
 `
 
@@ -35,7 +37,10 @@ VALUES  ("1", "LEVE3", 10, 17.93),
         ("11", "ITSA3", 12, 12.00), --position to be deleted, id 9
         ("12", "LEVE3", 5, 13.45), --position to be updated, id 10
         ("13", "LEVE3", 1, 1.00),
-        ('19', 'ITSA4', 10, 5.00) -- position to test PositionModel access to db;  
+        ('19', 'ITSA4', 10, 5.00), -- position to test PositionModel access to db
+        ('19', 'BBAS3', 15, 3.00), -- position to be altered with buy method
+        ('21', 'HGBS11', 10, 21.57), --postition to test error when trying to buy with insuficient funds
+        ("11", "KNRI11", 12, 12.00) -- another position to be deleted;  
 
 `
 

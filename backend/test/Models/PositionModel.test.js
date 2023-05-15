@@ -1,5 +1,6 @@
 const { InvalidInputError, NotFoundError } = require("../../src/CustomErrors")
 const PositionModel = require("../../src/Models/PositionModel")
+const { dbGet, dbRun, dbAll } = require("../../src/db/utils/dbutils")
 const FinanceAPIFetcher = require('../../src/services/FinanceAPIFetcher.js')
 
 describe('Test basic properties of PositionModel class', () => {
@@ -109,6 +110,22 @@ describe('Test methods from the PositionModel that access the Finance API', () =
 })
 
 describe('Test methods from the PositionModel that access database', () => {
+    async function getHistoryFromDB(userId, stockTicker) {
+        const history = await dbGet(`SELECT * FROM negotiations WHERE user_id=? AND stock_ticker=? ORDER BY negotiation_date DESC`, [userId, stockTicker])
+        return history
+    }
+    async function getPosition(userId, stockTicker) {
+        const position = await dbGet(`SELECT * FROM stock_positions WHERE user_id=? AND stock_ticker=?`, [userId, stockTicker])
+        return position
+    }
+    async function getUser(userId) {
+        const user = await dbGet(`SELECT * FROM users WHERE id=?`, [userId])
+        return user
+    }
+    async function addFundsToUser(userId, funds) {
+        await dbRun(`UPDATE users SET user_balance = user_balance + ${funds} WHERE id =?`, [userId])
+    }
+    
     test('instanceFromDB must return a PositionModel object with data from database', async () => {
         const testUserId = 19 //user id that exists in db
         const testTicker = 'ITSA4' //ticker that user has
@@ -154,4 +171,198 @@ describe('Test methods from the PositionModel that access database', () => {
         await expect(testFunction(19, 'WEGE3')).rejects.toThrow(NotFoundError)
 
     })
+
+    test('buy method calls the FinanceAPI fetcher and changes in the db user balance, stock qty, position average price and negotiation history for an existing position', async () => {
+        const originalFetchMethod = FinanceAPIFetcher.fetchStockInfo
+
+        const testUserId = 19 //know user from test db
+        const testStock = 'BBAS3'// stock know to be had be user in test db
+        const initialBalance = 100
+        const qtyToBuy = 10
+        const mockCurrentPrice = 4.00
+        const expectedQty = 15 + qtyToBuy // based on known values from db
+        const expectedTotal = 15 * 3 + qtyToBuy * mockCurrentPrice // based on known values from db
+        const expectedAvgPrice = expectedTotal / expectedQty
+        const expectedBalance = initialBalance - qtyToBuy * mockCurrentPrice
+        const today = new Date
+        
+        await addFundsToUser(testUserId, initialBalance)
+
+        const MockFetchInfo = jest.fn().mockImplementationOnce(async (tickerList) => {
+            return [{
+                ticker: tickerList[0],
+                companyName: 'testName',
+                currency: 'BRL',
+                currentPrice: mockCurrentPrice
+            }] 
+        })
+        
+        FinanceAPIFetcher.fetchStockInfo = MockFetchInfo
+        const existingPositionToBuy = await PositionModel.instanceFromDB(testUserId, testStock)
+        const { userBalance, stockAveragePrice, stockQty } = await existingPositionToBuy.buy(qtyToBuy)
+        
+        expect(MockFetchInfo).toBeCalledWith([testStock])
+
+        expect(userBalance).toBe(expectedBalance)
+        expect(stockAveragePrice).toBe(expectedAvgPrice)
+        expect(stockQty).toBe(expectedQty)
+
+        const user = await getUser(testUserId)
+        const negotiation = await getHistoryFromDB(testUserId, testStock)
+        const position = await getPosition(testUserId, testStock)
+
+        expect(existingPositionToBuy.totalCost).toBe(expectedTotal)
+        expect(existingPositionToBuy.qty).toBe(expectedQty)
+        expect(existingPositionToBuy.averagePrice).toBe(expectedAvgPrice)
+
+        expect(user.user_balance).toBe(expectedBalance)
+        expect(position.stock_qty).toBe(expectedQty)
+        expect(position.stock_avg_price).toBe(expectedAvgPrice)
+        
+        expect(negotiation).toEqual(expect.objectContaining({
+            user_id: testUserId, 
+            stock_ticker: testStock, 
+            negotiated_qty: qtyToBuy, 
+            negotiated_price: mockCurrentPrice, 
+            negotiation_type: 'BUY'
+        }))
+        const negotiationDate = new Date(negotiation.negotiation_date)
+        expect(negotiationDate.getDate()).toBe(today.getDate())
+        expect(negotiationDate.getMonth()).toBe(today.getMonth())
+        expect(negotiationDate.getFullYear()).toBe(today.getFullYear())
+        
+        FinanceAPIFetcher.fetchStockInfo = originalFetchMethod
+    })
+
+    test('buy method calls the FinanceAPI fetcher and changes in the db user balance, and creacte a new position and negotiation in the db for a new position', async () => {
+        const originalFetchMethod = FinanceAPIFetcher.fetchStockInfo
+
+        const testUserId = 20 //known user from test db
+        const testStock = 'XPML11'// stock known to not be in users portfolio
+        const initialBalance = 100
+        const qtyToBuy = 10
+        const mockCurrentPrice = 4.00
+        const expectedTotal = qtyToBuy * mockCurrentPrice
+        const expectedBalance = initialBalance - expectedTotal
+        const today = new Date()
+        
+        await addFundsToUser(testUserId, initialBalance)
+
+        const MockFetchInfo = jest.fn().mockImplementationOnce(async (tickerList) => {
+            return [{
+                ticker: tickerList[0],
+                companyName: 'testName',
+                currency: 'BRL',
+                currentPrice: mockCurrentPrice
+            }] 
+        })
+        
+        FinanceAPIFetcher.fetchStockInfo = MockFetchInfo
+        const positionToBeCreated = new PositionModel(testUserId, testStock, 0, 0)
+        const { userBalance, stockAveragePrice, stockQty } = await positionToBeCreated.buy(qtyToBuy)
+        
+        expect(MockFetchInfo).toBeCalledWith([testStock])
+
+        expect(userBalance).toBe(expectedBalance)
+        expect(stockAveragePrice).toBe(mockCurrentPrice)
+        expect(stockQty).toBe(qtyToBuy)
+
+        const user = await getUser(testUserId)
+        const negotiation = await getHistoryFromDB(testUserId, testStock)
+        const position = await getPosition(testUserId, testStock)
+
+        expect(positionToBeCreated.totalCost).toBe(expectedTotal)
+        expect(positionToBeCreated.qty).toBe(qtyToBuy)
+        expect(positionToBeCreated.averagePrice).toBe(mockCurrentPrice)
+
+        expect(user.user_balance).toBe(expectedBalance)
+        expect(position.stock_qty).toBe(qtyToBuy)
+        expect(position.stock_avg_price).toBe(mockCurrentPrice)
+        
+        expect(negotiation).toEqual(expect.objectContaining({
+            user_id: testUserId, 
+            stock_ticker: testStock, 
+            negotiated_qty: qtyToBuy, 
+            negotiated_price: mockCurrentPrice, 
+            negotiation_type: 'BUY'
+        }))
+        const negotiationDate = new Date(negotiation.negotiation_date)
+        expect(negotiationDate.getDate()).toBe(today.getDate())
+        expect(negotiationDate.getMonth()).toBe(today.getMonth())
+        expect(negotiationDate.getFullYear()).toBe(today.getFullYear())
+        
+        FinanceAPIFetcher.fetchStockInfo = originalFetchMethod
+    })
+
+    test('buy method must return a not found error if user id is not in db', async () => {
+        const idTestuser = 99999
+        const testStock = 'HGBS11'
+        const newPosition = new PositionModel(idTestuser, testStock, 0, 0)
+
+        async function testFunction() {
+            await newPosition.buy(1)
+        } 
+
+        const negotiationDB = await dbAll(`SELECT * FROM negotiations WHERE user_id=? AND stock_ticker=?`, [idTestuser, testStock])
+
+        expect(negotiationDB.length).toBe(0)
+        await expect(testFunction).rejects.toThrow(NotFoundError)
+    })
+
+    test('buy method must return a not found error if stock ticker is not found by external API', async () => {
+        const idTestuser = 21 // known user from test db
+        const testStock = 'INVLD7'
+        const newPosition = new PositionModel(idTestuser, testStock, 0, 0)
+
+        async function testFunction() {
+            await newPosition.buy(1)
+        } 
+
+        await expect(testFunction).rejects.toThrow(NotFoundError)
+
+        const negotiationDB = await dbAll(`SELECT * FROM negotiations WHERE user_id=? AND stock_ticker=?`, [idTestuser, testStock])
+        const userDB = await dbGet(`SELECT * FROM users WHERE id=?`, [idTestuser])
+
+        expect(userDB.user_balance).toBe(0) //user initial balance is known to be 0
+        expect(negotiationDB.length).toBe(0)
+    })
+
+    test('buy method must throw invalid input error if cost of buying the stocks is larger than user balance', async () => {
+        const idTestuser = 21 // known user from test db
+        const testStock = 'HGBS11'//stock known to be in user portfolio
+        const stockNotInPorfolio = 'ALZR11'
+        const positionFromDb = await PositionModel.instanceFromDB(idTestuser, testStock)
+
+        function testFunction(positionToTest) {
+            return async () => {
+                await positionToTest.buy(1)
+            }
+        } 
+
+        // //testing with existing position
+        await expect(testFunction(positionFromDb)).rejects.toThrow(InvalidInputError)
+
+        let negotiationDB = await dbAll(`SELECT * FROM negotiations WHERE user_id=? AND stock_ticker=?`, [idTestuser, testStock])
+        let userDB = await dbGet(`SELECT * FROM users WHERE id=?`, [idTestuser])
+        let positionFromDBAfterFailedBuy = await PositionModel.instanceFromDB(idTestuser, testStock)
+
+        expect(userDB.user_balance).toBe(0) //user initial balance is known to be 0
+        expect(negotiationDB.length).toBe(0)
+        expect(positionFromDBAfterFailedBuy.averagePrice).toBe(21.57) //known values from db
+        // expect(positionFromDBAfterFailedBuy.qty).toBe(10) //known values from db
+
+        //testing with new position
+        const newPosition = new PositionModel(idTestuser, stockNotInPorfolio, 0, 0)
+        await expect(testFunction(newPosition)).rejects.toThrow(InvalidInputError)
+
+        negotiationDB = await dbAll(`SELECT * FROM negotiations WHERE user_id=? AND stock_ticker=?`, [idTestuser, stockNotInPorfolio])
+        userDB = await dbGet(`SELECT * FROM users WHERE id=?`, [idTestuser])
+        const positionNotCreated = await dbGet(`SELECT * FROM stock_positions WHERE user_id=? AND stock_ticker=?`, [idTestuser, stockNotInPorfolio])
+
+        expect(userDB.user_balance).toBe(0) //user initial balance is known to be 0
+        expect(negotiationDB.length).toBe(0)
+        expect(positionNotCreated).toBe(undefined)
+
+    })
+
 })
