@@ -1,5 +1,6 @@
-const { InvalidInputError } = require("../../src/CustomErrors")
+const { InvalidInputError, NotFoundError } = require("../../src/CustomErrors")
 const PositionModel = require("../../src/Models/PositionModel")
+const FinanceAPIFetcher = require('../../src/services/FinanceAPIFetcher.js')
 
 describe('Test basic properties of PositionModel class', () => {
     const testStock = 'WEGE3'
@@ -50,4 +51,48 @@ describe('Test basic properties of PositionModel class', () => {
         //test price that is not a number
         expect(testFunction('WEGE3', 7, 'R$ 3.08')).toThrow(InvalidInputError)
     })
+})
+
+describe('Test methods from the PositionModel that access the Finance API', () => {
+    const testStock = 'WEGE3'
+    const testQty = 3
+    const testAvgPrice = 3.87
+    
+    const testPosition = new PositionModel(testStock, testQty, testAvgPrice)
+    
+    test('Integration test: method that fetches price from finance API must return a number', async () => {
+        const fetchedPrice = await testPosition.getCurrentPrice()
+
+        expect(fetchedPrice).toEqual(expect.any(Number))
+    })
+
+    test('Integration test: method that fetches price must throw a not found error if ticker is non existent', async () => {
+        async function testFunction() {
+            const invalidPosition = new PositionModel('INVL7', 1, 1.00)
+            await invalidPosition.getCurrentPrice()
+        }
+
+        expect(testFunction).rejects.toThrow(NotFoundError)
+    })
+
+    test('Unit test: method that fetches price from finance API must call the API fetcher method with the ticker of the instance', async () => {
+        const mockCurrentPrice = 4.00
+        const MockFetchInfo = jest.fn()
+        MockFetchInfo.mockImplementation(async (tickerList) => {
+            return [{
+                ticker: tickerList[0],
+                companyName: 'testName',
+                currency: 'BRL',
+                currentPrice: mockCurrentPrice
+            }] 
+        })
+
+        FinanceAPIFetcher.fetchStockInfo = MockFetchInfo
+
+        const mockedFetchedPrice = await testPosition.getCurrentPrice()
+
+        expect(MockFetchInfo).toBeCalledWith(expect.arrayContaining([testStock]))
+        expect(mockedFetchedPrice).toBe(mockCurrentPrice)
+    })
+    
 })
