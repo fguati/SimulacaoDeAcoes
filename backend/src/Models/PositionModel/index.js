@@ -1,7 +1,8 @@
+const { InvalidInputError } = require("../../CustomErrors");
 const PositionDAO = require("../../db/ComunicationDB/PositionDAO");
 const UserDAO = require("../../db/ComunicationDB/user");
 const FinanceAPIFetcher = require("../../services/FinanceAPIFetcher");
-const { validateConstructorArgs, validatePositionIdArgs, validateQty, updateValuesAfterNegotiation, updatePositionOnDb, updateBalanceAfterNegotiation, updateNegotiationHistory } = require("./utils");
+const { validateConstructorArgs, validatePositionIdArgs, validateQty, updatedValuesAfterNegotiation, updatePositionOnDb, updateBalanceAfterNegotiation, updateNegotiationHistory } = require("./utils");
 
 //Model for stock porfolio positions
 class PositionModel {
@@ -76,16 +77,24 @@ class PositionModel {
         return stockData.currentPrice
     }
 
-    //method that buys stock
-    async buy(qtyToBuy) {
+    //method for buying and sellings stocks from the position
+    async trade(qtyToTrade, tradeType) {
+        //validate trade type
+        
         //validate qty
-        validateQty(qtyToBuy)
+        validateQty(qtyToTrade)
+
+        //change quantity to negative if trade is a sale
+        qtyToTrade = tradeType === 'SELL' ? -1 * qtyToTrade : qtyToTrade
 
         //get current price from external API
         const currentPrice = await this.getCurrentPrice()
 
         //calculate updated average price, quantity and the total value of the negotiation
-        const { newQty, newAveragePrice, negotiationValue } = updateValuesAfterNegotiation(qtyToBuy, currentPrice, this)
+        const { newQty, newAveragePrice, negotiationValue } = updatedValuesAfterNegotiation(qtyToTrade, currentPrice, this)
+
+        //throw invalid input error if negotiation would lead to negative number of stocks
+        if(newQty < 0) throw new InvalidInputError(`User does not have enough ${this.#stockTicker} stocks to make this trade`, ['qtyToTrade'])
         
         //update position data on db
         await updatePositionOnDb(this, newQty, newAveragePrice)
@@ -94,7 +103,7 @@ class PositionModel {
         const newBalance = await updateBalanceAfterNegotiation(this, negotiationValue)
 
         //insert negotiation in negotiaton history on db
-        await updateNegotiationHistory(this, qtyToBuy, currentPrice)
+        await updateNegotiationHistory(this, qtyToTrade, currentPrice, tradeType)
 
         //update data from position instance
         this.#qty = newQty
@@ -108,9 +117,6 @@ class PositionModel {
         }
     }
     
-    //method that sells stock
-
-
 }
 
 module.exports = PositionModel

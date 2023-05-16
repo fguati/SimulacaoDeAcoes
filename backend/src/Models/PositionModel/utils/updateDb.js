@@ -33,13 +33,13 @@ async function updateBalanceAfterNegotiation(position, negotiationValue) {
 }
 
 //function that adds negotiation to history in db
-async function updateNegotiationHistory(position, qtyNegotiated, negotiationPrice) {
+async function updateNegotiationHistory(position, qtyNegotiated, negotiationPrice, tradeType) {
     const newNegotiation = {
         userId: position.userId, 
         stockTicker: position.stockTicker, 
         negotiatedQty: qtyNegotiated, 
         negotiatedPrice: negotiationPrice, 
-        negotiationType: 'BUY'
+        negotiationType: tradeType
     }
     await NegotiationDAO.insert(newNegotiation)
 }

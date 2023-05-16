@@ -211,7 +211,7 @@ describe('Test methods from the PositionModel that access database', () => {
         
         FinanceAPIFetcher.fetchStockInfo = MockFetchInfo
         const existingPositionToBuy = await PositionModel.instanceFromDB(testUserId, testStock)
-        const { userBalance, stockAveragePrice, stockQty } = await existingPositionToBuy.buy(qtyToBuy)
+        const { userBalance, stockAveragePrice, stockQty } = await existingPositionToBuy.trade(qtyToBuy, 'BUY')
         
         expect(MockFetchInfo).toBeCalledWith([testStock])
 
@@ -271,7 +271,7 @@ describe('Test methods from the PositionModel that access database', () => {
         
         FinanceAPIFetcher.fetchStockInfo = MockFetchInfo
         const positionToBeCreated = new PositionModel(testUserId, testStock, 0, 0)
-        const { userBalance, stockAveragePrice, stockQty } = await positionToBeCreated.buy(qtyToBuy)
+        const { userBalance, stockAveragePrice, stockQty } = await positionToBeCreated.trade(qtyToBuy, 'BUY')
         
         expect(MockFetchInfo).toBeCalledWith([testStock])
 
@@ -312,7 +312,7 @@ describe('Test methods from the PositionModel that access database', () => {
         const newPosition = new PositionModel(idTestuser, testStock, 0, 0)
 
         async function testFunction() {
-            await newPosition.buy(1)
+            await newPosition.trade(1, 'BUY')
         } 
 
         const negotiationDB = await dbAll(`SELECT * FROM negotiations WHERE user_id=? AND stock_ticker=?`, [idTestuser, testStock])
@@ -327,7 +327,7 @@ describe('Test methods from the PositionModel that access database', () => {
         const newPosition = new PositionModel(idTestuser, testStock, 0, 0)
 
         async function testFunction() {
-            await newPosition.buy(1)
+            await newPosition.trade(1, 'BUY')
         } 
 
         await expect(testFunction).rejects.toThrow(NotFoundError)
@@ -347,7 +347,7 @@ describe('Test methods from the PositionModel that access database', () => {
 
         function testFunction(positionToTest) {
             return async () => {
-                await positionToTest.buy(1)
+                await positionToTest.trade(1, 'BUY')
             }
         } 
 
@@ -376,5 +376,13 @@ describe('Test methods from the PositionModel that access database', () => {
         expect(positionNotCreated).toBe(undefined)
 
     })
+
+    test.todo('sell method calls the FinanceAPI fetcher and changes in the db user balance, stock qty and negotiation history for an existing position')
+    test.todo('sell method must return a not found error if position is not in db')
+    test.todo('sell method must return a not found error if stock ticker is not found by external API')
+    test.todo('sell method must throw an invalid input error if qty to sell is larger than the quantity the user has')
+
+    test.todo('trade method must throw invalid input error for invalid trade types')
+
 
 })
