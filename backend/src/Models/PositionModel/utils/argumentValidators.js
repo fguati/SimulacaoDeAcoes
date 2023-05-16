@@ -14,6 +14,7 @@ function validateId(userId) {
     if(!Number.isInteger(userId) || userId < 0) throw new InvalidInputError('The userId must be a positive integer', ['userId'])
 }
 
+//validation of args used in constructor of position model
 function validateConstructorArgs(userId, stockTicker, qty, averagaPrice) {
     validateId(userId)
     validateTicker(stockTicker)
@@ -21,9 +22,10 @@ function validateConstructorArgs(userId, stockTicker, qty, averagaPrice) {
     validateQty(qty)
 }
 
+//validation of arguments that identify a position
 function validatePositionIdArgs(userId, stockTicker) {
     validateId(userId)
     validateTicker(stockTicker)
 }
 
-module.exports = { validateConstructorArgs, validatePositionIdArgs }
+module.exports = { validateConstructorArgs, validatePositionIdArgs, validateQty }

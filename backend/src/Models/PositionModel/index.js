@@ -1,9 +1,7 @@
 const { NotFoundError } = require("../../CustomErrors");
-const NegotiationDAO = require("../../db/ComunicationDB/NegotiaionDAO");
 const PositionDAO = require("../../db/ComunicationDB/PositionDAO");
-const UserDAO = require("../../db/ComunicationDB/user");
 const FinanceAPIFetcher = require("../../services/FinanceAPIFetcher");
-const { validateConstructorArgs, validatePositionIdArgs } = require("./utils/argumentValidators");
+const { validateConstructorArgs, validatePositionIdArgs, validateQty, updateValuesAfterNegotiation, updatePositionOnDb, updateBalanceAfterNegotiation, updateNegotiationHistory } = require("./utils");
 
 //Model for stock porfolio positions
 class PositionModel {
@@ -77,54 +75,22 @@ class PositionModel {
     //method that buys stock
     async buy(qtyToBuy) {
         //validate qty
+        validateQty(qtyToBuy)
 
         //get current price from external API
         const currentPrice = await this.getCurrentPrice()
 
-        //calculate updated average price
-        const negotiationValue = qtyToBuy * currentPrice
-        const newTotalCost = negotiationValue + this.totalCost
-        const newQty = qtyToBuy + this.qty
-        const newAveragePrice = newTotalCost / newQty
-
+        //calculate updated average price, quantity and the total value of the negotiation
+        const { newQty, newAveragePrice, negotiationValue } = updateValuesAfterNegotiation(qtyToBuy, currentPrice, this)
+        
         //update position data on db
-        const positionToUpdate = {
-            userId: this.#userId, 
-            stockTicker: this.#stockTicker, 
-            stockQty: newQty, 
-            stockAvgPrice: newAveragePrice
-        }
-        await PositionDAO.insertOrUpdate(positionToUpdate)
+        await updatePositionOnDb(this, newQty, newAveragePrice)
 
-        //try to update balance and, in case its not possible, revert changes in Position in db
-        let newBalance
-        try {
-            //update user balance on db
-            newBalance = await UserDAO.updateBalance(this.#userId, -1 * negotiationValue)
-            
-        } catch (error) {
-            if(this.#qty === 0) {
-                await PositionDAO.deleteIfExists(this.#userId, this.#stockTicker)
-            } else {
-                await PositionDAO.insertOrUpdate({ 
-                    userId: this.#userId,
-                    stockTicker: this.#stockTicker,
-                    stockQty: this.#qty,
-                    stockAvgPrice: this.#averagePrice
-                })
-            }
-            throw error
-        }
+        //update balance in db and, if not possible, revert db modifications
+        const newBalance = await updateBalanceAfterNegotiation(this, negotiationValue)
 
         //insert negotiation in negotiaton history on db
-        const newNegotiation = {
-            userId: this.#userId, 
-            stockTicker: this.#stockTicker, 
-            negotiatedQty: qtyToBuy, 
-            negotiatedPrice: currentPrice, 
-            negotiationType: 'BUY'
-        }
-        await NegotiationDAO.insert(newNegotiation)
+        await updateNegotiationHistory(this, qtyToBuy, currentPrice)
 
         //update data from position instance
         this.#qty = newQty
