@@ -14,6 +14,13 @@ function validateId(userId) {
     if(!Number.isInteger(userId) || userId < 0) throw new InvalidInputError('The userId must be a positive integer', ['userId'])
 }
 
+function validateTradeType(tradeType) {
+    const validTradeTypes = ['BUY', 'SELL']
+    const typeIsValid = validTradeTypes.includes(tradeType)
+    if(!typeIsValid) throw new InvalidInputError('Trade type is not valid', ['tradeType'])
+}
+
+
 //validation of args used in constructor of position model
 function validateConstructorArgs(userId, stockTicker, qty, averagaPrice) {
     validateId(userId)
@@ -28,4 +35,4 @@ function validatePositionIdArgs(userId, stockTicker) {
     validateTicker(stockTicker)
 }
 
-module.exports = { validateConstructorArgs, validatePositionIdArgs, validateQty }
+module.exports = { validateConstructorArgs, validatePositionIdArgs, validateQty, validateTradeType }

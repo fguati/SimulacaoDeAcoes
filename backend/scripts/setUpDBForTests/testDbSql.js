@@ -21,7 +21,8 @@ VALUES  ("Testget", "test@get", "3a02078363bb72fd562ef80a18fed3ff05b1e80622283ea
         ('testDepositFundsRoute', 'depositFunds@routeTest.com', 'fd506281c9b034e5f9d587a7e3f56c924734e900f4c831c228b2d1c76ee785aacb253241301bbd7cce9fa45dc2e576e2db12e6d5c4b5dcc757c714d328bb7515', '6d7864d82902474233a5b17ea0af7c2379b1de812760f3d6d08d5b915d25570286460bff19682c74bb87b73ed9ad53452aae404b8398fa775430f2395ed718d26b40253a9e0ce329c9cb5b40e1f2f29190dba68aa953632a418d8ae6d44770bace723c4f75c34dbf0c2fc1a167299a865ba302a607623dfa8559c8e05882db63'),
         ('userWithPositions', 'userWithPositions@testPositionModel.com', '123', '123'),
         ('userThatWillBuyNewPosition', 'userBuy@newPositions.com', '123', '123'),
-        ('userToTestPositionModelErrorHandling', 'postiotionModel@errorTest.com', '123', '123');
+        ('userToTestPositionModelErrorHandling', 'postiotionModel@errorTest.com', '123', '123'),
+        ('userToTestSellPosition', 'testSellMethod@PositionModel.com', '123', '133');
 
 `
 
@@ -40,7 +41,8 @@ VALUES  ("1", "LEVE3", 10, 17.93),
         ('19', 'ITSA4', 10, 5.00), -- position to test PositionModel access to db
         ('19', 'BBAS3', 15, 3.00), -- position to be altered with buy method
         ('21', 'HGBS11', 10, 21.57), --postition to test error when trying to buy with insuficient funds
-        ("11", "KNRI11", 12, 12.00) -- another position to be deleted;  
+        ("11", "KNRI11", 12, 12.00), -- another position to be deleted
+        ("22", "ODPV3", 100, 32.57); --position to test sell function of the PositionModel class  
 
 `
 

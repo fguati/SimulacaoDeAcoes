@@ -111,7 +111,7 @@ describe('Test methods from the PositionModel that access the Finance API', () =
 
 describe('Test methods from the PositionModel that access database', () => {
     async function getHistoryFromDB(userId, stockTicker) {
-        const history = await dbGet(`SELECT * FROM negotiations WHERE user_id=? AND stock_ticker=? ORDER BY negotiation_date DESC`, [userId, stockTicker])
+        const history = await dbAll(`SELECT * FROM negotiations WHERE user_id=? AND stock_ticker=? ORDER BY negotiation_date DESC`, [userId, stockTicker])
         return history
     }
     async function getPosition(userId, stockTicker) {
@@ -220,7 +220,8 @@ describe('Test methods from the PositionModel that access database', () => {
         expect(stockQty).toBe(expectedQty)
 
         const user = await getUser(testUserId)
-        const negotiation = await getHistoryFromDB(testUserId, testStock)
+        const history = await getHistoryFromDB(testUserId, testStock)
+        const negotiation = history.find(neg => neg.negotiated_qty === qtyToBuy && neg.negotiated_price === mockCurrentPrice)
         const position = await getPosition(testUserId, testStock)
 
         expect(existingPositionToBuy.totalCost).toBe(expectedTotal)
@@ -280,7 +281,8 @@ describe('Test methods from the PositionModel that access database', () => {
         expect(stockQty).toBe(qtyToBuy)
 
         const user = await getUser(testUserId)
-        const negotiation = await getHistoryFromDB(testUserId, testStock)
+        const history = await getHistoryFromDB(testUserId, testStock)
+        const negotiation = history.find(neg => neg.negotiated_qty === qtyToBuy && neg.negotiated_price === mockCurrentPrice)
         const position = await getPosition(testUserId, testStock)
 
         expect(positionToBeCreated.totalCost).toBe(expectedTotal)
@@ -377,12 +379,168 @@ describe('Test methods from the PositionModel that access database', () => {
 
     })
 
-    test.todo('sell method calls the FinanceAPI fetcher and changes in the db user balance, stock qty and negotiation history for an existing position')
-    test.todo('sell method must return a not found error if position is not in db')
-    test.todo('sell method must return a not found error if stock ticker is not found by external API')
-    test.todo('sell method must throw an invalid input error if qty to sell is larger than the quantity the user has')
+    test('sell method calls the FinanceAPI fetcher and changes in the db user balance, stock qty and negotiation history for an existing position', async () => {
+        const originalFetchMethod = FinanceAPIFetcher.fetchStockInfo
 
-    test.todo('trade method must throw invalid input error for invalid trade types')
+        const initialBalance = 100
+        const qtyToSell = 10
+        const mockCurrentPrice = 4.00
+
+        const testUserId = 22 //known user from test db
+        const testStock = 'ODPV3'// stock known to be had be user in test db
+        const dbQty = 100 //values known from test db
+        const dbAveragePrice = 32.57 //values known from test db
+
+        const expectedQty = dbQty - qtyToSell 
+        const expectedTotal = expectedQty * dbAveragePrice 
+        const expectedAvgPrice = dbAveragePrice
+        const expectedBalance = initialBalance + qtyToSell * mockCurrentPrice
+        const today = new Date()
+        
+        await addFundsToUser(testUserId, initialBalance)
+
+        const MockFetchInfo = jest.fn().mockImplementationOnce(async (tickerList) => {
+            return [{
+                ticker: tickerList[0],
+                companyName: 'testName',
+                currency: 'BRL',
+                currentPrice: mockCurrentPrice
+            }] 
+        })
+        FinanceAPIFetcher.fetchStockInfo = MockFetchInfo
+
+        const existingPositionToSell = await PositionModel.instanceFromDB(testUserId, testStock)
+        const { userBalance, stockAveragePrice, stockQty } = await existingPositionToSell.trade(qtyToSell, 'SELL')
+        
+        expect(MockFetchInfo).toBeCalledWith([testStock])
+
+        expect(userBalance).toBe(expectedBalance)
+        expect(stockAveragePrice).toBe(expectedAvgPrice)
+        expect(stockQty).toBe(expectedQty)
+
+        const user = await getUser(testUserId)
+        const history = await getHistoryFromDB(testUserId, testStock)
+        const negotiation = history.find(neg => neg.negotiated_qty === qtyToSell && neg.negotiated_price === mockCurrentPrice)
+        const position = await getPosition(testUserId, testStock)
+
+        expect(existingPositionToSell.qty).toBe(expectedQty)
+        expect(existingPositionToSell.averagePrice).toBe(expectedAvgPrice)
+        expect(existingPositionToSell.totalCost).toBe(expectedTotal)
+
+        expect(user.user_balance).toBe(expectedBalance)
+        expect(position.stock_qty).toBe(expectedQty)
+        expect(position.stock_avg_price).toBe(expectedAvgPrice)
+        
+        expect(negotiation).toEqual(expect.objectContaining({
+            user_id: testUserId, 
+            stock_ticker: testStock, 
+            negotiated_qty: qtyToSell, 
+            negotiated_price: mockCurrentPrice, 
+            negotiation_type: 'SELL'
+        }))
+        const negotiationDate = new Date(negotiation.negotiation_date)
+        expect(negotiationDate.getDate()).toBe(today.getDate())
+        expect(negotiationDate.getMonth()).toBe(today.getMonth())
+        expect(negotiationDate.getFullYear()).toBe(today.getFullYear())
+        
+        FinanceAPIFetcher.fetchStockInfo = originalFetchMethod
+    })
+
+    test('sell method must throw a not found error if position is not in db', async () => {
+        function testFunction(userId, stock) {
+            return async () => {
+                const position = await PositionModel.instanceFromDB(userId, stock)
+                await position.trade(1, 'SELL')
+            }
+        }
+        
+        //user not found
+        await expect(testFunction(999, 'WEGE3')).rejects.toThrow(NotFoundError)
+
+    })
+
+    test('sell method must return a not found error if stock ticker is not found by external API', async () => {
+        const idTestuser = 21 // known user from test db
+        const testStock = 'INVLD7'
+        const newPosition = new PositionModel(idTestuser, testStock, 0, 0)
+
+        async function testFunction() {
+            await newPosition.trade(1, 'SELL')
+        } 
+
+        await expect(testFunction).rejects.toThrow(NotFoundError)
+
+        const negotiationDB = await dbAll(`SELECT * FROM negotiations WHERE user_id=? AND stock_ticker=?`, [idTestuser, testStock])
+        const userDB = await dbGet(`SELECT * FROM users WHERE id=?`, [idTestuser])
+
+        expect(userDB.user_balance).toBe(0) //user initial balance is known to be 0
+        expect(negotiationDB.length).toBe(0)
+    })
+
+    test('sell method must throw an invalid input error if qty to sell is larger than the quantity the user has', async () => {
+        const originalFetchMethod = FinanceAPIFetcher.fetchStockInfo
+
+        const qtyToSell = 10000
+        const mockCurrentPrice = 4.00
+
+        const testUserId = 22 //known user from test db
+        const testStock = 'ODPV3'// stock known to be had be user in test db
+
+        const MockFetchInfo = jest.fn().mockImplementationOnce(async (tickerList) => {
+            return [{
+                ticker: tickerList[0],
+                companyName: 'testName',
+                currency: 'BRL',
+                currentPrice: mockCurrentPrice
+            }] 
+        })
+        FinanceAPIFetcher.fetchStockInfo = MockFetchInfo
+
+        const existingPositionToSell = await PositionModel.instanceFromDB(testUserId, testStock)
+        
+        async function testFunction() {
+            await existingPositionToSell.trade(qtyToSell, 'SELL')
+        }
+
+        const { qty, averagePrice, totalCost } = existingPositionToSell
+        const expectedQty = qty
+        const expectedTotal = totalCost
+        const expectedAvgPrice = averagePrice
+
+        const { user_balance } = await dbGet(`SELECT user_balance FROM users WHERE id=?`, [testUserId])
+        const expectedBalance = user_balance
+
+        await expect(testFunction).rejects.toThrow(InvalidInputError)
+
+        const user = await getUser(testUserId)
+        const history = await getHistoryFromDB(testUserId, testStock)
+        const position = await getPosition(testUserId, testStock)
+
+        expect(existingPositionToSell.qty).toBe(expectedQty)
+        expect(existingPositionToSell.averagePrice).toBe(expectedAvgPrice)
+        expect(existingPositionToSell.totalCost).toBe(expectedTotal)
+
+        expect(user.user_balance).toBe(expectedBalance)
+        expect(position.stock_qty).toBe(expectedQty)
+        expect(position.stock_avg_price).toBe(expectedAvgPrice)
+        
+        const targetNegotiation = history.find(negotiation => negotiation.negotiated_qty === qtyToSell)
+        expect(targetNegotiation).toBe(undefined)
+        
+        FinanceAPIFetcher.fetchStockInfo = originalFetchMethod
+    })
+
+    test('trade method must throw invalid input error for invalid trade types', async () => {
+        const testUserId = 22 //known user from test db
+        const testStock = 'ODPV3'// stock known to be had be user in test db
+        const existingPositionToSell = await PositionModel.instanceFromDB(testUserId, testStock)
+
+        async function testFunction() {
+            await existingPositionToSell.trade(1, 'Invalid')
+        }
+
+        await expect(testFunction).rejects.toThrow(InvalidInputError)
+    })
 
 
 })

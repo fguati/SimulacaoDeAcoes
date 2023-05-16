@@ -2,7 +2,7 @@ const { InvalidInputError } = require("../../CustomErrors");
 const PositionDAO = require("../../db/ComunicationDB/PositionDAO");
 const UserDAO = require("../../db/ComunicationDB/user");
 const FinanceAPIFetcher = require("../../services/FinanceAPIFetcher");
-const { validateConstructorArgs, validatePositionIdArgs, validateQty, updatedValuesAfterNegotiation, updatePositionOnDb, updateBalanceAfterNegotiation, updateNegotiationHistory } = require("./utils");
+const { validateConstructorArgs, validatePositionIdArgs, validateQty, updatedValuesAfterNegotiation, updatePositionOnDb, updateBalanceAfterNegotiation, updateNegotiationHistory, validateTradeType } = require("./utils");
 
 //Model for stock porfolio positions
 class PositionModel {
@@ -80,24 +80,25 @@ class PositionModel {
     //method for buying and sellings stocks from the position
     async trade(qtyToTrade, tradeType) {
         //validate trade type
-        
+        validateTradeType(tradeType)
+
         //validate qty
         validateQty(qtyToTrade)
 
         //change quantity to negative if trade is a sale
-        qtyToTrade = tradeType === 'SELL' ? -1 * qtyToTrade : qtyToTrade
+        const changeToQty = tradeType === 'SELL' ? -1 * qtyToTrade : qtyToTrade
 
         //get current price from external API
         const currentPrice = await this.getCurrentPrice()
 
         //calculate updated average price, quantity and the total value of the negotiation
-        const { newQty, newAveragePrice, negotiationValue } = updatedValuesAfterNegotiation(qtyToTrade, currentPrice, this)
+        const { newQty, newAveragePrice, negotiationValue } = updatedValuesAfterNegotiation(changeToQty, currentPrice, this)
 
         //throw invalid input error if negotiation would lead to negative number of stocks
         if(newQty < 0) throw new InvalidInputError(`User does not have enough ${this.#stockTicker} stocks to make this trade`, ['qtyToTrade'])
         
         //update position data on db
-        await updatePositionOnDb(this, newQty, newAveragePrice)
+        await updatePositionOnDb(this, newQty, newAveragePrice, tradeType)
 
         //update balance in db and, if not possible, revert db modifications
         const newBalance = await updateBalanceAfterNegotiation(this, negotiationValue)

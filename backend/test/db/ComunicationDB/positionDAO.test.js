@@ -449,9 +449,9 @@ describe('Test the deleteIfExists method for the positionDAO class', () => {
 
 })
 
-describe('Test the updateByStockAndEmail method for the positionsDAO class', () => {
+describe('Test the update method for the positionsDAO class', () => {
     const positionToUpdate = {
-        userEmail: 'user@WithPositionToUpdate.com',
+        userId: 12,
         stockTicker: 'LEVE3',
         stockQty: 200,
         stockAvgPrice: 273.48
@@ -459,19 +459,17 @@ describe('Test the updateByStockAndEmail method for the positionsDAO class', () 
 
     it('updates an existing position', async () => {
 
-        await PositionDAO.updateByStockAndEmail(positionToUpdate)
+        await PositionDAO.update(positionToUpdate)
 
         const positionOnDb = await dbGet(`
             SELECT * FROM stock_positions
                      WHERE stock_ticker=?
-                     AND user_id=(
-                        SELECT id FROM users WHERE email=?
-                     )
-        `, [positionToUpdate.stockTicker, positionToUpdate.userEmail])
+                     AND user_id=?
+        `, [positionToUpdate.stockTicker, positionToUpdate.userId])
 
         expect(positionOnDb).toEqual(expect.objectContaining({
             id: expect.any(Number),
-            user_id: expect.any(Number),
+            user_id: positionToUpdate.userId,
             stock_ticker: positionToUpdate.stockTicker,
             stock_qty: positionToUpdate.stockQty,
             stock_avg_price: positionToUpdate.stockAvgPrice
@@ -480,10 +478,10 @@ describe('Test the updateByStockAndEmail method for the positionsDAO class', () 
 
     it('throws invalid input error if any of the inputs is missing or invalid', async () => {
         async function testFunction() {
-            await PositionDAO.updateByStockAndEmail(missingInputObj)
+            await PositionDAO.update(missingInputObj)
         }
 
-        //missing email
+        //missing id
         let missingInputObj = {
             stockTicker: positionToUpdate.stockTicker, 
             stockQty: positionToUpdate.stockQty, 
@@ -494,7 +492,7 @@ describe('Test the updateByStockAndEmail method for the positionsDAO class', () 
         
         //missing ticker
         missingInputObj = {
-            userEmail: positionToUpdate.email,
+            userId: positionToUpdate.userId,
             stockQty: positionToUpdate.stock_qty,
             stock_stockAvgPriceavg_price: positionToUpdate.stock_avg_price
         };
@@ -503,7 +501,7 @@ describe('Test the updateByStockAndEmail method for the positionsDAO class', () 
 
         //missing qty
         missingInputObj = {
-            userEmail: positionToUpdate.userEmail,
+            userId: positionToUpdate.userId,
             stockTicker: positionToUpdate.stockTicker, 
             stockAvgPrice: positionToUpdate.stockAvgPrice
         };
@@ -512,16 +510,16 @@ describe('Test the updateByStockAndEmail method for the positionsDAO class', () 
 
         //missing average price
         missingInputObj = {
-            userEmail: positionToUpdate.userEmail,
+            userId: positionToUpdate.userId,
             stockTicker: positionToUpdate.stockTicker, 
             stockQty: positionToUpdate.stockQty, 
         };
 
         expect(testFunction).rejects.toThrow(InvalidInputError)
         
-        //invalid email
+        //invalid id
         missingInputObj = {
-            userEmail: null,
+            userId: null,
             stockTicker: positionToUpdate.stockTicker, 
             stockQty: positionToUpdate.stockQty, 
             stockAvgPrice: positionToUpdate.stockAvgPrice
@@ -531,7 +529,7 @@ describe('Test the updateByStockAndEmail method for the positionsDAO class', () 
         
         //invalid ticker
         missingInputObj = {
-            userEmail: positionToUpdate.userEmail,
+            userId: positionToUpdate.userId,
             stockTicker: null, 
             stockQty: positionToUpdate.stockQty, 
             stockAvgPrice: positionToUpdate.stockAvgPrice
@@ -541,7 +539,7 @@ describe('Test the updateByStockAndEmail method for the positionsDAO class', () 
         
         //invalid qty
         missingInputObj = {
-            userEmail: positionToUpdate.userEmail,
+            userId: positionToUpdate.userId,
             stockTicker: positionToUpdate.stockTicker, 
             stockQty: null, 
             stockAvgPrice: positionToUpdate.stockAvgPrice
@@ -551,7 +549,7 @@ describe('Test the updateByStockAndEmail method for the positionsDAO class', () 
         
         //invalid average price
         missingInputObj = {
-            userEmail: positionToUpdate.userEmail,
+            userId: positionToUpdate.userId,
             stockTicker: positionToUpdate.stockTicker, 
             stockQty: positionToUpdate.stockQty, 
             stockAvgPrice: null
@@ -563,14 +561,14 @@ describe('Test the updateByStockAndEmail method for the positionsDAO class', () 
 
     it('throws invalid input error if stock_qty is not an integer', async () => {
         const invalidData = {
-            userEmail: 'user@WithPositionToUpdate.com',
+            userId: 12,
             stockTicker: 'LEVE3',
             stockQty: 200.01,
             stockAvgPrice: 273.48
         }
         
         async function testFunction() {
-            await PositionDAO.updateByStockAndEmail(invalidData)
+            await PositionDAO.update(invalidData)
         }
 
         expect(testFunction).rejects.toThrow(InvalidInputError)
@@ -578,14 +576,14 @@ describe('Test the updateByStockAndEmail method for the positionsDAO class', () 
 
     it('throws invalid input error if stock_avg_price is not a number', async () => {
         const invalidData = {
-            userEmail: 'user@WithPositionToUpdate.com',
+            userId: 12,
             stockTicker: 'LEVE3',
             stockQty: 200,
             stockAvgPrice: 'R$273.48'
         }
         
         async function testFunction() {
-            await PositionDAO.updateByStockAndEmail(invalidData)
+            await PositionDAO.update(invalidData)
         }
 
         expect(testFunction).rejects.toThrow(InvalidInputError)
@@ -593,19 +591,19 @@ describe('Test the updateByStockAndEmail method for the positionsDAO class', () 
     
     it('throws a not found error if position is not found', async () => {
         let notFoundData = {
-            userEmail: 'user@withnostocks.email',
+            userId: 10,
             stockTicker: 'LEVE3',
             stockQty: 200,
             stockAvgPrice: 273.48
         }
         
         async function testFunction() {
-            await PositionDAO.updateByStockAndEmail(notFoundData)
+            await PositionDAO.update(notFoundData)
         }
 
         expect(testFunction).rejects.toThrow(NotFoundError)
 
-        notFoundData.email = 'emailThatDoesntExistInDB@test.com'
+        notFoundData.userId = 999
         expect(testFunction).rejects.toThrow(NotFoundError)
     })
 })
