@@ -97,7 +97,7 @@ describe('Integration test of GET method in /user/:id route', () => {
         }))
     })
 
-    it('must get an error 422 response from an invalid id', async () => {
+    it('must get an error 404 response from an invalid id', async () => {
         const authToken = await login()
         const id =`thisiddoesntexist`
         
@@ -105,14 +105,13 @@ describe('Integration test of GET method in /user/:id route', () => {
             .get(`/user/${id}`)
             .set('Content-Type', 'application/json')
             .set('Cookie', authToken)
-            .expect(422)
+            .expect(404)
         
         const parsedBody = JSON.parse(resposta.text)
 
         expect(parsedBody).toEqual(expect.objectContaining({
-            name: 'InvalidInputError',
-            message: expect.any(String),
-            aditionalInfo: expect.any(String)
+            name: 'NotFoundError',
+            message: expect.any(String)
         }))
     })
 

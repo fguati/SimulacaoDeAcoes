@@ -57,7 +57,7 @@ describe('Unit tests of select by id queries to users table in DB', ()=> {
             await UserDAO.selectById('dfgdsfg')
         }
         
-        await expect(testFunction).rejects.toThrow(InvalidInputError)
+        await expect(testFunction).rejects.toThrow(NotFoundError)
     })
 
 })

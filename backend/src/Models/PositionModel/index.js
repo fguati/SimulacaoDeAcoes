@@ -1,5 +1,5 @@
-const { NotFoundError } = require("../../CustomErrors");
 const PositionDAO = require("../../db/ComunicationDB/PositionDAO");
+const UserDAO = require("../../db/ComunicationDB/user");
 const FinanceAPIFetcher = require("../../services/FinanceAPIFetcher");
 const { validateConstructorArgs, validatePositionIdArgs, validateQty, updateValuesAfterNegotiation, updatePositionOnDb, updateBalanceAfterNegotiation, updateNegotiationHistory } = require("./utils");
 
@@ -27,14 +27,18 @@ class PositionModel {
         //get position data from db
         const dbPosition = await PositionDAO.selectByUserId(userId, stockTicker)
 
-        //check if searchd position exists in database
-        if(!dbPosition) throw new NotFoundError('Position searched was not found. Please check if the user has this stock in his portfolio')
-        
-        //create new instance of Position
+        if(!dbPosition) {
+            //throw not found error if user is not in database
+            await UserDAO.selectById(userId)
+            
+            //Instantiate an empty position if position does not exist in db but user does
+            const newInstance = new PositionModel(userId, stockTicker, 0, 0)
+            return newInstance
+        } 
+
+        //create new instance of Position with db data
         const { stock_qty, stock_avg_price } = dbPosition
         const newInstance = new PositionModel(userId, stockTicker, stock_qty, stock_avg_price)
-
-        //return the new instance
         return newInstance
     }
 

@@ -74,8 +74,12 @@ class PositionDAO {
 
     //method that searches for all positions of an user in the db through its id. Can optionally filter results by stock ticker
     static async selectByUserId(userId, stockTickerFilter = null) {
-        //base sql for select by id
-        const userIdSql = `SELECT * FROM stock_positions WHERE user_id=?`
+        //base sql for select by id. The select also returns user email so it possible to check whether user exists in database
+        const userIdSql = `
+            SELECT *
+            FROM stock_positions
+            WHERE user_id=?
+        `
 
         //check if stockTicker was received and add it to sql if it was
         const stockTIckerSql = stockTickerFilter ? ` AND stock_ticker=?;` : ';'

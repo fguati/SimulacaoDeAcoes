@@ -78,19 +78,18 @@ describe('test getOneById method of the UserController', () => {
         }))
     })
 
-    it('must return an invalid input error response if id is invalid', async () => {
+    it('must return an not found error response if id is invalid', async () => {
         const {req, res, next} = mockReqResNext()
 
         req.params.id = 0
 
-        const invalidInputError = await UserController.getOneById(req, res, next)
+        const notFoundError = await UserController.getOneById(req, res, next)
 
-        expect(next).toBeCalledWith(invalidInputError)
-        expect(invalidInputError.statusCode).toBe(422)
-        expect(invalidInputError).toEqual(expect.objectContaining({
-            name:'InvalidInputError',
+        expect(next).toBeCalledWith(notFoundError)
+        expect(notFoundError.statusCode).toBe(404)
+        expect(notFoundError).toEqual(expect.objectContaining({
+            name:'NotFoundError',
             message: expect.any(String),
-            aditionalInfo: expect.stringContaining('id')
         }))
     })
 

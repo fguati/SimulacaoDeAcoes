@@ -142,6 +142,21 @@ describe('Test methods from the PositionModel that access database', () => {
 
     })
 
+    test('instanceFromDB must return an empty position object if user exists in db but does not have the entered stock', async () => {
+        const testUserId = 19 //user id that exists in db
+        const testTicker = 'WEGE3' //ticker that user does not have
+        const testPosition = await PositionModel.instanceFromDB(testUserId, testTicker)
+
+        expect(testPosition).toEqual(expect.objectContaining({
+            userId: testUserId,
+            stockTicker: testTicker,
+            qty: 0,
+            averagePrice: 0,
+            totalCost: 0
+
+        }))
+    })
+
     test('instanceFromDB must throw Invalid Input error if user id or ticker are invalid', async () => {
         function testFunction(userId, stockTicker) {
             return async () => {
@@ -157,7 +172,7 @@ describe('Test methods from the PositionModel that access database', () => {
 
     })
 
-    test('instanceFromDB must throw not found error if position entered is not in db', async () => {
+    test('instanceFromDB must throw not found error if user entered is not in db', async () => {
         function testFunction(userId, stockTicker) {
             return async () => {
                 const testPosition = await PositionModel.instanceFromDB(userId, stockTicker)
@@ -165,10 +180,7 @@ describe('Test methods from the PositionModel that access database', () => {
             }
         }
 
-        //inexistent user
         await expect(testFunction(99999999, 'ITSA4')).rejects.toThrow(NotFoundError)
-        //inexistent position
-        await expect(testFunction(19, 'WEGE3')).rejects.toThrow(NotFoundError)
 
     })
 
