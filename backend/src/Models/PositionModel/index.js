@@ -9,15 +9,18 @@ class PositionModel {
     //Properties of position. They are all private since they will only be changed by buy and sell methods
     #userId; #stockTicker; #qty; #averagePrice
 
-    //constructor: receives the stocks ticker, quantity and its average price. Validates the arguments and calculates the total cost
-    constructor(userId, stockTicker, qty, averagePrice) {
-        //validate arguments entered
-        validateConstructorArgs(userId, stockTicker, qty, averagePrice)
+    //constructor: receives position row taken from db.
+    constructor(dbPosition) {      
+        //deconstruct doPosition
+        const { user_id, stock_ticker, stock_qty, stock_avg_price } = dbPosition
         
-        this.#userId = userId
-        this.#averagePrice = averagePrice
-        this.#qty = qty
-        this.#stockTicker = stockTicker
+        //validate arguments entered
+        validateConstructorArgs(user_id, stock_ticker, stock_qty, stock_avg_price)
+        
+        this.#userId = user_id
+        this.#averagePrice = stock_avg_price
+        this.#qty = stock_qty
+        this.#stockTicker = stock_ticker
     }
 
     //getPositionInfoFromDB
@@ -33,13 +36,18 @@ class PositionModel {
             await UserDAO.selectById(userId)
             
             //Instantiate an empty position if position does not exist in db but user does
-            const newInstance = new PositionModel(userId, stockTicker, 0, 0)
+            const emptyPosition = {
+                user_id: userId, 
+                stock_ticker: stockTicker, 
+                stock_qty: 0, 
+                stock_avg_price: 0
+            }
+            const newInstance = new PositionModel(emptyPosition)
             return newInstance
         } 
 
         //create new instance of Position with db data
-        const { stock_qty, stock_avg_price } = dbPosition
-        const newInstance = new PositionModel(userId, stockTicker, stock_qty, stock_avg_price)
+        const newInstance = new PositionModel(dbPosition)
         return newInstance
     }
 

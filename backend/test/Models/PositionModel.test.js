@@ -8,8 +8,10 @@ describe('Test basic properties of PositionModel class', () => {
     const testQty = 3
     const testAvgPrice = 3.87
     const testUserId = 1
+
+    const mockedDbPosition = {user_id: testUserId, stock_ticker: testStock, stock_qty: testQty, stock_avg_price: testAvgPrice}
     
-    const testPosition = new PositionModel(testUserId, testStock, testQty, testAvgPrice)
+    const testPosition = new PositionModel(mockedDbPosition)
 
     it('must have a userId, stockTicker, qty and averagePrice properties that return the values entered in the constructor', () => {
         expect(testPosition.stockTicker).toBe(testStock)
@@ -44,7 +46,9 @@ describe('Test basic properties of PositionModel class', () => {
     test('must throw invalid input error if any argument is invalid', () => {
         function testFunction(userId, ticker, qty, avgPrice) {
             return () => {
-                new PositionModel(userId, ticker, qty, avgPrice)
+                new PositionModel({
+                    user_id: userId, stock_ticker: ticker, stock_qty: qty, stock_avg_price: avgPrice
+                })
             }
         }
 
@@ -67,7 +71,9 @@ describe('Test methods from the PositionModel that access the Finance API', () =
     const testAvgPrice = 3.87
     const testUser = 1
     
-    const testPosition = new PositionModel(testUser, testStock, testQty, testAvgPrice)
+    const testPosition = new PositionModel({
+        user_id: testUser, stock_ticker: testStock, stock_qty: testQty, stock_avg_price: testAvgPrice
+    })
     
     test('Unit test: method that fetches price from finance API must call the API fetcher method with the ticker of the instance', async () => {
         const originalFetchMethod = FinanceAPIFetcher.fetchStockInfo
@@ -100,7 +106,7 @@ describe('Test methods from the PositionModel that access the Finance API', () =
 
     test('Integration test: method that fetches price must throw a not found error if ticker is non existent', async () => {
         async function testFunction() {
-            const invalidPosition = new PositionModel(1, 'INVL7', 1, 1.00)
+            const invalidPosition = new PositionModel({user_id:1, stock_ticker:'INVL7', stock_qty:1, stock_avg_price:1.00})
             await invalidPosition.getCurrentPrice()
         }
 
@@ -271,7 +277,7 @@ describe('Test methods from the PositionModel that access database', () => {
         })
         
         FinanceAPIFetcher.fetchStockInfo = MockFetchInfo
-        const positionToBeCreated = new PositionModel(testUserId, testStock, 0, 0)
+        const positionToBeCreated = new PositionModel({user_id: testUserId, stock_ticker: testStock, stock_qty: 0, stock_avg_price: 0})
         const { userBalance, stockAveragePrice, stockQty } = await positionToBeCreated.trade(qtyToBuy, 'BUY')
         
         expect(MockFetchInfo).toBeCalledWith([testStock])
@@ -311,7 +317,7 @@ describe('Test methods from the PositionModel that access database', () => {
     test('buy method must return a not found error if user id is not in db', async () => {
         const idTestuser = 99999
         const testStock = 'HGBS11'
-        const newPosition = new PositionModel(idTestuser, testStock, 0, 0)
+        const newPosition = new PositionModel({user_id: idTestuser, stock_ticker: testStock, stock_qty: 0, stock_avg_price: 0})
 
         async function testFunction() {
             await newPosition.trade(1, 'BUY')
@@ -326,7 +332,7 @@ describe('Test methods from the PositionModel that access database', () => {
     test('buy method must return a not found error if stock ticker is not found by external API', async () => {
         const idTestuser = 21 // known user from test db
         const testStock = 'INVLD7'
-        const newPosition = new PositionModel(idTestuser, testStock, 0, 0)
+        const newPosition = new PositionModel({user_id: idTestuser, stock_ticker: testStock, stock_qty: 0, stock_avg_price: 0})
 
         async function testFunction() {
             await newPosition.trade(1, 'BUY')
@@ -366,7 +372,7 @@ describe('Test methods from the PositionModel that access database', () => {
         // expect(positionFromDBAfterFailedBuy.qty).toBe(10) //known values from db
 
         //testing with new position
-        const newPosition = new PositionModel(idTestuser, stockNotInPorfolio, 0, 0)
+        const newPosition = new PositionModel({user_id: idTestuser, stock_ticker: stockNotInPorfolio, stock_qty: 0, stock_avg_price: 0})
         await expect(testFunction(newPosition)).rejects.toThrow(InvalidInputError)
 
         negotiationDB = await dbAll(`SELECT * FROM negotiations WHERE user_id=? AND stock_ticker=?`, [idTestuser, stockNotInPorfolio])
@@ -462,7 +468,7 @@ describe('Test methods from the PositionModel that access database', () => {
     test('sell method must return a not found error if stock ticker is not found by external API', async () => {
         const idTestuser = 21 // known user from test db
         const testStock = 'INVLD7'
-        const newPosition = new PositionModel(idTestuser, testStock, 0, 0)
+        const newPosition = new PositionModel({user_id: idTestuser, stock_ticker: testStock, stock_qty: 0, stock_avg_price: 0})
 
         async function testFunction() {
             await newPosition.trade(1, 'SELL')
