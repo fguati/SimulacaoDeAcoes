@@ -1,3 +1,4 @@
+const { InvalidInputError } = require("../../CustomErrors");
 const PositionDAO = require("../../db/ComunicationDB/PositionDAO");
 const UserDAO = require("../../db/ComunicationDB/user");
 const FinanceAPIFetcher = require("../../services/FinanceAPIFetcher");
@@ -27,6 +28,7 @@ class UserModel {
         return newUser
     }
 
+    //getters
     get id() {
         return this.#id
     }
@@ -37,7 +39,6 @@ class UserModel {
     get portfolio() {
         return this.#portfolio.filter(position => position.qty > 0)
     } 
-
     //portfolio getter: converts the list of positions from the instance into a dictionary for ease of use
     get portfolioDict() {
         //empty object to be portfolio dictionary
@@ -73,6 +74,20 @@ class UserModel {
         totalAssetValue += this.balance
         
         return totalAssetValue
+    }
+
+    //method that adds or subtract funds from user balance
+    async moveFunds(funds) {
+        //validate that funds are a number
+        if(isNaN(funds)) throw new InvalidInputError('Funds to be moved must be a number', ['funds'])
+        //check that movement won't make user balance negative
+        if(this.#balance + funds < 0) throw new InvalidInputError('Insuficient funds for withdraw', ['funds'])
+        
+        //query db to update for change in balance
+        await UserDAO.updateBalance(this.#id, funds)
+
+        //update instance of object with new balance
+        this.#balance += funds
     }
 
 

@@ -1,5 +1,7 @@
+const { InvalidInputError } = require("../../src/CustomErrors")
 const PositionModel = require("../../src/Models/PositionModel")
 const UserModel = require("../../src/Models/UserModel")
+const { dbGet } = require("../../src/db/utils/dbutils")
 
 describe('Test instancing of UserModel class', () => {
     function testPortfolioProp(positionList, userToTest) {
@@ -84,5 +86,58 @@ describe('Test UserModel methods that send requests to finance API', () => {
         const testRatio = Math.abs(totalUserAssets - aproximateExpectedTotalAssets) / totalUserAssets
 
         expect(testRatio).toBeLessThanOrEqual(tolerance)
+    })
+})
+
+describe('Test UserModel methods that query db', () => {
+    test('moveFunds method must change user balance in db and instance', async () => {
+        const testId = 24 //known id from db
+        const testFunds = 100
+        let expectedBalance = 1000 //data known from db
+
+        const testUser = await UserModel.instanceFromDB(testId)
+
+        async function testMoveFunds(funds) {
+            await testUser.moveFunds(funds)
+            expectedBalance += funds
+            expect(testUser.balance).toBe(expectedBalance)
+            const dbUser = await dbGet(`SELECT user_balance FROM users WHERE id=?`, [testUser.id])
+            expect(dbUser.user_balance).toBe(expectedBalance)
+        }
+
+        await testMoveFunds(testFunds)
+        await testMoveFunds(-2 * testFunds)
+        
+    })
+
+    test('moveFunds method must throw error if funds are not a number', async () => {
+        const testId = 24 //known id from db
+        const testUser = await UserModel.instanceFromDB(testId)
+        
+        async function testFunction() {
+            await testUser.moveFunds('asdf')
+        }
+
+        await expect(testFunction).rejects.toThrow(InvalidInputError)
+    })
+
+    test('moveFunds method must throw error if movement would lead user to have negative balance', async () => {
+        const testId = 24 //known id from db
+        const testUser = await UserModel.instanceFromDB(testId)
+        let dbUser = await dbGet(`SELECT user_balance FROM users WHERE id=?`, [testUser.id])
+        const initialDbBalance = dbUser.user_balance
+        const initialObjBalance = testUser.balance
+        
+        async function testFunction() {
+            await testUser.moveFunds(-100000)
+            
+        }
+        
+        await expect(testFunction).rejects.toThrow(InvalidInputError)
+
+        dbUser = await dbGet(`SELECT user_balance FROM users WHERE id=?`, [testUser.id])
+
+        expect(dbUser.user_balance).toBe(initialDbBalance)
+        expect(testUser.balance).toBe(initialObjBalance)
     })
 })

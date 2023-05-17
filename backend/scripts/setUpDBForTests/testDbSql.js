@@ -23,7 +23,8 @@ VALUES  ("Testget", "test@get", "3a02078363bb72fd562ef80a18fed3ff05b1e80622283ea
         ('userThatWillBuyNewPosition', 'userBuy@newPositions.com', '123', '123', 0),
         ('userToTestPositionModelErrorHandling', 'postiotionModel@errorTest.com', '123', '123', 0),
         ('userToTestSellPosition', 'testSellMethod@PositionModel.com', '123', '133', 0),
-        ('userToTestUserModelInstancing', 'testUser@ModelInstancing.com', '123', '123', 1000);
+        ('userToTestUserModelInstancing', 'testUser@ModelInstancing.com', '123', '123', 1000),
+        ('userToTestMoveFundsMethod', 'UserModel@MoveFunds.com', '123', '123', 1000);
 
 `
 
