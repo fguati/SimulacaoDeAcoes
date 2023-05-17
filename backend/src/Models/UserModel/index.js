@@ -82,12 +82,28 @@ class UserModel {
         if(isNaN(funds)) throw new InvalidInputError('Funds to be moved must be a number', ['funds'])
         //check that movement won't make user balance negative
         if(this.#balance + funds < 0) throw new InvalidInputError('Insuficient funds for withdraw', ['funds'])
-        
+
         //query db to update for change in balance
         await UserDAO.updateBalance(this.#id, funds)
 
         //update instance of object with new balance
         this.#balance += funds
+    }
+
+    //method that trade stocks
+    async trade(stockToTrade, qtyToTrade, tradeType) {
+        //look up for stock in portfolio
+        let postitionToTrade = this.portfolioDict[stockToTrade]
+
+        //if not found create new instance
+        if(!postitionToTrade) postitionToTrade = await PositionModel.instanceFromDB(this.#id, stockToTrade)
+
+        //call trade method from position model
+        await postitionToTrade.trade(qtyToTrade, tradeType)
+
+        //if position instance is new, add it to portfolio from this instance
+        this.#portfolio.push(postitionToTrade)
+
     }
 
 

@@ -24,7 +24,8 @@ VALUES  ("Testget", "test@get", "3a02078363bb72fd562ef80a18fed3ff05b1e80622283ea
         ('userToTestPositionModelErrorHandling', 'postiotionModel@errorTest.com', '123', '123', 0),
         ('userToTestSellPosition', 'testSellMethod@PositionModel.com', '123', '133', 0),
         ('userToTestUserModelInstancing', 'testUser@ModelInstancing.com', '123', '123', 1000),
-        ('userToTestMoveFundsMethod', 'UserModel@MoveFunds.com', '123', '123', 1000);
+        ('userToTestMoveFundsMethod', 'UserModel@MoveFunds.com', '123', '123', 1000),
+        ('userToTestTradeFromUserModel', 'UserModel@Trade.com', '123', '123', 10000);
 
 `
 
@@ -46,7 +47,9 @@ VALUES  ("1", "LEVE3", 10, 17.93),
         ("11", "KNRI11", 12, 12.00), -- another position to be deleted
         ("22", "ODPV3", 100, 32.57), --position to test sell function of the PositionModel class 
         ("23", "BBSE3", 50, 22.45), --position to test instancing of user model class 
-        ("23", "ITSA3", 27, 17.54); --position to test instancing of user model class 
+        ("23", "ITSA3", 27, 17.54), --position to test instancing of user model class 
+        ("25", "BBAS3", 35, 54.87), --position to test buy method from user class
+        ("25", "KNRI11", 44, 39.47); --position to test sell method from user class
 
 `
 

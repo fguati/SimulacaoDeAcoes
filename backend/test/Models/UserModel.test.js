@@ -1,7 +1,8 @@
 const { InvalidInputError } = require("../../src/CustomErrors")
 const PositionModel = require("../../src/Models/PositionModel")
 const UserModel = require("../../src/Models/UserModel")
-const { dbGet } = require("../../src/db/utils/dbutils")
+const { dbGet, dbAll } = require("../../src/db/utils/dbutils")
+const FinanceAPIFetcher = require("../../src/services/FinanceAPIFetcher")
 
 describe('Test instancing of UserModel class', () => {
     function testPortfolioProp(positionList, userToTest) {
@@ -90,6 +91,19 @@ describe('Test UserModel methods that send requests to finance API', () => {
 })
 
 describe('Test UserModel methods that query db', () => {
+    async function getHistoryFromDB(userId, stockTicker) {
+        const history = await dbAll(`SELECT * FROM negotiations WHERE user_id=? AND stock_ticker=? ORDER BY negotiation_date DESC`, [userId, stockTicker])
+        return history
+    }
+    async function getPosition(userId, stockTicker) {
+        const position = await dbGet(`SELECT * FROM stock_positions WHERE user_id=? AND stock_ticker=?`, [userId, stockTicker])
+        return position
+    }
+    async function getUser(userId) {
+        const user = await dbGet(`SELECT * FROM users WHERE id=?`, [userId])
+        return user
+    }
+
     test('moveFunds method must change user balance in db and instance', async () => {
         const testId = 24 //known id from db
         const testFunds = 100
@@ -139,5 +153,92 @@ describe('Test UserModel methods that query db', () => {
 
         expect(dbUser.user_balance).toBe(initialDbBalance)
         expect(testUser.balance).toBe(initialObjBalance)
+    })
+
+    test('trade method calls the FinanceAPI fetcher and changes in the db user balance, stock qty, position average price and negotiation history for an existing position', async () => {
+        const originalFetchMethod = FinanceAPIFetcher.fetchStockInfo
+
+        //known values from test db
+        const testUserId = 25 
+        const testStockFromPortfolioToBuy = 'BBAS3'
+        const testStockToSell = 'KNRI11'
+        const initialBalance = 10000
+        
+        //test variables
+        const testUser = await UserModel.instanceFromDB(testUserId)
+        const qtyToBuy = 10
+        const mockCurrentPrice = 4.00
+        const today = new Date()
+        const testStockNotInPortfolio = 'MGLU3'
+
+        const MockFetchInfo = jest.fn().mockImplementation(async (tickerList) => {
+            return {list: tickerList.map(ticker => {
+                return {
+                    ticker: ticker,
+                    companyName: 'testName',
+                    currency: 'BRL',
+                    currentPrice: mockCurrentPrice
+                }
+            })}
+        })
+        FinanceAPIFetcher.fetchStockInfo = MockFetchInfo
+
+        let expectedBalance = initialBalance
+        async function testTrade(testStock, qtyToTrade, tradeType) {
+            const tradeTypeMultiplier = (tradeType === 'BUY' ? 1: -1)
+            const postionOnInstanceBeforeTrade = testUser.portfolioDict[testStock]
+            const negotiationValue = qtyToTrade * mockCurrentPrice * tradeTypeMultiplier
+            const expectedQty = (postionOnInstanceBeforeTrade ? postionOnInstanceBeforeTrade.qty : 0) + tradeTypeMultiplier * qtyToTrade
+            const expectedTotal = 
+                tradeType === 'BUY' ? 
+                (postionOnInstanceBeforeTrade ? postionOnInstanceBeforeTrade.totalCost : 0) + negotiationValue :
+                postionOnInstanceBeforeTrade.averagePrice * expectedQty
+            const expectedAvgPrice = tradeType === 'BUY' ? expectedTotal / expectedQty : postionOnInstanceBeforeTrade.averagePrice
+            expectedBalance += -1 * negotiationValue
+
+            await testUser.trade(testStock, qtyToTrade, tradeType)
+            
+            expect(MockFetchInfo).toBeCalledWith([testStock])
+
+            //test data from instance
+            const positionOnUserInstance = testUser.portfolioDict[testStock]
+            expect(positionOnUserInstance.qty).toBe(expectedQty)
+            expect(positionOnUserInstance.averagePrice).toBe(expectedAvgPrice)
+            expect(positionOnUserInstance.totalCost).toBeCloseTo(expectedTotal)
+
+            //test data from db
+            const user = await getUser(testUserId)
+            const history = await getHistoryFromDB(testUserId, testStock)
+            const negotiation = history.find(neg => neg.negotiated_qty === qtyToTrade && neg.negotiated_price === mockCurrentPrice)
+            const position = await getPosition(testUserId, testStock)
+
+            expect(user.user_balance).toBe(expectedBalance)
+            expect(position.stock_qty).toBe(expectedQty)
+            expect(position.stock_avg_price).toBe(expectedAvgPrice)
+            
+            expect(negotiation).toEqual(expect.objectContaining({
+                user_id: testUserId, 
+                stock_ticker: testStock, 
+                negotiated_qty: qtyToTrade, 
+                negotiated_price: mockCurrentPrice, 
+                negotiation_type: tradeType
+            }))
+            const negotiationDate = new Date(negotiation.negotiation_date)
+            expect(negotiationDate.getDate()).toBe(today.getDate())
+            expect(negotiationDate.getMonth()).toBe(today.getMonth())
+            expect(negotiationDate.getFullYear()).toBe(today.getFullYear())
+        }
+
+        //test buying stock from position already had
+        await testTrade(testStockFromPortfolioToBuy, qtyToBuy, 'BUY')
+
+        //test buying stock thats not on portfolio yet
+        await testTrade(testStockNotInPortfolio, 37, 'BUY')
+
+        //test selling stock
+        await testTrade(testStockToSell, 20, 'SELL')
+        
+        
+        FinanceAPIFetcher.fetchStockInfo = originalFetchMethod
     })
 })
