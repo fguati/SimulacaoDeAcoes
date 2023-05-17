@@ -1,17 +1,16 @@
 const PositionDAO = require("../../db/ComunicationDB/PositionDAO");
 const UserDAO = require("../../db/ComunicationDB/user");
 const FinanceAPIFetcher = require("../../services/FinanceAPIFetcher");
-const { convertPositionDBtoObj } = require("./utils");
-
+const PositionModel = require("../PositionModel");
 
 class UserModel {
     #id; #balance; #portfolio
     
-    //contructor is private: object should be created with instanceFromDB method
+    //contructor is private: object should be created with instanceFromDB method. The portfolio property transform the list of position from the db in a list of instances of the PositionModel class
     constructor(id, dbBalance, dbPortfolio) {
         this.#id = id
         this.#balance = dbBalance
-        this.#portfolio = dbPortfolio
+        this.#portfolio = dbPortfolio.map(position => new PositionModel(position))
     }
 
     //method that creates instance with data from db. Every instance of UserModel must be created with this method
@@ -34,8 +33,12 @@ class UserModel {
     get balance() {
         return this.#balance
     }
+    //portfolio getter: filters out empty positions from the portfolio
+    get portfolio() {
+        return this.#portfolio.filter(position => position.qty > 0)
+    } 
 
-    //portfolio getter: converts the list of positions from db into a dictionary for ease of use, filtering out empty positions for simplicity
+    //portfolio getter: converts the list of positions from the instance into a dictionary for ease of use
     get portfolioDict() {
         //empty object to be portfolio dictionary
         const portfolioDict = {}
@@ -50,13 +53,6 @@ class UserModel {
         //return portfolio object
         return portfolioDict
     }
-
-    //portfolio getter: list of positions with empty ones filtered out
-    get portfolio() {
-        const porfolioNonEmpty = this.#portfolio.filter(position => position.stock_qty > 0)
-        const portfolioConverted = porfolioNonEmpty.map(position => convertPositionDBtoObj(position))
-        return portfolioConverted
-    } 
 
     //Total assets getter: get current prices for all the stocks in the portfolio and use it to calculate the total assets
     async getTotalAssets() {
