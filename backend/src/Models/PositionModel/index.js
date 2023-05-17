@@ -77,6 +77,12 @@ class PositionModel {
         return stockData.currentPrice
     }
 
+    //method to calculates the current value of the position based in current price
+    async getCurrentValue() {
+       const currentPrice = await this.getCurrentPrice()
+       return currentPrice * this.#qty
+    }
+
     //method for buying and sellings stocks from the position
     async trade(qtyToTrade, tradeType) {
         //validate trade type
@@ -117,6 +123,7 @@ class PositionModel {
             stockQty: this.#qty
         }
     }
+
     
 }
 
