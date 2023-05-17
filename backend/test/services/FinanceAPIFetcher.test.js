@@ -4,8 +4,9 @@ const FinanceAPIFetcher = require("../../src/services/FinanceAPIFetcher")
 describe('fetchStockInfo method of the FinanceAPIFetcher class', () => {
     it('must return an ok response with relevant info for each ticker', async () => {
         const testStockList = ['WEGE3', 'EGIE3', 'XPML11']
-        const listOfStockInfo = await FinanceAPIFetcher.fetchStockInfo(testStockList)
-        
+        const stockInfo = await FinanceAPIFetcher.fetchStockInfo(testStockList)
+        const listOfStockInfo = stockInfo.list
+
         const regexStocks = new RegExp(`/${testStockList.join('|')}/`)
 
         expect(listOfStockInfo).toEqual(expect.arrayContaining([
@@ -28,8 +29,9 @@ describe('fetchStockInfo method of the FinanceAPIFetcher class', () => {
 
     it('must have an error object if only one ticker in the list is invalid', async () => {
         const testStockList = ['WEGE3', 'EGIE3', 'INVLD7']
-        const listOfStockInfo = await FinanceAPIFetcher.fetchStockInfo(testStockList)
-        
+        const stockInfo = await FinanceAPIFetcher.fetchStockInfo(testStockList)
+        const listOfStockInfo = stockInfo.list
+
         const regexStocks = new RegExp(`${testStockList.join('|')}`)
 
         listOfStockInfo.forEach(stock => {

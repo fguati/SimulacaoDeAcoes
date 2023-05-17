@@ -74,12 +74,12 @@ describe('Test methods from the PositionModel that access the Finance API', () =
 
         const mockCurrentPrice = 4.00
         const MockFetchInfo = jest.fn().mockImplementationOnce(async (tickerList) => {
-            return [{
+            return {list: [{
                 ticker: tickerList[0],
                 companyName: 'testName',
                 currency: 'BRL',
                 currentPrice: mockCurrentPrice
-            }] 
+            }]}
         })
         
         FinanceAPIFetcher.fetchStockInfo = MockFetchInfo
@@ -201,12 +201,12 @@ describe('Test methods from the PositionModel that access database', () => {
         await addFundsToUser(testUserId, initialBalance)
 
         const MockFetchInfo = jest.fn().mockImplementationOnce(async (tickerList) => {
-            return [{
+            return {list: [{
                 ticker: tickerList[0],
                 companyName: 'testName',
                 currency: 'BRL',
                 currentPrice: mockCurrentPrice
-            }] 
+            }]}
         })
         
         FinanceAPIFetcher.fetchStockInfo = MockFetchInfo
@@ -262,12 +262,12 @@ describe('Test methods from the PositionModel that access database', () => {
         await addFundsToUser(testUserId, initialBalance)
 
         const MockFetchInfo = jest.fn().mockImplementationOnce(async (tickerList) => {
-            return [{
+            return {list: [{
                 ticker: tickerList[0],
                 companyName: 'testName',
                 currency: 'BRL',
                 currentPrice: mockCurrentPrice
-            }] 
+            }]}
         })
         
         FinanceAPIFetcher.fetchStockInfo = MockFetchInfo
@@ -400,12 +400,12 @@ describe('Test methods from the PositionModel that access database', () => {
         await addFundsToUser(testUserId, initialBalance)
 
         const MockFetchInfo = jest.fn().mockImplementationOnce(async (tickerList) => {
-            return [{
+            return {list: [{
                 ticker: tickerList[0],
                 companyName: 'testName',
                 currency: 'BRL',
                 currentPrice: mockCurrentPrice
-            }] 
+            }]}
         })
         FinanceAPIFetcher.fetchStockInfo = MockFetchInfo
 
@@ -487,12 +487,12 @@ describe('Test methods from the PositionModel that access database', () => {
         const testStock = 'ODPV3'// stock known to be had be user in test db
 
         const MockFetchInfo = jest.fn().mockImplementationOnce(async (tickerList) => {
-            return [{
+            return {list: [{
                 ticker: tickerList[0],
                 companyName: 'testName',
                 currency: 'BRL',
                 currentPrice: mockCurrentPrice
-            }] 
+            }]}
         })
         FinanceAPIFetcher.fetchStockInfo = MockFetchInfo
 

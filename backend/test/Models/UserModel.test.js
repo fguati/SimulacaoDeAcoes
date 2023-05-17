@@ -1,11 +1,11 @@
+const PositionModel = require("../../src/Models/PositionModel")
 const UserModel = require("../../src/Models/UserModel")
 
 describe('Test instancing of UserModel class', () => {
     function testPortfolioProp(positionList, userToTest) {
         positionList.forEach(position => {
             const stockTicker = position.stock_ticker
-            const stockFromUser = userToTest.portfolio[stockTicker]
-            
+            const stockFromUser = userToTest.portfolioDict[stockTicker]
             expect(stockFromUser).toEqual(expect.objectContaining({
                 userId: position.user_id, 
                 stockTicker: stockTicker, 
@@ -34,7 +34,6 @@ describe('Test instancing of UserModel class', () => {
         ]
         
         const testUser = new UserModel(testId, testBalance, testPortfolio)
-
         expect(testUser.id).toBe(testId)
         expect(testUser.balance).toBe(testBalance)
         testPortfolioProp(testPortfolio, testUser)
@@ -63,5 +62,27 @@ describe('Test instancing of UserModel class', () => {
         expect(testUser.id).toBe(testId)
         expect(testUser.balance).toBe(expectedBalance)
         testPortfolioProp(expectedPortfolio, testUser)
+    })
+})
+
+describe('Test UserModel methods that send requests to finance API', () => {
+    test('getTotalAssets method return a value close to the total value', async () => {
+        const tolerance = 0.97
+        const testId = 23
+        const testUser = await UserModel.instanceFromDB(testId)
+        const totalUserAssets = await testUser.getTotalAssets()
+        const userPortfolio = testUser.portfolio
+
+        let aproximateExpectedTotalAssets = await userPortfolio.reduce(async (acum, currentPosition) => { //expected value cannot be calculated precisely since values of the API may change between requests
+            const positionInstance = await PositionModel.instanceFromDB(currentPosition.userId, currentPosition.stockTicker)
+            const currentPostitionValue = await positionInstance.getCurrentValue()
+            return await acum + currentPostitionValue
+        }, 0)
+
+        aproximateExpectedTotalAssets += testUser.balance
+
+        const testRatio = Math.abs(totalUserAssets - aproximateExpectedTotalAssets) / totalUserAssets
+
+        expect(testRatio).toBeLessThanOrEqual(tolerance)
     })
 })

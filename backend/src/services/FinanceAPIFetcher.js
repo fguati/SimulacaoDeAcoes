@@ -14,16 +14,19 @@ class FinanceAPIFetcher {
         method: 'get'
     })
 
-    //auxiliary function that converts a success response in a list of objects in the desired format
-    static #makeStockListFromResponse(response) {
+    //aux function that format the return value of the API to be an object
+    static #convertAPIRsIntoObject(response) {
         //get list of stocks from response (check API documentation)
         const listOfStockInfo = response.data.results
-        //map a new list which will only contain objects of the desired format
-        const listOfDesiredStockInfo = listOfStockInfo.map(stock => {
+
+        //create object where each key is one stock
+        const formatedResponse = {}
+
+        listOfStockInfo.forEach(stock => {
             //first check if stock was found (it will have a market price if it was) and convert it to the desired format
             if(stock.regularMarketPrice){
                 const { symbol, longName, currency, regularMarketPrice } = stock
-                return {
+                formatedResponse[symbol] = {
                     ticker: symbol,
                     companyName: longName,
                     currency: currency,
@@ -34,10 +37,13 @@ class FinanceAPIFetcher {
             //check if stock was not found (has the error property as true) and return it, changing the name of the symbol property to ticker
             if(stock.error) {
                 const { symbol: ticker, ...rest } = stock;
-                return { ticker, ...rest };
+                formatedResponse[ticker] = { ticker, ...rest };
             }
         })
-        return listOfDesiredStockInfo
+
+        formatedResponse.list = Object.values(formatedResponse)
+
+        return formatedResponse
     }
 
     //auxiliary validation function that ensures its argument is an array of strings
@@ -69,7 +75,7 @@ class FinanceAPIFetcher {
             const response = await FinanceAPIFetcher.#http.request({ url: endpoint })
 
             //handle response, converting it from the format returned by the API to the desired format
-            return FinanceAPIFetcher.#makeStockListFromResponse(response)
+            return FinanceAPIFetcher.#convertAPIRsIntoObject(response)
 
         } catch (error) {
             //check if error was a not found one

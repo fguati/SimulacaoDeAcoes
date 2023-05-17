@@ -71,7 +71,8 @@ class PositionModel {
     //method that fetches current stock price from API
     async getCurrentPrice() {
         //fetches stock info (API must receive an array of tickers)
-        const listOfStockData = await FinanceAPIFetcher.fetchStockInfo([this.#stockTicker])
+        const stockDataResponse = await FinanceAPIFetcher.fetchStockInfo([this.#stockTicker])
+        const listOfStockData = stockDataResponse.list
         const stockData = listOfStockData[0]
         //returns current price found
         return stockData.currentPrice
