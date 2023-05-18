@@ -3,6 +3,7 @@ const { listInvalidInputs } = require('../utils')
 const UserDAO = require('../db/ComunicationDB/user.js');
 const { InvalidInputError } = require('../CustomErrors');
 const { hasInvalidParam } = require('../utils');
+const UserModel = require('../Models/UserModel');
 
 class UserController {
     static async getAll(req, res, next) {
@@ -73,6 +74,30 @@ class UserController {
         } catch (error) {
             //send error to error treating middleware
             return next(error)
+        }
+    }
+
+    //method that returns the user full portfolio
+    static async getPortfolio(req, res, next) {
+        try {
+            //get user id from jwt payload
+            const { id } = req.body.payloadJWT
+
+            //check if user id was sent in jwt payload in the req body
+            if(!id) throw new InvalidInputError('User id was not sent in http request', ['id'])
+
+            //instance user model
+            const user = await UserModel.instanceFromDB(id)
+
+            //get user portfolio in JSON string format
+            const portfolio = JSON.stringify(user.portfolio)
+
+            //send success response
+            return res.status(200).send(portfolio)
+            
+        } catch (error) {
+            //send error to error treating middleware
+            return next(error)    
         }
     }
 

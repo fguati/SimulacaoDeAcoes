@@ -25,7 +25,9 @@ VALUES  ("Testget", "test@get", "3a02078363bb72fd562ef80a18fed3ff05b1e80622283ea
         ('userToTestSellPosition', 'testSellMethod@PositionModel.com', '123', '133', 0),
         ('userToTestUserModelInstancing', 'testUser@ModelInstancing.com', '123', '123', 1000),
         ('userToTestMoveFundsMethod', 'UserModel@MoveFunds.com', '123', '123', 1000),
-        ('userToTestTradeFromUserModel', 'UserModel@Trade.com', '123', '123', 10000);
+        ('userToTestTradeFromUserModel', 'UserModel@Trade.com', '123', '123', 10000),
+        ('userToTestGetPortFolio', 'UserControler@getportfolio.com', 'c6b76d6101f022c4b5a55d48ee4dd3926248514c1b259eb40a0d3d44504600156ef21b9ffea84c8941d4a116ccc5aac110195df2fb6bf4baa890834101fa887e', '559e0406c53c43634f0ec8814c05477c1d9bbb5af214464bc9095445ada0e681cceb7df0f97c839465ad6452ebc3c66d0baaa21d5ea540451828b3a8d31286991548c38fd75113f7b3a27da286defbb06fd1bc7fb16abd21933c4afebebb2d3e03065821718970be4a32f6d4104f76983b6a8f18da9a8c1027b109831437ee34', 500),
+        ('userWithEmptyPositions', 'TestUser@WithEmptyPositions.com', '123', '123', 10000);
 
 `
 
@@ -49,7 +51,11 @@ VALUES  ("1", "LEVE3", 10, 17.93),
         ("23", "BBSE3", 50, 22.45), --position to test instancing of user model class 
         ("23", "ITSA3", 27, 17.54), --position to test instancing of user model class 
         ("25", "BBAS3", 35, 54.87), --position to test buy method from user class
-        ("25", "KNRI11", 44, 39.47); --position to test sell method from user class
+        ("25", "KNRI11", 44, 39.47), --position to test sell method from user class
+        ("26", "PETR4", 72, 22.54), --position to test getPortfolio method from user controller
+        ("26", "VALE3", 117, 41.87), --position to test getPortfolio method from user controller
+        ("26", "HGRE11", 31, 147.51), --position to test getPortfolio method from user controller
+        ("27", "HGRE11", 0, 0); --empty position
 
 `
 

@@ -133,6 +133,15 @@ class PositionModel {
         }
     }
 
+    toJSON() {
+        return {
+            userId: this.userId,
+            stockTicker: this.stockTicker,
+            qty: this.qty, 
+            averagePrice: this.averagePrice
+        }
+    }
+
     
 }
 
