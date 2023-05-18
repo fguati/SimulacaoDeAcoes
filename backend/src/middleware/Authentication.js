@@ -11,8 +11,7 @@ class Authentication {
 
             //check if an authToken was actually found on the cookies and, if not, send an error to the error handler middleware
             if(!authToken){
-                const error = new MissingAuthTokenError('faltou o auth')
-                return next(error)
+                throw new MissingAuthTokenError('faltou o auth')
             }
 
             /**validate the token. The payload is stored so, in the implementation of future 
@@ -28,7 +27,7 @@ class Authentication {
         }
         
     } 
-
+    
 }
 
 module.exports = Authentication
