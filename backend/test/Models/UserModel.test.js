@@ -241,4 +241,58 @@ describe('Test UserModel methods that query db', () => {
         
         FinanceAPIFetcher.fetchStockInfo = originalFetchMethod
     })
+
+    test('trade method must throw invalid input error if trade would lead to any asset from user to be negative', async () => {
+        const idTestuser = 21 // known user from test db
+        const existingTestStock = 'HGBS11'//stock known to be in user portfolio
+        const stockNotInPorfolio = 'ALZR11'
+        const testUser = await UserModel.instanceFromDB(idTestuser)
+        const testQtyToBuy = 1 //user has balance 0
+        const testQtyToSell = 11 //number known to be bigger than what user has in db
+        
+
+        function testErrorFunction(stock, qty, type) {
+            return async () => {
+                await testUser.trade(stock, qty, type)
+            }
+        }
+        
+        function getInfoFromPositionIfExists(position, desiredDataKey) {
+            return position ? position[desiredDataKey] : undefined
+        }
+
+        async function testFunction(stock, qty, type) {
+        let initialPositionData = await PositionModel.instanceFromDB(idTestuser, stock)
+
+        await expect(testErrorFunction(stock, qty, type)).rejects.toThrow(InvalidInputError)
+
+        let negotiationDB = await dbAll(`SELECT * FROM negotiations WHERE user_id=? AND stock_ticker=?`, [idTestuser, stock])
+        let userDB = await dbGet(`SELECT * FROM users WHERE id=?`, [idTestuser])
+        let positionFromDBAfterFaileTrade = await PositionModel.instanceFromDB(idTestuser, stock)
+
+        const expectedUserBalance = 0 //known values from db
+        expect(userDB.user_balance).toBe(expectedUserBalance)
+        expect(negotiationDB.length).toBe(0)
+        
+        const dbPositionAvgPriceToTest= getInfoFromPositionIfExists(positionFromDBAfterFaileTrade, 'averagePrice')
+        const dbPositionQty = getInfoFromPositionIfExists(positionFromDBAfterFaileTrade, 'qty')
+
+        const expectedAvgPrice =  getInfoFromPositionIfExists(initialPositionData, 'averagePrice') 
+        const expectedQty = getInfoFromPositionIfExists(initialPositionData, 'qty') 
+
+        expect(dbPositionAvgPriceToTest).toBe(expectedAvgPrice) 
+        expect(dbPositionQty).toBe(expectedQty) 
+        }
+        
+        //test buying more of a stock from portfolio than user balance allow
+        await testFunction(existingTestStock, testQtyToBuy, 'BUY')
+        
+        //test buying more of a stock out of portfolio than user balance allow
+        await testFunction(stockNotInPorfolio, testQtyToBuy, 'BUY')
+
+        //test selling more of a stock than user has in portfolio
+        await testFunction(existingTestStock, testQtyToSell, 'SELL')
+
+    })
+
 })
