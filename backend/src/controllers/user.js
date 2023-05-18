@@ -4,12 +4,13 @@ const UserDAO = require('../db/ComunicationDB/user.js');
 const { InvalidInputError } = require('../CustomErrors');
 const { hasInvalidParam } = require('../utils');
 const UserModel = require('../Models/UserModel');
+const { sendOKResponse } = require('./utils');
 
 class UserController {
     static async getAll(req, res, next) {
         try {
             const listOfUsers = await UserDAO.select();
-            return res.status(200).send(JSON.stringify(listOfUsers))
+            return sendOKResponse(res, listOfUsers)
         } catch (error) {
             return next(error)
         }
@@ -24,7 +25,7 @@ class UserController {
                 return next(new InvalidInputError("Id not found", [id]))
             }
 
-            return res.status(200).send(JSON.stringify(user))
+            return sendOKResponse(res, user)
 
         } catch (error) {
             return next(error)
@@ -44,7 +45,7 @@ class UserController {
             }
 
             await UserDAO.insert(newUser)
-            return res.status(201).send(JSON.stringify({message: 'User created successfully'}))
+            return sendOKResponse(res, {message: 'User created successfully'}, 201)
             
         } catch (error) {
             return next(error)
@@ -69,7 +70,7 @@ class UserController {
             //send operation to database
             const balance = await UserDAO.updateBalance(id, funds)
             //send success response
-            return res.status(200).send(JSON.stringify({ balance }))
+            return sendOKResponse(res, { balance })
             
         } catch (error) {
             //send error to error treating middleware
@@ -89,11 +90,8 @@ class UserController {
             //instance user model
             const user = await UserModel.instanceFromDB(id)
 
-            //get user portfolio in JSON string format
-            const portfolio = JSON.stringify(user.portfolio)
-
-            //send success response
-            return res.status(200).send(portfolio)
+            //send success response with portfolio provided by user model
+            return sendOKResponse(res, user.portfolio)
             
         } catch (error) {
             //send error to error treating middleware

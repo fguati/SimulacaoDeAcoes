@@ -2,16 +2,16 @@ const { InvalidInputError, InvalidCredentialsError } = require("../CustomErrors"
 const { validateLogin } = require('../services/validate.js');
 const { listInvalidInputs, hasInvalidParam } = require('../utils/invalidInputFunctions.js')
 const JWToken = require('../services/tokens.js')
-const { authTokenDurationInSec } = require("../utils/globalVariables")
+const { authTokenDurationInSec } = require("../utils/globalVariables");
+const { sendOKResponse } = require("./utils");
 
 const inputNamesFromBody = ['email', 'password']
 
 function sendAuthTokenResponse(user, res) {
-    
     let authToken = JWToken.generate(user)
     res.set('Authorization', authToken)
     res.setHeader('Set-Cookie', `authToken=${authToken}; Max-Age=${authTokenDurationInSec}; Path=/`)
-    return res.status(200).send(JSON.stringify({authToken: authToken}))
+    return sendOKResponse(res, {authToken: authToken})
 }
 
 function sendInvalidInputError(req, next) {
