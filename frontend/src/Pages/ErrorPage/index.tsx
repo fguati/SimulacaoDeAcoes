@@ -2,6 +2,7 @@
 import Title from "Components/AtomComponents/Title";
 import useErrorHandler from "./useErrorHandler";
 import IErrorPageProps from "./IErrorPageProps";
+import Paragraph from "Components/AtomComponents/Paragraph";
 
 /**
  * render an error page, generated from an error response to a http request. It displays
@@ -12,7 +13,7 @@ function ErrorPage(props: IErrorPageProps) {
     return(
         <>
             <Title role={'title'}>{`Error ${code}: ${name}`}</Title>
-            <p role={'message'}>{message}</p>
+            <Paragraph role={'message'}>{message}</Paragraph>
         </>
     )
 }
