@@ -1,34 +1,19 @@
 import StockTable from "Components/StockTable";
 import Title from "Components/AtomComponents/Title";
 import IStock from "Interfaces/IStock";
-
-//temporary mock portfolio data. Will eventually be replaced by data received from the backend API
-const stockList: IStock[] = [
-    {
-        id: Math.random().toString(),
-        ticker: 'WEGE3',
-        companyName: 'Weg',
-        qty: 237,
-        currentPrice: 25.37,
-    },
-    {
-        id: Math.random().toString(),
-        ticker: 'EGIE3',
-        companyName: 'Engie',
-        qty: 315,
-        currentPrice:15.17,
-    },
-    {
-        id: Math.random().toString(),
-        ticker: 'ITUB4',
-        companyName: 'Banco Itaú',
-        qty: 17,
-        currentPrice: 155.48,
-    }
-]
+import { useEffect, useState } from 'react'
+import useFetchPortfolio from "./utils/fetchPortfolio";
 
 //Render the landing page for a logged in user. Still in construction.
 function HomePage() {
+    const [stockList, setStockList] = useState<IStock[]>([])
+    const fetchPortfolio = useFetchPortfolio()
+    useEffect(() => {
+        const response = fetchPortfolio()
+        response.then(portfolio => {
+            setStockList(portfolio!)
+        })
+    }, [fetchPortfolio])
     return(
         <>
             <Title>Dashboard</Title>
