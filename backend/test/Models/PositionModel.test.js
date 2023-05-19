@@ -368,8 +368,8 @@ describe('Test methods from the PositionModel that access database', () => {
 
         expect(userDB.user_balance).toBe(0) //user initial balance is known to be 0
         expect(negotiationDB.length).toBe(0)
-        expect(positionFromDBAfterFailedBuy.averagePrice).toBe(21.57) //known values from db
-        // expect(positionFromDBAfterFailedBuy.qty).toBe(10) //known values from db
+        expect(positionFromDBAfterFailedBuy.averagePrice).toBeCloseTo(positionFromDb.averagePrice)
+        expect(positionFromDBAfterFailedBuy.qty).toBe(positionFromDb.qty)
 
         //testing with new position
         const newPosition = new PositionModel({user_id: idTestuser, stock_ticker: stockNotInPorfolio, stock_qty: 0, stock_avg_price: 0})

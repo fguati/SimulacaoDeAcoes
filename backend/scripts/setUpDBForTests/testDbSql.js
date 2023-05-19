@@ -27,9 +27,11 @@ VALUES  ("Testget", "test@get", "3a02078363bb72fd562ef80a18fed3ff05b1e80622283ea
         ('userToTestMoveFundsMethod', 'UserModel@MoveFunds.com', '123', '123', 1000),
         ('userToTestTradeFromUserModel', 'UserModel@Trade.com', '123', '123', 10000),
         ('userToTestGetPortFolio', 'UserControler@getportfolio.com', 'c6b76d6101f022c4b5a55d48ee4dd3926248514c1b259eb40a0d3d44504600156ef21b9ffea84c8941d4a116ccc5aac110195df2fb6bf4baa890834101fa887e', '559e0406c53c43634f0ec8814c05477c1d9bbb5af214464bc9095445ada0e681cceb7df0f97c839465ad6452ebc3c66d0baaa21d5ea540451828b3a8d31286991548c38fd75113f7b3a27da286defbb06fd1bc7fb16abd21933c4afebebb2d3e03065821718970be4a32f6d4104f76983b6a8f18da9a8c1027b109831437ee34', 500),
-        ('userWithEmptyPositions', 'TestUser@WithEmptyPositions.com', '123', '123', 10000);
+        ('userWithEmptyPositions', 'TestUser@WithEmptyPositions.com', '123', '123', 10000),
+        ('admin', 'admim@admin.com', 'f9db4a45745deee1840ecc5c9c3c4d44dd86f7b562662e79e86dee7e0896e551402041eb9e18cd76ccf95f5bb7ffe437c56b748cd5eeeba2affa55bb1c4152ca', '33b3700ea5ebcb36a86501cc31166db5b39d0627ff55eb7fe30db230674140fa8b568027fa64b818eeab11abf0116270c5360ee5860aa0edee7a5683d1d87bed1112359da6a2b21d0d7a0eaa229bd36b808e411e40d2f44ac76286440bceb0a8a59a2552e2df830f659f05b1684193f3f0a6c82818974db255ec14d8f01d1b07', 0);
 
 `
+const updateAdminRole = `UPDATE users SET role="ADMIN" WHERE email="admim@admin.com";`
 
 const positionDbSql = `INSERT INTO stock_positions (user_id, stock_ticker, stock_qty, stock_avg_price) 
 VALUES  ("1", "LEVE3", 10, 17.93),
@@ -68,4 +70,4 @@ VALUES  ("14", "TAEE11", 100, 10.45, "BUY"),
         ("14", "BBSE3", 27, 23.47, "SELL"), --negotiation that will be updated,
         ("14", "BBSE3", 27, 23.47, "SELL") --negotiation that will be deleted: id 7;
 `
-module.exports = { userDbSql, positionDbSql, negotiationDbSql }
+module.exports = { userDbSql, positionDbSql, negotiationDbSql, updateAdminRole }
