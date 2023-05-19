@@ -20,6 +20,7 @@ function transformErrorInResponse(error: Error, statusCode?: number, message?: s
     if(message){
         errorResponse.message = message
     }
+
     return errorResponse
 
 }

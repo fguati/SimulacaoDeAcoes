@@ -19,7 +19,6 @@ async function getErrorResponseObject (response: Response | IErrorResponse): Pro
 //Function responsible for handling any error response receive from http requests
 async function handleErrorResponse(response: Response | IErrorResponse, navigate: NavigateFunction) {
     const errorResponse = await getErrorResponseObject(response) 
-    
 	//renders an error page with the info received in the response
     return navigate('/error', {state: JSON.stringify(errorResponse)})
 }
