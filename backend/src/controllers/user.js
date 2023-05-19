@@ -3,12 +3,14 @@ const { listInvalidInputs } = require('../utils')
 const UserDAO = require('../db/ComunicationDB/user.js');
 const { InvalidInputError } = require('../CustomErrors');
 const { hasInvalidParam } = require('../utils');
+const UserModel = require('../Models/UserModel');
+const { sendOKResponse } = require('./utils');
 
 class UserController {
     static async getAll(req, res, next) {
         try {
             const listOfUsers = await UserDAO.select();
-            return res.status(200).send(JSON.stringify(listOfUsers))
+            return sendOKResponse(res, listOfUsers)
         } catch (error) {
             return next(error)
         }
@@ -23,7 +25,7 @@ class UserController {
                 return next(new InvalidInputError("Id not found", [id]))
             }
 
-            return res.status(200).send(JSON.stringify(user))
+            return sendOKResponse(res, user)
 
         } catch (error) {
             return next(error)
@@ -43,7 +45,7 @@ class UserController {
             }
 
             await UserDAO.insert(newUser)
-            return res.status(201).send(JSON.stringify({message: 'User created successfully'}))
+            return sendOKResponse(res, {message: 'User created successfully'}, 201)
             
         } catch (error) {
             return next(error)
@@ -68,11 +70,32 @@ class UserController {
             //send operation to database
             const balance = await UserDAO.updateBalance(id, funds)
             //send success response
-            return res.status(200).send(JSON.stringify({ balance }))
+            return sendOKResponse(res, { balance })
             
         } catch (error) {
             //send error to error treating middleware
             return next(error)
+        }
+    }
+
+    //method that returns the user full portfolio
+    static async getPortfolio(req, res, next) {
+        try {
+            //get user id from jwt payload
+            const { id } = req.body.payloadJWT
+
+            //check if user id was sent in jwt payload in the req body
+            if(!id) throw new InvalidInputError('User id was not sent in http request', ['id'])
+
+            //instance user model
+            const user = await UserModel.instanceFromDB(id)
+
+            //send success response with portfolio provided by user model
+            return sendOKResponse(res, user.portfolio)
+            
+        } catch (error) {
+            //send error to error treating middleware
+            return next(error)    
         }
     }
 

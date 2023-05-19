@@ -28,7 +28,8 @@ class UserDAO {
         if(selectedUser) {
             return selectedUser
         }
-        throw new InvalidInputError(`User id ${id} not found`, ['id'])
+        
+        throw new NotFoundError(`User not found in our database`)
     }
 
     static async selectByEmail(email) {

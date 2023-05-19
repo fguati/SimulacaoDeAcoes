@@ -1,6 +1,7 @@
 const UserController = require("../../src/controllers/user");
 const UserDAO = require("../../src/db/ComunicationDB/user");
 const { createMocks } = require('node-mocks-http');
+const { dbAll } = require("../../src/db/utils/dbutils");
 
 
 const validCredentials = {
@@ -78,19 +79,18 @@ describe('test getOneById method of the UserController', () => {
         }))
     })
 
-    it('must return an invalid input error response if id is invalid', async () => {
+    it('must return an not found error response if id is invalid', async () => {
         const {req, res, next} = mockReqResNext()
 
         req.params.id = 0
 
-        const invalidInputError = await UserController.getOneById(req, res, next)
+        const notFoundError = await UserController.getOneById(req, res, next)
 
-        expect(next).toBeCalledWith(invalidInputError)
-        expect(invalidInputError.statusCode).toBe(422)
-        expect(invalidInputError).toEqual(expect.objectContaining({
-            name:'InvalidInputError',
+        expect(next).toBeCalledWith(notFoundError)
+        expect(notFoundError.statusCode).toBe(404)
+        expect(notFoundError).toEqual(expect.objectContaining({
+            name:'NotFoundError',
             message: expect.any(String),
-            aditionalInfo: expect.stringContaining('id')
         }))
     })
 
@@ -348,5 +348,68 @@ describe('test the moveFunds method of the user controller class', () => {
         }))
         
     })
+})
+
+describe('Test the getPortfolio method of the user controller', () => {
+    it('must return an ok response with the user portfolio', async () => {
+        const { req, res, next } = mockReqResNext()
+        const testUserId = 26
+        const dbPortfolio = await dbAll(`SELECT * FROM stock_positions WHERE user_id=?`, [testUserId])
+        req.body = {
+            payloadJWT: {
+                id: testUserId,
+            },
+        }
+    
+        let response = await UserController.getPortfolio(req, res, next)
+    
+        expect(response.statusCode).toBe(200)
+    
+        let responseBody = JSON.parse(response.body)
+    
+        responseBody.forEach(position => {
+            const { stock_ticker, stock_qty, stock_avg_price } = dbPortfolio.find(dbPosition => dbPosition.stock_ticker === position.stockTicker) //expected position gotten from db
+            
+            expect(position).toEqual(expect.objectContaining({
+                userId: testUserId,
+                stockTicker: stock_ticker,
+                qty: stock_qty, 
+                averagePrice: stock_avg_price
+            }))
+        })
+
+    })
+
+    it('must return an ok response with an empty list if user has no positions or only empty positions', async () => {
+        const { req, res, next } = mockReqResNext()
+        
+        async function testFunction(testUser) {
+            req.body = {
+                payloadJWT: {
+                    id: testUser,
+                },
+            }
+        
+            let response = await UserController.getPortfolio(req, res, next)
+        
+            expect(response.statusCode).toBe(200)
+        
+            let responseBody = JSON.parse(response.body)
+        
+            expect(responseBody).toEqual([])
+
+        }
+
+        const testUserIdWithNoStocks = 10
+
+        await testFunction(testUserIdWithNoStocks)
+
+        const userWithEmptyPOsitions = 27
+
+        await testFunction(userWithEmptyPOsitions)
+
+    })
+
+
 })
 

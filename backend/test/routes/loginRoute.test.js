@@ -1,9 +1,8 @@
 const app = require('../../src/app.js')
 const request = require('supertest')
 const JWToken = require('../../src/services/tokens.js')
-const { dbGet, dbRun } = require('../../src/db/utils/dbutils.js')
-const UserDAO = require('../../src/db/ComunicationDB/user.js')
 
+let server
 
 beforeEach(() => {
     server = app.listen(0)
@@ -35,7 +34,8 @@ describe('Test /login route', () => {
         const submittedData = validLoginData
         const JWTPayload = {
             id: 5,
-            username: validLoginData.username
+            username: validLoginData.username,
+            role: 'CLIENT'
         }
         
         const token = JWToken.generate(JWTPayload)

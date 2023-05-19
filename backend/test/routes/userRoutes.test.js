@@ -1,10 +1,16 @@
 const app = require('../../src/app.js')
 const request = require('supertest')
 const UserDao = require('../../src/db/ComunicationDB/user.js')
-const { dbGet } = require('../../src/db/utils/dbutils.js')
+const { dbGet, dbAll } = require('../../src/db/utils/dbutils.js')
 const { authTokenDurationInSec } = require('../../src/utils/globalVariables.js')
 
-const validCredentials = {
+const validAmindCredentials = {
+    username: "admin",
+    email: "admim@admin.com",
+    password: "*Aa12345678"
+}
+
+const validClientCredentials ={
     username: "validLoginUser",
     email: "validlogin@user",
     password: "123"
@@ -13,6 +19,13 @@ const validCredentials = {
 const testObjectToBePosted = {
     username: 'userToTestPOSTRoute',
     email: 'postuser@routetest',
+    hashed_password: '123',
+    salt: 'testSalt'
+};
+
+const testUserUnauthorized = {
+    username: 'testUserUnauthorized',
+    email: 'testUserUnauthorized@unauthorized',
     hashed_password: '123',
     salt: 'testSalt'
 };
@@ -26,11 +39,27 @@ let testObjectWithInvalidFields = {
 
 let server;
 
-async function login() {
+async function login(credentials) {
     
-    const resposta = await request(server).post('/login').send(validCredentials)
+    const resposta = await request(server).post('/login').send(credentials)
     const authToken = resposta.headers['set-cookie']
     return authToken
+}
+
+async function testUnauthorizedError(route, body = {}, method='get') {
+    const authToken = await login(validClientCredentials)
+        const resposta = await request(server)[method](route)
+            .set('Content-Type', 'application/json')
+            .set('Cookie', authToken)
+            .send(body)
+            .expect(403)
+        
+        const parsedBody = JSON.parse(resposta.text)
+
+        expect(parsedBody).toEqual(expect.objectContaining({
+            name: 'UnauthorizedError',
+            message: expect.any(String)
+        }))
 }
 
 beforeEach(async () => {
@@ -44,7 +73,7 @@ afterEach(() => {
 describe('Integration tests of the GET method in the /user route', () => {
 
     it('Must return an list with at least one user', async () => {
-        const authToken = await login()
+        const authToken = await login(validAmindCredentials)
 
         const resposta = await request(server)
             .get('/user/')
@@ -75,13 +104,17 @@ describe('Integration tests of the GET method in the /user route', () => {
             message: expect.any(String)
         }))
     })
+
+    it('Must return an UnauthorizedError error if it is not admin', async () => {
+        await testUnauthorizedError('/user/')
+    })
 })
 
 describe('Integration test of GET method in /user/:id route', () => {
     
     it('Must get a response with one user object', async () => {
-        const authToken = await login()
-        const id = 5
+        const authToken = await login(validAmindCredentials)
+        const id = 28
         
         const resposta = await request(server)
             .get(`/user/${id}`)
@@ -91,28 +124,27 @@ describe('Integration test of GET method in /user/:id route', () => {
         const parsedBody = JSON.parse(resposta.text)
         expect(parsedBody).toEqual(expect.objectContaining({
             id: id,
-            username: validCredentials.username,
-            email: validCredentials.email,
+            username: validAmindCredentials.username,
+            email: validAmindCredentials.email,
             hashed_password: expect.any(String)
         }))
     })
 
-    it('must get an error 422 response from an invalid id', async () => {
-        const authToken = await login()
+    it('must get an error 404 response from an invalid id', async () => {
+        const authToken = await login(validAmindCredentials)
         const id =`thisiddoesntexist`
         
         const resposta = await request(server)
             .get(`/user/${id}`)
             .set('Content-Type', 'application/json')
             .set('Cookie', authToken)
-            .expect(422)
+            .expect(404)
         
         const parsedBody = JSON.parse(resposta.text)
 
         expect(parsedBody).toEqual(expect.objectContaining({
-            name: 'InvalidInputError',
-            message: expect.any(String),
-            aditionalInfo: expect.any(String)
+            name: 'NotFoundError',
+            message: expect.any(String)
         }))
     })
 
@@ -131,6 +163,11 @@ describe('Integration test of GET method in /user/:id route', () => {
             message: expect.any(String)
         }))
     })
+
+    it('Must return an UnauthorizedError error if it is not admin', async () => {
+        const id = 5
+        await testUnauthorizedError(`/user/${id}`)
+    })
 })
 
 describe('Testar POST em /user', () => {   
@@ -143,7 +180,7 @@ describe('Testar POST em /user', () => {
     }
 
     it('must create an object in the the DB', async () => {
-        const authToken = await login()
+        const authToken = await login(validAmindCredentials)
         
         await request(server)
             .post('/user')
@@ -164,7 +201,7 @@ describe('Testar POST em /user', () => {
     })
 
     it('must receive an error with invalid input if a mandatory info is either missing or invalid', async () => {
-        const authToken = await login()
+        const authToken = await login(validAmindCredentials)
         
         let userObject = {
             email: testObjectWithInvalidFields.email,
@@ -279,7 +316,7 @@ describe('Testar POST em /user', () => {
     })
 
     it('must receive an error with invalid input if body has a repeated email', async () => {
-        const authToken = await login()
+        const authToken = await login(validAmindCredentials)
         const repeatedEmailUser = {
             username: 'POSTuserRouteRepeatedEmailTest',
             email: 'postuser@routerepeatedemail.test',
@@ -299,6 +336,10 @@ describe('Testar POST em /user', () => {
             aditionalInfo: expect.stringContaining('email')
         }))
 
+    })
+
+    it('Must return an UnauthorizedError error if it is not admin', async () => {
+        await testUnauthorizedError(`/user`, testUserUnauthorized, 'post')
     })
 
 
@@ -422,6 +463,97 @@ describe('Integration tests of the /user/depostit route', () => {
             .set('Content-Type', 'application/json')
             .set('Cookie', authToken)
             .send({ funds: valueToDeposit })
+            .expect(401)
+        
+        let parsedBody = JSON.parse(resposta.text)
+
+        expect(parsedBody).toEqual(expect.objectContaining({
+            name: 'TokenExpiredError',
+            message: expect.any(String)
+        }))
+    })
+
+})
+
+describe('Integration tests of the /user/portfolio route', () => {
+    const testUserWithPortfolio = {
+        username: "userToTestGetPortFolio",
+        email: "UserControler@getportfolio.com",
+        password: "*Aa12345678"
+    }
+
+    const testUserWithoutStocks = {
+        username: "userWithNoStocks",
+        email: "user@withnostocks.email",
+        password: "123"
+    }
+
+    const loginGetPortfolio = async (credentials) => {
+        const resposta = await request(server).post('/login').send(credentials)
+        const authToken = resposta.headers['set-cookie']
+        return authToken
+    }
+    
+    it('must return ok response with user portfolio in its body', async () =>{
+        const authToken = await loginGetPortfolio(testUserWithPortfolio)
+        const dbPortfolio = await dbAll(`SELECT * FROM stock_positions WHERE user_id=?`, [26])
+        
+        const resposta = await request(server)
+            .get(`/user/portfolio`)
+            .set('Content-Type', 'application/json')
+            .set('Cookie', authToken)
+            .expect(200)
+        
+        const parsedBody = JSON.parse(resposta.text)
+        parsedBody.forEach(position => {
+            const { stock_ticker, stock_qty, stock_avg_price } = dbPortfolio.find(dbPosition => dbPosition.stock_ticker === position.stockTicker) //expected position gotten from db
+            
+            expect(position).toEqual(expect.objectContaining({
+                userId: 26,
+                stockTicker: stock_ticker,
+                qty: stock_qty, 
+                averagePrice: stock_avg_price
+            }))
+        })
+    })
+
+    it('must return ok response with an empty list in its body if user has no stocks', async () => {
+        const authToken = await loginGetPortfolio(testUserWithoutStocks)
+        
+        const resposta = await request(server)
+            .get(`/user/portfolio`)
+            .set('Content-Type', 'application/json')
+            .set('Cookie', authToken)
+            .expect(200)
+        
+        const parsedBody = JSON.parse(resposta.text)
+
+        expect(parsedBody).toEqual([])
+    })
+
+    it('must return an MissingAuthTokenError error if it is not authenticated', async () => {
+        let resposta = await request(server)
+            .get(`/user/portfolio`)
+            .set('Content-Type', 'application/json')
+            .expect(401)
+
+        const parsedBody = JSON.parse(resposta.text)
+
+        expect(parsedBody).toEqual(expect.objectContaining({
+            name: 'MissingAuthTokenError',
+            message: expect.any(String)
+        }))
+    })
+
+    it('must return a failure response if it is authToken is expired', async () => {
+        jest.useFakeTimers();
+        const authToken = await loginGetPortfolio(testUserWithPortfolio)
+        jest.advanceTimersByTime(authTokenDurationInSec * 1000 + 1)
+
+        let resposta = await request(server)
+            .get(`/user/portfolio`)
+            .set('Content-Type', 'application/json')
+            .set('Cookie', authToken)
             .expect(401)
         
         let parsedBody = JSON.parse(resposta.text)

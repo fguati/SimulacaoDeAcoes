@@ -5,7 +5,7 @@ const { InvalidInputError } = require("../CustomErrors")
  * Used to validate data received through forms
 */
 function hasInvalidParam(paramList) {
-    return paramList.some(param => !param)
+    return paramList.some(param => !param && param !== 0)
 }
 
 

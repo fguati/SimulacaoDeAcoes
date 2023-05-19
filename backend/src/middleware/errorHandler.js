@@ -1,6 +1,7 @@
 const BaseError = require('../CustomErrors/BaseError')
 
 //middleware that handles any error thrown by the app
+// eslint-disable-next-line no-unused-vars
 function errorHandler(error, req, res, next) {
     //if the error is an instanceof our BaseError, it uses the BaseError method the sends the proper error response to the frontend
     if(error instanceof BaseError) {

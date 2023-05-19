@@ -6,3 +6,4 @@ teste.js
 .env
 .env.test
 dbBackUp.sqlite
+launch.json

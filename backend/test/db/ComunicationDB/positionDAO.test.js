@@ -1,4 +1,4 @@
-const { dbGet, dbAll, dbRun } = require("../../../src/db/utils/dbutils")
+const { dbGet, dbAll } = require("../../../src/db/utils/dbutils")
 const PositionDAO = require('../../../src/db/ComunicationDB/PositionDAO.js')
 const { InvalidInputError, UniqueConstraintError, NotFoundError } = require("../../../src/CustomErrors")
 
@@ -375,13 +375,13 @@ describe('Test select by email queries to the stocl positions table', () => {
         const testEmail = 'emailThatNeverExisted@inDB.SelectPositionByEmailTest'
 
         async function testFunction() {
-            const result = await PositionDAO.selectByUserEmail(testEmail)
+            await PositionDAO.selectByUserEmail(testEmail)
         }
 
         expect(testFunction).rejects.toThrow(NotFoundError)
 
         async function testFunctionWithStockFilter() {
-            const result = await PositionDAO.selectByUserEmail(testEmail, 'LEVE3')
+            await PositionDAO.selectByUserEmail(testEmail, 'LEVE3')
         }
 
         expect(testFunctionWithStockFilter).rejects.toThrow(NotFoundError)
@@ -435,9 +435,23 @@ describe('Test the delete method for the positionDAO class', () => {
     })
 })
 
-describe('Test the updateByStockAndEmail method for the positionsDAO class', () => {
+describe('Test the deleteIfExists method for the positionDAO class', () => {
+    test('must successfully delete an entry', async () => {
+        const userId = 11 //known data to be deleted from test db
+        const testStock = 'KNRI11' //known data to be deleted from test db
+        
+        await PositionDAO.deleteIfExists(userId, testStock)
+
+        const test = await dbAll('SELECT * from stock_positions WHERE user_id=? AND stock_ticker=?', [userId, testStock])
+
+        expect(test).toEqual([])
+    })
+
+})
+
+describe('Test the update method for the positionsDAO class', () => {
     const positionToUpdate = {
-        userEmail: 'user@WithPositionToUpdate.com',
+        userId: 12,
         stockTicker: 'LEVE3',
         stockQty: 200,
         stockAvgPrice: 273.48
@@ -445,19 +459,17 @@ describe('Test the updateByStockAndEmail method for the positionsDAO class', () 
 
     it('updates an existing position', async () => {
 
-        await PositionDAO.updateByStockAndEmail(positionToUpdate)
+        await PositionDAO.update(positionToUpdate)
 
         const positionOnDb = await dbGet(`
             SELECT * FROM stock_positions
                      WHERE stock_ticker=?
-                     AND user_id=(
-                        SELECT id FROM users WHERE email=?
-                     )
-        `, [positionToUpdate.stockTicker, positionToUpdate.userEmail])
+                     AND user_id=?
+        `, [positionToUpdate.stockTicker, positionToUpdate.userId])
 
         expect(positionOnDb).toEqual(expect.objectContaining({
             id: expect.any(Number),
-            user_id: expect.any(Number),
+            user_id: positionToUpdate.userId,
             stock_ticker: positionToUpdate.stockTicker,
             stock_qty: positionToUpdate.stockQty,
             stock_avg_price: positionToUpdate.stockAvgPrice
@@ -466,10 +478,10 @@ describe('Test the updateByStockAndEmail method for the positionsDAO class', () 
 
     it('throws invalid input error if any of the inputs is missing or invalid', async () => {
         async function testFunction() {
-            await PositionDAO.updateByStockAndEmail(missingInputObj)
+            await PositionDAO.update(missingInputObj)
         }
 
-        //missing email
+        //missing id
         let missingInputObj = {
             stockTicker: positionToUpdate.stockTicker, 
             stockQty: positionToUpdate.stockQty, 
@@ -480,7 +492,7 @@ describe('Test the updateByStockAndEmail method for the positionsDAO class', () 
         
         //missing ticker
         missingInputObj = {
-            userEmail: positionToUpdate.email,
+            userId: positionToUpdate.userId,
             stockQty: positionToUpdate.stock_qty,
             stock_stockAvgPriceavg_price: positionToUpdate.stock_avg_price
         };
@@ -489,7 +501,7 @@ describe('Test the updateByStockAndEmail method for the positionsDAO class', () 
 
         //missing qty
         missingInputObj = {
-            userEmail: positionToUpdate.userEmail,
+            userId: positionToUpdate.userId,
             stockTicker: positionToUpdate.stockTicker, 
             stockAvgPrice: positionToUpdate.stockAvgPrice
         };
@@ -498,16 +510,16 @@ describe('Test the updateByStockAndEmail method for the positionsDAO class', () 
 
         //missing average price
         missingInputObj = {
-            userEmail: positionToUpdate.userEmail,
+            userId: positionToUpdate.userId,
             stockTicker: positionToUpdate.stockTicker, 
             stockQty: positionToUpdate.stockQty, 
         };
 
         expect(testFunction).rejects.toThrow(InvalidInputError)
         
-        //invalid email
+        //invalid id
         missingInputObj = {
-            userEmail: null,
+            userId: null,
             stockTicker: positionToUpdate.stockTicker, 
             stockQty: positionToUpdate.stockQty, 
             stockAvgPrice: positionToUpdate.stockAvgPrice
@@ -517,7 +529,7 @@ describe('Test the updateByStockAndEmail method for the positionsDAO class', () 
         
         //invalid ticker
         missingInputObj = {
-            userEmail: positionToUpdate.userEmail,
+            userId: positionToUpdate.userId,
             stockTicker: null, 
             stockQty: positionToUpdate.stockQty, 
             stockAvgPrice: positionToUpdate.stockAvgPrice
@@ -527,7 +539,7 @@ describe('Test the updateByStockAndEmail method for the positionsDAO class', () 
         
         //invalid qty
         missingInputObj = {
-            userEmail: positionToUpdate.userEmail,
+            userId: positionToUpdate.userId,
             stockTicker: positionToUpdate.stockTicker, 
             stockQty: null, 
             stockAvgPrice: positionToUpdate.stockAvgPrice
@@ -537,7 +549,7 @@ describe('Test the updateByStockAndEmail method for the positionsDAO class', () 
         
         //invalid average price
         missingInputObj = {
-            userEmail: positionToUpdate.userEmail,
+            userId: positionToUpdate.userId,
             stockTicker: positionToUpdate.stockTicker, 
             stockQty: positionToUpdate.stockQty, 
             stockAvgPrice: null
@@ -549,14 +561,14 @@ describe('Test the updateByStockAndEmail method for the positionsDAO class', () 
 
     it('throws invalid input error if stock_qty is not an integer', async () => {
         const invalidData = {
-            userEmail: 'user@WithPositionToUpdate.com',
+            userId: 12,
             stockTicker: 'LEVE3',
             stockQty: 200.01,
             stockAvgPrice: 273.48
         }
         
         async function testFunction() {
-            await PositionDAO.updateByStockAndEmail(invalidData)
+            await PositionDAO.update(invalidData)
         }
 
         expect(testFunction).rejects.toThrow(InvalidInputError)
@@ -564,14 +576,14 @@ describe('Test the updateByStockAndEmail method for the positionsDAO class', () 
 
     it('throws invalid input error if stock_avg_price is not a number', async () => {
         const invalidData = {
-            userEmail: 'user@WithPositionToUpdate.com',
+            userId: 12,
             stockTicker: 'LEVE3',
             stockQty: 200,
             stockAvgPrice: 'R$273.48'
         }
         
         async function testFunction() {
-            await PositionDAO.updateByStockAndEmail(invalidData)
+            await PositionDAO.update(invalidData)
         }
 
         expect(testFunction).rejects.toThrow(InvalidInputError)
@@ -579,86 +591,82 @@ describe('Test the updateByStockAndEmail method for the positionsDAO class', () 
     
     it('throws a not found error if position is not found', async () => {
         let notFoundData = {
-            userEmail: 'user@withnostocks.email',
+            userId: 10,
             stockTicker: 'LEVE3',
             stockQty: 200,
             stockAvgPrice: 273.48
         }
         
         async function testFunction() {
-            await PositionDAO.updateByStockAndEmail(notFoundData)
+            await PositionDAO.update(notFoundData)
         }
 
         expect(testFunction).rejects.toThrow(NotFoundError)
 
-        notFoundData.email = 'emailThatDoesntExistInDB@test.com'
+        notFoundData.userId = 999
         expect(testFunction).rejects.toThrow(NotFoundError)
     })
 })
 
 describe('Test the insertOrUpdate method for the positionDAO class', () => {
-    test('Insert data in the stock_positions table if there is no entry with the user email and stock ticker entered', async () => {
+    test('Insert data in the stock_positions table if there is no entry with the user id and stock ticker entered', async () => {
         const dataToBeInserted = {
-            userEmail: 'createPosition@byEmail.test',
+            userId: 8,
             stockTicker: 'XPML11',
             stockQty: 100,
             stockAvgPrice: 15.27
         }
 
-        const selectUserId = `SELECT id FROM users WHERE email=?`
         const selectSQLtoCheck = `SELECT * FROM stock_positions WHERE stock_ticker=? AND user_id=?`
 
-        const userId = await dbGet(selectUserId, [dataToBeInserted.userEmail])
-        let dbEntry = await dbGet(selectSQLtoCheck, [dataToBeInserted.stockTicker, userId.id])
+        let dbEntry = await dbGet(selectSQLtoCheck, [dataToBeInserted.stockTicker, dataToBeInserted.userId])
         expect(dbEntry).toBe(undefined)
 
         await PositionDAO.insertOrUpdate(dataToBeInserted)
 
-        dbEntry = await dbGet(selectSQLtoCheck, [dataToBeInserted.stockTicker, userId.id])
+        dbEntry = await dbGet(selectSQLtoCheck, [dataToBeInserted.stockTicker, dataToBeInserted.userId])
         expect(dbEntry).toEqual(expect.objectContaining({
             stock_ticker: dataToBeInserted.stockTicker,
             stock_qty: dataToBeInserted.stockQty,
             stock_avg_price: dataToBeInserted.stockAvgPrice,
-            user_id: userId.id
+            user_id: dataToBeInserted.userId
         }))
 
     })
 
-    test('Update the data in the stock_positions table if there is an entry with the user email and stock ticker entered', async () => {
+    test('Update the data in the stock_positions table if there is an entry with the user id and stock ticker entered', async () => {
         const dataToBeInserted = {
-            userEmail: 'createPosition@byEmail.test',
+            userId: 8,
             stockTicker: 'XPML11',
             stockQty: 50,
             stockAvgPrice: 10.22
         }
         
-        const selectUserId = `SELECT id FROM users WHERE email=?`
         const selectSQLtoCheck = `SELECT * FROM stock_positions WHERE stock_ticker=? AND user_id=?`
 
-        const userId = await dbGet(selectUserId, [dataToBeInserted.userEmail])
-        let dbEntry = await dbGet(selectSQLtoCheck, [dataToBeInserted.stockTicker, userId.id])
+        let dbEntry = await dbGet(selectSQLtoCheck, [dataToBeInserted.stockTicker, dataToBeInserted.userId])
 
         expect(dbEntry.stock_qty).not.toBe(dataToBeInserted.stockQty)
         expect(dbEntry.stock_avg_price).not.toBe(dataToBeInserted.stockAvgPrice)
         expect(dbEntry).toEqual(expect.objectContaining({
             stock_ticker: dataToBeInserted.stockTicker,
-            user_id: userId.id
+            user_id: dataToBeInserted.userId
         }))
 
         await PositionDAO.insertOrUpdate(dataToBeInserted)
 
-        dbEntry = await dbGet(selectSQLtoCheck, [dataToBeInserted.stockTicker, userId.id])
+        dbEntry = await dbGet(selectSQLtoCheck, [dataToBeInserted.stockTicker, dataToBeInserted.userId])
         expect(dbEntry).toEqual(expect.objectContaining({
             stock_ticker: dataToBeInserted.stockTicker,
             stock_qty: dataToBeInserted.stockQty,
             stock_avg_price: dataToBeInserted.stockAvgPrice,
-            user_id: userId.id
+            user_id: dataToBeInserted.userId
         }))
     })
 
     test('Throw invalid input error if any mandatory argument in empty or invalid', async () => {
         const positionToUpdate = {
-            userEmail: 'user@WithPositionToUpdate.com',
+            userId: 8,
             stockTicker: 'LEVE3',
             stockQty: 200,
             stockAvgPrice: 273.48
@@ -666,87 +674,91 @@ describe('Test the insertOrUpdate method for the positionDAO class', () => {
 
         function testFunction(testObject) {
             return async () => {
-                console.log(testObject)
                 await PositionDAO.insertOrUpdate(testObject)
             }
         }
 
         async function testDBFunction() {
-            const testEnrty =  await dbGet('SELECT * FROM stock_positions WHERE stock_ticker=? AND user_id=(SELECT id FROM users WHERE email=?)', [positionToUpdate.stockTicker, positionToUpdate.userEmail])
-            expect(testEnrty.stock_qty).not.toBe(positionToUpdate.stockQty)
-            expect(testEnrty.stock_avg_price).not.toBe(positionToUpdate.stockAvgPrice)
-            expect(testEnrty.stock_qty).not.toBe(missingInputObj.stockQty)
-            expect(testEnrty.stock_avg_price).not.toBe(missingInputObj.stockAvgPrice)
+            const testEnrty =  await dbGet('SELECT * FROM stock_positions WHERE stock_ticker=? AND user_id=?', [positionToUpdate.stockTicker, positionToUpdate.userId])
+            if(testEnrty) {
+                expect(testEnrty.stock_qty).not.toBe(positionToUpdate.stockQty)
+                expect(testEnrty.stock_avg_price).not.toBe(positionToUpdate.stockAvgPrice)
+                expect(testEnrty.stock_qty).not.toBe(missingInputObj.stockQty)
+                expect(testEnrty.stock_avg_price).not.toBe(missingInputObj.stockAvgPrice)
+
+            } else {
+                expect(testEnrty).toBe(undefined)
+            }
         }
 
-         //missing email
+         //missing user id
         let missingInputObj = {
             stockTicker: positionToUpdate.stockTicker, 
             stockQty: positionToUpdate.stockQty, 
             stockAvgPrice: positionToUpdate.stockAvgPrice
         };
 
-        expect(testFunction(missingInputObj)).rejects.toThrow(InvalidInputError)
-        testDBFunction()
+        await expect(testFunction(missingInputObj)).rejects.toThrow(InvalidInputError)
+        await testDBFunction()
         
         //missing ticker
         missingInputObj = {
-            userEmail: positionToUpdate.email,
+            userId: positionToUpdate.userId,
             stockQty: positionToUpdate.stock_qty,
             stockAvgPrice: positionToUpdate.stock_avg_price
         };
 
-        expect(testFunction(missingInputObj)).rejects.toThrow(InvalidInputError)
-        testDBFunction()
+        await expect(testFunction(missingInputObj)).rejects.toThrow(InvalidInputError)
+        await testDBFunction()
         
-        //invalid email
+        //invalid id
         missingInputObj = {
-            userEmail: null,
+            userId: null,
             stockTicker: positionToUpdate.stockTicker, 
             stockQty: positionToUpdate.stockQty, 
             stockAvgPrice: positionToUpdate.stockAvgPrice
         };
 
-        expect(testFunction(missingInputObj)).rejects.toThrow(InvalidInputError)
-        testDBFunction()
+        await expect(testFunction(missingInputObj)).rejects.toThrow(InvalidInputError)
+        await testDBFunction()
         
         //invalid ticker
         missingInputObj = {
-            userEmail: positionToUpdate.userEmail,
+            userId: positionToUpdate.userId,
             stockTicker: null, 
             stockQty: positionToUpdate.stockQty, 
             stockAvgPrice: positionToUpdate.stockAvgPrice
         };
 
-        expect(testFunction(missingInputObj)).rejects.toThrow(InvalidInputError)
-        testDBFunction()
+        await expect(testFunction(missingInputObj)).rejects.toThrow(InvalidInputError)
+        await testDBFunction()
         
         //invalid qty
         missingInputObj = {
-            userEmail: positionToUpdate.userEmail,
+            userId: positionToUpdate.userId,
             stockTicker: positionToUpdate.stockTicker, 
             stockQty: 200.01, //
             stockAvgPrice: positionToUpdate.stockAvgPrice
         };
 
-        expect(testFunction(missingInputObj)).rejects.toThrow(InvalidInputError)
-        testDBFunction()
+        await expect(testFunction(missingInputObj)).rejects.toThrow(InvalidInputError)
+        await testDBFunction()
         
         //invalid average price
         missingInputObj = {
-            userEmail: positionToUpdate.userEmail,
+            userId: positionToUpdate.userId,
             stockTicker: positionToUpdate.stockTicker, 
             stockQty: positionToUpdate.stockQty, 
             stockAvgPrice: 'R$100.21'//
         };
 
-        expect(testFunction(missingInputObj)).rejects.toThrow(InvalidInputError)
-        testDBFunction()
+        await expect(testFunction(missingInputObj)).rejects.toThrow(InvalidInputError)
+        await testDBFunction()
     })
 
     test('Throw not found error if user email entered is not in the users table, including typing for quantity and average price', async () => {
         const notFoundData = {
-            userEmail: 'emailThatDoesntExistInDB@test.com',
+            userId: 999999999999,
             stockTicker: 'LEVE3',
             stockQty: 200,
             stockAvgPrice: 273.48
@@ -756,6 +768,6 @@ describe('Test the insertOrUpdate method for the positionDAO class', () => {
             await PositionDAO.insertOrUpdate(notFoundData)
         }
 
-        expect(testFunction).rejects.toThrow(NotFoundError)
+        await expect(testFunction).rejects.toThrow(NotFoundError)
     })
 })

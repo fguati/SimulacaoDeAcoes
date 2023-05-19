@@ -5,6 +5,7 @@ const { signInRoute, loginRoute, userRoute } = require('./routes')
 const { corsAllowances, cookieSettings, errorHandler} = require('./middleware')
 const { NotFoundError } = require('./CustomErrors/NotFoundError.js');
 const Authentication = require('./middleware/Authentication.js');
+const { sendOKResponse } = require('./controllers/utils');
 
 //instantiate app
 const app = express();
@@ -25,8 +26,11 @@ app.use(Authentication.authToken)
 //routes that require auth
 app.use('/user', userRoute)
 
+app.get('/test', (req, res) => sendOKResponse(res, { message: 'tudo ok até aqui' }))
+
 //error 404 route - for now only applied for routes with auth required
 app.get('/:anything', (req, res, next) => next(new NotFoundError()))
+
 
 //error handling middleware
 app.use(errorHandler)

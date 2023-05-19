@@ -5,6 +5,7 @@ const {TokenExpiredError} = require('./TokenExpiredError.js')
 const {JsonWebTokenError} = require('./JsonWebTokenError.js')
 const {MissingAuthTokenError} = require('./missingAuthToken.js')
 const {NotFoundError} = require('./NotFoundError.js')
+const {UnauthorizedError} = require('./UnauthorizedError.js')
 
 module.exports = { 
     InvalidInputError,
@@ -13,5 +14,6 @@ module.exports = {
     TokenExpiredError, 
     JsonWebTokenError, 
     MissingAuthTokenError,
-    NotFoundError
+    NotFoundError,
+    UnauthorizedError
 }
