@@ -1,7 +1,8 @@
 import IUser from "Interfaces/IUser"
-import { postForm, addProperties, useHandleRequestResponse } from "utils/BackendAPICommunication/"
+import { postForm, useHandleRequestResponse } from "utils/BackendAPICommunication/"
 import useSignUpSuccessHandler from "./useSignUpSuccessHandler"
-import listOfSignUpValues from "./listOfSignUpValuesType"
+import IFormField from "Interfaces/IFormField"
+import turnFieldListInObject from "utils/turnFieldListInObject"
 
 /**
  * Custom hook that return function responsible for handling the submission of the
@@ -15,20 +16,10 @@ const useSubmitSignUp = () =>{
 
     const route = '/register'
 
-    return async (e:React.FormEvent<HTMLFormElement>) => {
-        /**
-         * cast the event target type with the properties of the register user
-         * form so typescript can access this properties 
-         */
-        const target = addProperties<listOfSignUpValues>().toTarget(e.target)
-        
-        //creating user to be submiited with form data
-        const user: IUser = {
-            username: target.Username.value,
-            email: target["E-mail"].value,
-            password: target.Password.value
-        }
-        
+    return async (listOfFields: IFormField[]) => {
+        //create user to be posted from the values of the field list
+        const user: IUser = turnFieldListInObject<IUser>(listOfFields) 
+
         //posts the user data to the backend API
         const response = await postForm<IUser>(user).to(route)
         

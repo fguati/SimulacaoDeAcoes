@@ -19,7 +19,7 @@ function Form({fields, onSubmit}:IFormProps) {
     */
     const baseOnSubmit = (e:React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
-        onSubmit(e)
+        onSubmit(currentFieldValues)
         clearForm()
     }
 

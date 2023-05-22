@@ -1,7 +1,8 @@
 import IUser from "Interfaces/IUser";
-import { postForm, useHandleRequestResponse, addProperties } from "utils/BackendAPICommunication/";
+import { postForm, useHandleRequestResponse } from "utils/BackendAPICommunication/";
 import useLoginSuccessHandler from "./useLoginSuccessHandler";
-import listOfLoginFormValues from "./listOfLoginFormValuesType";
+import IFormField from "Interfaces/IFormField";
+import turnFieldListInObject from "utils/turnFieldListInObject";
 
 /**
  * Custom hook that returns a function that submits the login form to the backend
@@ -18,15 +19,9 @@ const useSubmitLoginRequest = () => {
     
     const route = '/login'
     
-    return async (e:React.FormEvent<HTMLFormElement>) => {
-        //cast event target to a type that can have its properties accessed by typescript
-        const target = addProperties<listOfLoginFormValues>().toTarget(e.target)
-        
-        //use target data to create user to be submited to backend API
-        const user: IUser = {
-            email: target["E-mail"].value,
-            password: target.Password.value
-        }
+    return async (fiedlList: IFormField[]) => {
+        //create user to be posted from the values of the field list
+        const user: IUser = turnFieldListInObject<IUser>(fiedlList) 
 
         //make the http request
         const response = await postForm<IUser>(user).to(route)

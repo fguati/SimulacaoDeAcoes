@@ -11,8 +11,8 @@ import { fieldIsNotEmpty } from "utils/FormValidators";
 function LoginPage() {
     //fields that will be rendered in the login form
     const fields:IFormField[] = [
-        {name: 'E-mail', type:'email', value:'', validators: [fieldIsNotEmpty]}, 
-        {name: 'Password', type:'password', value:'', validators: [fieldIsNotEmpty]}
+        {name: 'E-mail', type:'email', value:'', fieldProperty: 'email', validators: [fieldIsNotEmpty]}, 
+        {name: 'Password', type:'password', value:'', fieldProperty: 'password', validators: [fieldIsNotEmpty]}
     ] 
     
     /**

@@ -9,16 +9,16 @@ function SignUpPage() {
     
     //input fields present in the register user form
     const fields:IFormField[] = [
-        {name: 'Username', type: 'text', value:'', validators: [fieldIsNotEmpty, entederedValueIsWithinLength({minLength: 3})]},
-        {name: 'E-mail', type:'email', value:'', validators: [emailFieldIsCorrectlyFormatted]}, 
-        {name: 'Password', type:'password', value:'', validators: [passwordMatchesRequirements, entederedValueIsWithinLength({minLength: 8, maxLength: 30})]},
+        {name: 'Username', type: 'text', value:'', fieldProperty: 'username', validators: [fieldIsNotEmpty, entederedValueIsWithinLength({minLength: 3})]},
+        {name: 'E-mail', type:'email', value:'', fieldProperty: 'email', validators: [emailFieldIsCorrectlyFormatted]}, 
+        {name: 'Password', type:'password', value:'', fieldProperty: 'password', validators: [passwordMatchesRequirements, entederedValueIsWithinLength({minLength: 8, maxLength: 30})]},
         {name: 'Confirm Password', type: 'password', value:'', validators: [passwordFieldMatchesConfirmePassword]}
 
     ] 
 
     return(
         <>
-            <Form fields={fields} onSubmit={(e) => submitSignUp(e)}/>
+            <Form fields={fields} onSubmit={submitSignUp}/>
 
         </>
     )
