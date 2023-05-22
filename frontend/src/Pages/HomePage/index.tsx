@@ -8,8 +8,9 @@ import useFetchPortfolio from "./utils/fetchPortfolio";
 function HomePage() {
     const [stockList, setStockList] = useState<IStock[]>([])
     const fetchPortfolio = useFetchPortfolio()
+    
     useEffect(() => {
-        const response = fetchPortfolio()
+        const response = fetchPortfolio()//testar error
         response.then(portfolio => {
             setStockList(portfolio!)
         })

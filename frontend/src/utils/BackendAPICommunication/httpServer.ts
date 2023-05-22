@@ -1,7 +1,6 @@
 import { backendURL } from "Common/Constants";
 import axios from "axios";
 
-
 const httpServer = axios.create({
     baseURL: backendURL,
     headers: {
