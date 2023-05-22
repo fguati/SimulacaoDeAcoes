@@ -1,8 +1,6 @@
 import { BackendRoutes } from "Common/Types";
 import IFormField from "Interfaces/IFormField";
 import { postForm, useHandleRequestResponse, turnFieldListInObject } from "utils/BackendAPICommunication/"
-// import turnFieldListInObject from "utils/turnFieldListInObject";
-
 
 function useSubmitForm<objToPostType>(route:BackendRoutes, useSuccessHandler: ()=> (response:Response) => Promise<void>) {
     //create a success handler
