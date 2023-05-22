@@ -4,14 +4,14 @@ import { MemoryRouter } from "react-router-dom"
 import '@testing-library/jest-dom'
 
 import Form from "Components/Form";
-import useSubmitLoginRequest from "../../utils/useSubmitLoginRequest";
-jest.mock("../../utils/useSubmitLoginRequest", () => jest.fn())
+import useSubmitForm from "utils/BackendAPICommunication/useSubmitForm";
+jest.mock("utils/BackendAPICommunication/useSubmitForm", () => jest.fn())
 jest.mock("Components/Form", () => jest.fn())
 
 describe('unit tests: test login page render and behavior with mocked components and hooks', () => {
     
     const mockedForm = Form as jest.MockedFunction<typeof Form>
-    const mockedUseSubmitLoginRequest = useSubmitLoginRequest as jest.MockedFunction<typeof useSubmitLoginRequest>
+    const mockedUseSubmitForm = useSubmitForm as jest.MockedFunction<typeof useSubmitForm>
     const mockedSubmitLogin = jest.fn()
 
     beforeEach(() => {
@@ -19,7 +19,7 @@ describe('unit tests: test login page render and behavior with mocked components
             return (<form>form</form>)
         })
     
-        mockedUseSubmitLoginRequest.mockReturnValue(mockedSubmitLogin)
+        mockedUseSubmitForm.mockReturnValue(mockedSubmitLogin)
 
     })
 
@@ -34,7 +34,7 @@ describe('unit tests: test login page render and behavior with mocked components
     test('useSubmitLoginRequest hook must be called', () => {
         render(<LoginPage/>, {wrapper:MemoryRouter})
 
-        expect(mockedUseSubmitLoginRequest).toBeCalled()
+        expect(mockedUseSubmitForm).toBeCalled()
     })
 
 })

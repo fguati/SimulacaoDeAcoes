@@ -1,7 +1,6 @@
 import { SessionContext } from "Common/Contexts/SessionContext";
 import { SnackbarContext } from "Common/Contexts/SnackbarContext";
 import { useContext } from "react";
-import { NavigateFunction } from "react-router-dom";
 
 /**
  * Custom hook that returns a function that handles the responses of 
@@ -20,7 +19,7 @@ function useLoginSuccessHandler() {
      * handler function for succesful responses received from http requests.
      * It receives the success response only so it can interface with the useResponseHandler custom hook
      */
-    function loginSuccessHandler(response: Response, navigation: NavigateFunction) {
+    async function loginSuccessHandler(response: Response) {
         //set user login status to true, which is how the app knows the user is logged in. Obs: updates state functionally to avoid the stale closure problem
         setLogIn(status => true)
         
