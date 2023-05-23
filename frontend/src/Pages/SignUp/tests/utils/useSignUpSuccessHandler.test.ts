@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useContext } from 'react'
 import { ISnackbarContext } from "Common/Contexts/SnackbarContext";
 import { botScrnSnckBrPosition } from "Common/Constants";
+import IServerResponse from "Interfaces/IServerResponse";
 
 jest.mock('react-router-dom', () => {
     const originalMod = jest.requireActual('react-router-dom')
@@ -37,7 +38,10 @@ describe('test the success handler custom hooke for the sign up page', () => {
     }
     const mockUseContext = useContext as jest.MockedFunction<typeof useContext>
 
-    const mockResponse = new Response("Success!", { status: 200 });
+    const mockResponse: IServerResponse<unknown> = {
+        code: 200,
+        ok: true
+    }
 
     beforeEach(() => {
         mockUseContext.mockReturnValue(mockedState)

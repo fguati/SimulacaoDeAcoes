@@ -2,6 +2,7 @@ import useLoginSuccessHandler from "../../utils/useLoginSuccessHandler"
 import { renderHook } from '@testing-library/react-hooks';
 import { useLocation, Location } from "react-router-dom";
 import { useContext } from 'react';
+import IServerResponse from "Interfaces/IServerResponse";
 
 jest.mock('react', () => {
 	const React = jest.requireActual('react');
@@ -29,7 +30,7 @@ jest.mock("react-router-dom", () => {
 
 describe('unit tests of the useLoginSuccessHandler custom hook', () => {
     const mockUseLocation = useLocation as jest.MockedFunction<typeof useLocation>
-    const mockResponse = {} as Response
+    const mockResponse = {} as IServerResponse<unknown>
 	const mockedUseContext = useContext as jest.MockedFunction<typeof useContext>
 
     const mockedSetLogin = jest.fn()

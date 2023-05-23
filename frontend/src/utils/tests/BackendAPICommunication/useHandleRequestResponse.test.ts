@@ -1,4 +1,5 @@
 import { renderHook } from '@testing-library/react-hooks';
+import IServerResponse from 'Interfaces/IServerResponse';
 import { handleErrorResponse, useHandleRequestResponse } from 'utils/BackendAPICommunication';
 
 jest.mock('react-router-dom', () => ({
@@ -14,7 +15,10 @@ describe('Tests for the useHandleRequestResponse custom hook', () => {
     const mockedErrorHandler = handleErrorResponse as jest.MockedFunction<typeof handleErrorResponse> 
     
     it('calls the happy path handler with response if status code is below 400', async () => {
-        const mockResponse = new Response('success', { status: 200 });
+        const mockResponse: IServerResponse<unknown> = {
+            code: 200,
+            ok: true
+        }
         const mockHandler = jest.fn();
         const { result } = renderHook(() => useHandleRequestResponse(mockHandler));
         await result.current(mockResponse);
@@ -23,7 +27,10 @@ describe('Tests for the useHandleRequestResponse custom hook', () => {
 
     it('calls handleErrorResponse if status code is above 399', async () => {
         mockedErrorHandler.mockImplementation((reponse, navigate) => Promise.resolve())
-        const mockResponse = new Response('error', { status: 404 });
+        const mockResponse: IServerResponse<unknown> = {
+            code: 404,
+            ok: true
+        };
         const mockHandler = jest.fn();
         const { result } = renderHook(() => useHandleRequestResponse(mockHandler));
         await result.current(mockResponse);
