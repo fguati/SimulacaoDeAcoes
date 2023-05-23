@@ -1,6 +1,7 @@
 import { BackendRoutes } from "Common/Types"
 import IFormField from "Interfaces/IFormField"
-import { postForm, useHandleRequestResponse } from "utils/BackendAPICommunication/"
+import IServerResponse from "Interfaces/IServerResponse"
+import { useHandleRequestResponse, serverRequest } from "utils/BackendAPICommunication/"
 import useSubmitForm from "utils/BackendAPICommunication/useSubmitForm"
 
 jest.mock('utils/BackendAPICommunication/', () => {
@@ -14,7 +15,7 @@ jest.mock('utils/BackendAPICommunication/', () => {
 
 describe('Test the custom hook use submit form', () => {
     const mockedUseHandleRequestResponseHook = useHandleRequestResponse as jest.MockedFunction<typeof useHandleRequestResponse>
-    const mockedPostForm = postForm as jest.MockedFunction<typeof postForm>
+    const mockedServerReq = serverRequest as jest.MockedFunction<typeof serverRequest>
 
 
     const mockUseSuccessHandlerHook = jest.fn()
@@ -29,7 +30,11 @@ describe('Test the custom hook use submit form', () => {
         "E-mail": {value: 'mockedEmail'},
         Password: {value: 'mockedPassword'}
     }
-    const mockedResponse = new Response(JSON.stringify(mockedForm), { status: 200 });
+    const mockedResponse: IServerResponse<unknown> = {
+        ok: true,
+        code: 200,
+        body: mockedForm
+    }
 
     const mockeFields:IFormField[] = [
         {name: 'Username', type: 'text', value:mockedForm.Username.value, fieldProperty: 'username'},
@@ -45,7 +50,7 @@ describe('Test the custom hook use submit form', () => {
 
 
         mockedToRouteMethod.mockResolvedValue(mockedResponse)
-        mockedPostForm.mockReturnValue({to: mockedToRouteMethod})
+        mockedServerReq.mockResolvedValue(mockedResponse)
     })
 
     test('useHandleRequestResponse custom hook must be called with the success handler function', () => {       
@@ -54,7 +59,7 @@ describe('Test the custom hook use submit form', () => {
     
     })
 
-    test('postForm.to method must be called with entered route and user with the same properties as the mockedForm', async () => {
+    test('serverRequest method must be called with entered route and user with the same properties as the mockedForm', async () => {
         const submitFunction = useSubmitForm(testRoute, mockUseSuccessHandlerHook)
         await submitFunction(mockeFields)
         const mockedUser = {
@@ -62,7 +67,7 @@ describe('Test the custom hook use submit form', () => {
             email: mockedForm["E-mail"].value,
             password: mockedForm.Password.value
         }
-        expect(mockedPostForm).toBeCalledWith(mockedUser)
+        expect(mockedServerReq).toBeCalledWith(mockedUser)
     })
 
     test('fuction returned by useHandleRequestResponse custom hook must be called with response returned by postForm.to method', async () => {
