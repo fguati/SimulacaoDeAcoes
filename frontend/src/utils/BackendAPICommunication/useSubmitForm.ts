@@ -4,12 +4,12 @@ import IServerResponse from "Interfaces/IServerResponse";
 import { useHandleRequestResponse, turnFieldListInObject } from "utils/BackendAPICommunication/"
 import serverRequest from "./http/httpServerFetch";
 
-function useSubmitForm<objToPostType>(route:BackendRoutes, useSuccessHandler: ()=> (response:IServerResponse<unknown>) => Promise<void>) {
+function useSubmitForm<objToPostType extends object>(route:BackendRoutes, useSuccessHandler: ()=> (response:IServerResponse<unknown>) => Promise<void>) {
     //create a success handler
     const successHandler = useSuccessHandler()
     
     //create a response handler function that receives a success handler for the happy path
-    const responseHandler = useHandleRequestResponse(successHandler)
+    const responseHandler = useHandleRequestResponse<objToPostType>(successHandler)
 
     return async (formFields: IFormField[]) => {
         //create obejct from form fields to be posted
