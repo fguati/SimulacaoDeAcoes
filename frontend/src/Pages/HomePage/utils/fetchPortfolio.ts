@@ -34,11 +34,11 @@ function useFetchPortfolio() {
         } catch (error) {
             if(error instanceof Error) {
                 const errorResponse = transformErrorInResponse(error)
-                await handleErrorResponse(errorResponse, navigate)
+                return await handleErrorResponse(errorResponse, navigate)
             }
             
             const errorResponse = error as IErrorResponse
-            await handleErrorResponse(errorResponse, navigate)
+            return await handleErrorResponse(errorResponse, navigate)
         }
         
     }, [navigate]) 
