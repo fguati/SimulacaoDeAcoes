@@ -40,10 +40,6 @@ async function fetchFromServer<resDataType>(url: BackendRoutes, method = 'GET', 
     }
 }
 
-
-
-export default fetchFromServer
-
 function handleGenericError(error: Error, errorResponse: IServerResponse<IErrorResponse>) {
     const errorResponseBody = transformErrorInResponse(error)
     errorResponse.body = errorResponseBody
@@ -90,4 +86,4 @@ function convertAxiosResponse<resDataType>(axiosResponse: AxiosResponse<resDataT
     return response
 }
 
-
+export default fetchFromServer
