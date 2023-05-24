@@ -2,7 +2,7 @@ import { BackendRoutes } from "Common/Types";
 import IFormField from "Interfaces/IFormField";
 import IServerResponse from "Interfaces/IServerResponse";
 import { useHandleRequestResponse, turnFieldListInObject } from "utils/BackendAPICommunication/"
-import serverRequest from "./http/httpServerFetch";
+import fetchFromServer from "./http/httpServerFetch";
 
 function useSubmitForm<objToPostType extends object>(route:BackendRoutes, useSuccessHandler: ()=> (response:IServerResponse<unknown>) => Promise<void>) {
     //create a success handler
@@ -16,7 +16,7 @@ function useSubmitForm<objToPostType extends object>(route:BackendRoutes, useSuc
         const objectToPost = turnFieldListInObject<objToPostType>(formFields)
 
         //post data to backend API
-        const response = await serverRequest(route, 'POST', objectToPost)
+        const response = await fetchFromServer(route, 'POST', objectToPost)
 
         //Uses the response handler with the response received form the backend API
         const handledResponse = await responseHandler(response)

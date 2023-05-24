@@ -1,7 +1,7 @@
 import { BackendRoutes } from "Common/Types"
 import IFormField from "Interfaces/IFormField"
 import IServerResponse from "Interfaces/IServerResponse"
-import { useHandleRequestResponse, serverRequest } from "utils/BackendAPICommunication/"
+import { useHandleRequestResponse, fetchFromServer } from "utils/BackendAPICommunication/"
 import useSubmitForm from "utils/BackendAPICommunication/useSubmitForm"
 
 jest.mock('utils/BackendAPICommunication/', () => {
@@ -15,7 +15,7 @@ jest.mock('utils/BackendAPICommunication/', () => {
 
 describe('Test the custom hook use submit form', () => {
     const mockedUseHandleRequestResponseHook = useHandleRequestResponse as jest.MockedFunction<typeof useHandleRequestResponse>
-    const mockedServerReq = serverRequest as jest.MockedFunction<typeof serverRequest>
+    const mockedServerReq = fetchFromServer as jest.MockedFunction<typeof fetchFromServer>
 
 
     const mockUseSuccessHandlerHook = jest.fn()
@@ -59,7 +59,7 @@ describe('Test the custom hook use submit form', () => {
     
     })
 
-    test('serverRequest method must be called with entered route and user with the same properties as the mockedForm', async () => {
+    test('fetchFromServer method must be called with entered route and user with the same properties as the mockedForm', async () => {
         const submitFunction = useSubmitForm(testRoute, mockUseSuccessHandlerHook)
         await submitFunction(mockeFields)
         const mockedUser = {
