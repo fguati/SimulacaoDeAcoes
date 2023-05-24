@@ -1,17 +1,19 @@
 import { BackendRoutes } from "Common/Types"
 import IFormField from "Interfaces/IFormField"
 import IServerResponse from "Interfaces/IServerResponse"
-import { useHandleRequestResponse, fetchFromServer } from "utils/BackendAPICommunication/"
+import { useHandleRequestResponse } from "utils/BackendAPICommunication/"
+import fetchFromServer from "utils/BackendAPICommunication/http/httpServerFetch"
 import useSubmitForm from "utils/BackendAPICommunication/useSubmitForm"
 
 jest.mock('utils/BackendAPICommunication/', () => {
     const originalModule = jest.requireActual('utils/BackendAPICommunication/')
     return {
         ...originalModule,
-        postForm: jest.fn(),
         useHandleRequestResponse: jest.fn()
     }
 })
+
+jest.mock('utils/BackendAPICommunication/http/httpServerFetch', () => jest.fn())
 
 describe('Test the custom hook use submit form', () => {
     const mockedUseHandleRequestResponseHook = useHandleRequestResponse as jest.MockedFunction<typeof useHandleRequestResponse>
@@ -48,7 +50,6 @@ describe('Test the custom hook use submit form', () => {
         mockedResponseHandlerFunction.mockImplementation((response) => Promise.resolve(response))
         mockedUseHandleRequestResponseHook.mockReturnValue(mockedResponseHandlerFunction)
 
-
         mockedToRouteMethod.mockResolvedValue(mockedResponse)
         mockedServerReq.mockResolvedValue(mockedResponse)
     })
@@ -67,7 +68,7 @@ describe('Test the custom hook use submit form', () => {
             email: mockedForm["E-mail"].value,
             password: mockedForm.Password.value
         }
-        expect(mockedServerReq).toBeCalledWith(mockedUser)
+        expect(mockedServerReq).toBeCalledWith(testRoute, 'POST', mockedUser)
     })
 
     test('fuction returned by useHandleRequestResponse custom hook must be called with response returned by postForm.to method', async () => {

@@ -14,7 +14,7 @@ describe('Tests the error response handler function', () => {
         await handleErrorResponse(response, navigate);
 
         expect(navigate).toHaveBeenCalledWith('/error', {
-            state: JSON.stringify({ message: 'Invalid input', code: 400 }),
+            state: JSON.stringify({ code: 400, message: 'Invalid input' }),
         });
     })
 })

@@ -15,7 +15,6 @@ function useHandleRequestResponse<resBodyType extends object> (happyResponseHand
     return async (response: IServerResponse<resBodyType | IErrorResponse | null>) => {
         //check if response body implements Error response interface
         const bodyIsErrorRes = (response.body &&'code' in response.body && 'message' in response.body && 'name' in response.body)
-
         //check if response received is an error one and, if it is, calls the error response handler
         if (response.code > 399 && bodyIsErrorRes) {
             const handleError = await handleErrorResponse(response.body as IErrorResponse, navigate)

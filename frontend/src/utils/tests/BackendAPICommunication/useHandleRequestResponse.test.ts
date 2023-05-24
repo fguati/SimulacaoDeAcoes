@@ -1,13 +1,15 @@
 import { renderHook } from '@testing-library/react-hooks';
+import IErrorResponse from 'Interfaces/IErrorResponse';
 import IServerResponse from 'Interfaces/IServerResponse';
-import { handleErrorResponse, useHandleRequestResponse } from 'utils/BackendAPICommunication';
+import { useHandleRequestResponse } from 'utils/BackendAPICommunication';
+import handleErrorResponse from 'utils/BackendAPICommunication/responseHandlers/handleErrorResponse'
 
 jest.mock('react-router-dom', () => ({
   Navigate: () => null,
   useNavigate: () => jest.fn(),
 }));
 
-jest.mock('utils/BackendAPICommunication/handleErrorResponse', () => {
+jest.mock('utils/BackendAPICommunication/responseHandlers/handleErrorResponse', () => {
     return jest.fn()
 })
 
@@ -27,13 +29,18 @@ describe('Tests for the useHandleRequestResponse custom hook', () => {
 
     it('calls handleErrorResponse if status code is above 399', async () => {
         mockedErrorHandler.mockImplementation((reponse, navigate) => Promise.resolve())
-        const mockResponse: IServerResponse<null> = {
+        const mockResponse: IServerResponse<IErrorResponse> = {
             code: 404,
-            ok: true
+            ok: true,
+            body: {
+                code: 404,
+                name:'NotFoundError',
+                message: 'Not Found'
+            }
         };
         const mockHandler = jest.fn();
         const { result } = renderHook(() => useHandleRequestResponse(mockHandler));
         await result.current(mockResponse);
-        expect(mockedErrorHandler).toHaveBeenCalledWith(mockResponse, expect.any(Function));
+        expect(mockedErrorHandler).toHaveBeenCalledWith(mockResponse.body, expect.any(Function));
     })
 })

@@ -33,7 +33,6 @@ async function fetchFromServer<resDataType>(url: BackendRoutes, method = 'GET', 
         }
 
         if(error instanceof AxiosError && error.response) {
-            console.log()
             const errorData = error.response.data
             const errorResponseBody:IErrorResponse = {
                 code: error.response.status,
