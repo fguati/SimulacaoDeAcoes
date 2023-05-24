@@ -2,7 +2,7 @@ import { AxiosError, AxiosRequestConfig, AxiosResponse } from "axios"
 import httpServer from "./httpServer"
 import { BackendRoutes } from "Common/Types"
 import IErrorResponse from "Interfaces/IErrorResponse"
-import transformErrorInResponse from "../transformErrorInResponse"
+import transformErrorInResponse from "../responseHandlers/transformErrorInResponse"
 import unknownError from "Pages/ErrorPage/useErrorHandler/unknownError"
 import IServerResponse from 'Interfaces/IServerResponse'
 

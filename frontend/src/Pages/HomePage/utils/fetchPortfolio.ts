@@ -6,7 +6,7 @@ import { useCallback } from "react"
 import { useNavigate } from "react-router-dom"
 import { handleErrorResponse } from "utils/BackendAPICommunication"
 import fetchFromServer from "utils/BackendAPICommunication/http/httpServerFetch"
-import transformErrorInResponse from "utils/BackendAPICommunication/transformErrorInResponse"
+import transformErrorInResponse from "utils/BackendAPICommunication/responseHandlers/transformErrorInResponse"
 
 
 function useFetchPortfolio() {
