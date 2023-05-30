@@ -8,7 +8,7 @@ interface Props {
 
 interface ISessionContext {
     setLogIn: React.Dispatch<React.SetStateAction<boolean>>
-    getLogInStatus: () => boolean
+    checkAuthCookie: () => boolean
     loggedIn: boolean
 }
 
@@ -40,19 +40,19 @@ const SessionProvider = ({ children }: Props) => {
      * the cookie changed, the loged in status will have 
      * changed as well
      */
-    const getLogInStatus = useCallback(() => {
-            const authCookie = getCookie('authToken')
-            let returnValue = loggedIn
-            if(!authCookie && loggedIn){
-                setLogIn(false)
-                returnValue = false
-            }
-            return returnValue
+    const checkAuthCookie = useCallback(() => {
+        const authCookie = getCookie('authToken')
+        let hasAuthCookie = Boolean(authCookie)
+        if(loggedIn !== hasAuthCookie){
+            setLogIn(hasAuthCookie)
+        }
 
-        }, [loggedIn])
+        return hasAuthCookie
+
+    }, [loggedIn])
 
     return (
-        <SessionContext.Provider value={{setLogIn, getLogInStatus, loggedIn}}>
+        <SessionContext.Provider value={{setLogIn, checkAuthCookie, loggedIn}}>
             {children}
         </SessionContext.Provider>
     )

@@ -11,7 +11,7 @@ jest.mock('Pages/Login', () => jest.fn())
 
 describe('Testing the component responsible for checking if user is logged in and redirecting accordingly', () => {
     interface IMockedSessionContext {
-        getLogInStatus: () => boolean
+        checkAuthCookie: () => boolean
         loggedIn: boolean
         setLogIn: React.Dispatch<React.SetStateAction<boolean>>
     }
@@ -53,7 +53,7 @@ describe('Testing the component responsible for checking if user is logged in an
     test('calls activate snackbar and renders login page if user is not logged in', () => {
         MockedLoginPage.mockReturnValue((<p>Mocked Login Page</p>))
         const mockedSessionContext:IMockedSessionContext = {
-            getLogInStatus: jest.fn(),
+            checkAuthCookie: jest.fn(),
             loggedIn: false,
             setLogIn: jest.fn()
         }
@@ -67,7 +67,7 @@ describe('Testing the component responsible for checking if user is logged in an
 
     test('returns outlet if user is logged in', () => {
         const mockedSessionContext:IMockedSessionContext = {
-            getLogInStatus: jest.fn(),
+            checkAuthCookie: jest.fn(),
             loggedIn: true,
             setLogIn: jest.fn()
         }
