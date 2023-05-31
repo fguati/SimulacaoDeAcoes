@@ -9,7 +9,7 @@ function TotalValueCell({stock, indStock}:ITotalValueCellProps) {
             row={indStock + 2}
             column={6}
         >
-            {(stock.qty * stock.currentPrice).toFixed(2)}
+            {((stock.qty ?? 0) * stock.currentPrice).toFixed(2)}
         </StyledTableItem>
     )
 }

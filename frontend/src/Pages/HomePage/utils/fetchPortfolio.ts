@@ -53,7 +53,7 @@ const convertPositionToStock = (position: IServerPositionRes): IStock => {
         ticker: position.stockTicker,
     }
 
-    stock.totalValue = stock.qty * stock.currentPrice
+    stock.totalValue = (stock.qty ?? 0) * stock.currentPrice
     return stock
 }
 

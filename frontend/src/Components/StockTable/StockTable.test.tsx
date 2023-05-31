@@ -68,7 +68,7 @@ describe('Test the correct rendering of the stock table', () => {
             const stock = exampleStockList[row - 2]
 
             if(col === numberOfColumns) {
-                return (stock.qty * stock.currentPrice).toFixed(2)
+                return (stock.qty! * stock.currentPrice).toFixed(2)
             }
 
             const property = stockProperties[col - 1]

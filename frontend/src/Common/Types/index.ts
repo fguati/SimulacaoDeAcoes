@@ -12,3 +12,6 @@ export type BackendRoutes = '/login' | '/register' | '/user' | '/user/deposit' |
 
 //Type that restricts the basic collor palette of a box
 export type BoxColorPalette = 'success' | 'failure' | 'neutral'
+
+//Type that defines used currencies
+export type currency = 'BRL' | 'USD'
