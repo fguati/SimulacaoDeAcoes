@@ -2,14 +2,14 @@ import { renderHook } from '@testing-library/react-hooks';
 import IErrorResponse from 'Interfaces/IErrorResponse';
 import IServerResponse from 'Interfaces/IServerResponse';
 import { useHandleRequestResponse } from 'utils/BackendAPICommunication';
-import handleErrorResponse from 'utils/BackendAPICommunication/responseHandlers/handleErrorResponse'
+import handleErrorResponse from 'utils/handleErrorResponse'
 
 jest.mock('react-router-dom', () => ({
   Navigate: () => null,
   useNavigate: () => jest.fn(),
 }));
 
-jest.mock('utils/BackendAPICommunication/responseHandlers/handleErrorResponse', () => {
+jest.mock('utils/handleErrorResponse', () => {
     return jest.fn()
 })
 

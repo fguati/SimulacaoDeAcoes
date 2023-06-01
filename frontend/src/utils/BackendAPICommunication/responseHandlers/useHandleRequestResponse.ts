@@ -1,5 +1,5 @@
 import { NavigateFunction, useNavigate } from "react-router-dom";
-import handleErrorResponse from "./handleErrorResponse";
+import handleErrorResponse from "../../handleErrorResponse";
 import IErrorResponse from "Interfaces/IErrorResponse";
 import IServerResponse from "Interfaces/IServerResponse";
 
