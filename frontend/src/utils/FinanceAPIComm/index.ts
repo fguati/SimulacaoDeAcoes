@@ -23,8 +23,9 @@ const fetchStockInfo = async (tickerList: string[]):Promise<IApiStock[] | IError
         return filteredList
 
     } catch (error) {
-        //return an error object that implements the Error Response interface so it can be treated by hooks
-        return handleFinanceAPIError(error)
+        //throw an error object that implements the Error Response interface so it can be treated by hooks
+        const errorResponse = handleFinanceAPIError(error)
+        throw errorResponse
     }
 
 }

@@ -1,5 +1,5 @@
+/* eslint-disable jest/no-conditional-expect */
 import IApiStock from "Interfaces/IApiStock"
-import IErrorResponse from "Interfaces/IErrorResponse"
 import { fetchStockInfo } from "utils/FinanceAPIComm"
 
 describe('fetchStockInfo method of the FinanceAPIComm module', () => {
@@ -25,15 +25,21 @@ describe('fetchStockInfo method of the FinanceAPIComm module', () => {
     })
 
     it('must return a not found error response if only one ticker is entered and is invalid', async () => {
-        const invalidTicker = ['INVLD7']
+        const tickerList = ["INVLD7"];
 
-        const errorResponse = await fetchStockInfo(invalidTicker) as IErrorResponse
+        try {
+            await fetchStockInfo(tickerList);
 
-        expect(errorResponse).toEqual(expect.objectContaining({
-            code: 404,
-            name: 'Not Found Error',
-            message: expect.any(String)
-        }))
+            // If the function does not throw an error, fail the test
+            // eslint-disable-next-line jest/no-jasmine-globals
+            fail("Expected function to throw an error.");
+        } catch (error) {
+            expect(error).toEqual(expect.objectContaining({
+                code: 404,
+                name: 'Not Found Error',
+                message: expect.any(String)
+            }))
+        }
 
     })
 
