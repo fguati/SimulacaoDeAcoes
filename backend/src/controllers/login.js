@@ -10,7 +10,7 @@ const inputNamesFromBody = ['email', 'password']
 function sendAuthTokenResponse(user, res) {
     let authToken = JWToken.generate(user)
     res.set('Authorization', authToken)
-    res.setHeader('Set-Cookie', `authToken=${authToken}; Max-Age=${authTokenDurationInSec}; Path=/`)
+    res.setHeader('Set-Cookie', `authToken=${authToken}; Max-Age=${authTokenDurationInSec}; SameSite=None; Secure; Path=/`)
     return sendOKResponse(res, {authToken: authToken})
 }
 

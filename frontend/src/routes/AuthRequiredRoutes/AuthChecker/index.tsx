@@ -10,14 +10,14 @@ import { SnackbarContext } from "Common/Contexts/SnackbarContext";
  * logged in and, redirecting them to the login page if they are not
  */
 function AuthRequestBranch() {
-    const { getLogInStatus, loggedIn } = useContext(SessionContext)
+    const { checkAuthCookie, loggedIn } = useContext(SessionContext)
     const { activateSnackbar } = useContext(SnackbarContext)
     const errorMessage = 'Please log in before trying to access this page'
     
     useEffect(() => {
         //use the session context to check whether user is logged in
-        getLogInStatus!()
-    }, [getLogInStatus])
+        checkAuthCookie()
+    }, [checkAuthCookie])
 
     useEffect(() => {
         if(!loggedIn) {

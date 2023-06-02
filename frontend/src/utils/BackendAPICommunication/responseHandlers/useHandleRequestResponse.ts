@@ -1,6 +1,7 @@
 import { NavigateFunction, useNavigate } from "react-router-dom";
-import handleErrorResponse from "./handleErrorResponse";
+import handleErrorResponse from "../../handleErrorResponse";
 import IErrorResponse from "Interfaces/IErrorResponse";
+import IServerResponse from "Interfaces/IServerResponse";
 
 /**
  * Custom hook that returns function that act as handler for any response received
@@ -9,12 +10,14 @@ import IErrorResponse from "Interfaces/IErrorResponse";
  * It has a function that handles the success cases beacuse so the success can be handled
  * in customized ways, according to the requirements of the module that makes the request
  */
-const useHandleRequestResponse = (happyResponseHandler: (happyResponse: Response, navigateFunction: NavigateFunction) => unknown) => {
+function useHandleRequestResponse<resBodyType extends object> (happyResponseHandler: (happyResponse: IServerResponse<unknown>, navigateFunction: NavigateFunction) => unknown) {
     const navigate = useNavigate()
-    return async (response: Response | IErrorResponse) => {
+    return async (response: IServerResponse<resBodyType | IErrorResponse | null>) => {
+        //check if response body implements Error response interface
+        const bodyIsErrorRes = (response.body &&'code' in response.body && 'message' in response.body && 'name' in response.body)
         //check if response received is an error one and, if it is, calls the error response handler
-        if (!(response instanceof Response) || response.status > 399) {
-            const handleError = await handleErrorResponse(response, navigate)
+        if (response.code > 399 && bodyIsErrorRes) {
+            const handleError = await handleErrorResponse(response.body as IErrorResponse, navigate)
             return handleError
         }
         

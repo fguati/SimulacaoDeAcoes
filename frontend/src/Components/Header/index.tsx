@@ -12,10 +12,10 @@ function Header() {
     /**acquire the getter function for the login status from the session context
      * and use it to check whether the user is logged in or not
     */
-    const { getLogInStatus, loggedIn } = useContext(SessionContext)
+    const { checkAuthCookie, loggedIn } = useContext(SessionContext)
     useEffect(() => {
-        getLogInStatus!()
-    }, [loggedIn, getLogInStatus])
+        checkAuthCookie()
+    }, [loggedIn, checkAuthCookie])
 
     //receives the logout function through the useLogOut custom hook
     const logOut = useLogOut()

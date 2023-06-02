@@ -12,7 +12,7 @@ function getCookie(cookieKey: string) {
         //splits the cookie value from its key
         const [key, value] = reqCookie.split('=')
         //makes sure the key retrieved is the one requested
-        if(key === cookieKey) {
+        if(key.trim() === cookieKey) {
             return value
         }
     }

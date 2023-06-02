@@ -1,7 +1,7 @@
 import { SessionContext, SessionProvider } from ".";
 import { fireEvent, render, screen } from '@testing-library/react'
 import '@testing-library/jest-dom'
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import getCookie from "utils/getCookie";
 jest.mock("utils/getCookie")
 
@@ -9,17 +9,20 @@ describe('Unit tests of the Session Context', () => {
     const mockedGetCookie = getCookie as jest.MockedFunction<typeof getCookie>
 
     const ExampleComponent = () => {
-        const { getLogInStatus, setLogIn } = useContext(SessionContext)
-        const isLoggedIn = getLogInStatus!()
+        const { checkAuthCookie, setLogIn, loggedIn } = useContext(SessionContext)
+
+        useEffect(() => {
+            checkAuthCookie()
+        }, [loggedIn, checkAuthCookie])
       
         return (<div>
-            Logged in: {isLoggedIn.toString()}
+            Logged in: {loggedIn.toString()}
             <button onClick={() => setLogIn(false)}>Change to False</button>
             <button onClick={() => setLogIn(true)}>Change to True</button>
         </div>)
     }
 
-    test('Session Context provides getLogInStatus that returns true when getCookie returns a non-empty string', () => {
+    test('Session Context provides checkAuthCookie that sets the loggedIn value to true when getCookie returns a non-empty string', () => {
         mockedGetCookie.mockImplementation((key) => key)
         render(
             <SessionProvider>
@@ -31,7 +34,7 @@ describe('Unit tests of the Session Context', () => {
         expect(testDiv.textContent).toEqual(expect.stringContaining('true'))
     })
 
-    test('Session Context provides getLogInStatus that returns false when getCookie returns an empty string', () => {
+    test('Session Context provides checkAuthCookie that sets the loggedIn value to false when getCookie returns an empty string', () => {
         mockedGetCookie.mockImplementation((key) => '')
         render(
             <SessionProvider>
@@ -43,7 +46,7 @@ describe('Unit tests of the Session Context', () => {
         expect(testDiv.textContent).toEqual(expect.stringContaining('false'))
     })
 
-    test('When getCookies return a non-empty string, setLogIn is capable of change the state of the login', () => {
+    test('When getCookies return a non-empty string, setLogIn is not capable of change the state of the login', () => {
         mockedGetCookie.mockImplementation((key) => key)
         render(
             <SessionProvider>
@@ -57,7 +60,7 @@ describe('Unit tests of the Session Context', () => {
 
         expect(testDiv.textContent).toEqual(expect.stringContaining('true'))
         fireEvent.click(falseButton)
-        expect(testDiv.textContent).toEqual(expect.stringContaining('false'))
+        expect(testDiv.textContent).toEqual(expect.stringContaining('true'))
         fireEvent.click(trueButton)
         expect(testDiv.textContent).toEqual(expect.stringContaining('true'))
 

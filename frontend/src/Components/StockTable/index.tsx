@@ -7,11 +7,12 @@ import StockRow from "./TableRows/StockRow"
 function StockTable({ stockList }:IStockTableProps) {
     //list of headers of the table
     const headers = [
-        'id',
         'Ticker',
         'Company Name',
         'Stock quantity',
         'Current Price',
+        'Currency',
+        'Average Price',
         'Total Value'
     ]
     

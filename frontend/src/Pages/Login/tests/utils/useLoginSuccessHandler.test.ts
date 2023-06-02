@@ -1,7 +1,8 @@
 import useLoginSuccessHandler from "../../utils/useLoginSuccessHandler"
 import { renderHook } from '@testing-library/react-hooks';
-import { NavigateFunction, useLocation, Location } from "react-router-dom";
+import { useLocation, Location } from "react-router-dom";
 import { useContext } from 'react';
+import IServerResponse from "Interfaces/IServerResponse";
 
 jest.mock('react', () => {
 	const React = jest.requireActual('react');
@@ -28,9 +29,8 @@ jest.mock("react-router-dom", () => {
 
 
 describe('unit tests of the useLoginSuccessHandler custom hook', () => {
-    const mockNavigation = jest.fn() as NavigateFunction
     const mockUseLocation = useLocation as jest.MockedFunction<typeof useLocation>
-    const mockResponse = {} as Response
+    const mockResponse = {} as IServerResponse<unknown>
 	const mockedUseContext = useContext as jest.MockedFunction<typeof useContext>
 
     const mockedSetLogin = jest.fn()
@@ -55,14 +55,14 @@ describe('unit tests of the useLoginSuccessHandler custom hook', () => {
 
     test('rendered function must call activate snackbar with login successful message', () => {
         const { result } = renderHook(() => useLoginSuccessHandler())
-        result.current(mockResponse, mockNavigation)
+        result.current(mockResponse)
 
         expect(mockedActivateSnackbar).toBeCalledWith(expect.stringContaining('success'), { colorPalette: 'success' })        
     })
 
     test('must call setLogin with true', () => {
         const { result } = renderHook(() => useLoginSuccessHandler())
-        result.current(mockResponse, mockNavigation)
+        result.current(mockResponse)
 
         expect(mockedSetLogin).toBeCalled()   
     })

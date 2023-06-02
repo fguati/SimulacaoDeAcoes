@@ -11,6 +11,7 @@ interface IFormField {
     type: 'text' | 'password' | 'email'
     value: FieldValue
     validators?: Array<FormValidator>
+    fieldProperty?: string
 }
 
 export default IFormField

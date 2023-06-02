@@ -1,5 +1,5 @@
 import unknownError from "Pages/ErrorPage/useErrorHandler/unknownError"
-import transformErrorInResponse from "utils/BackendAPICommunication/transformErrorInResponse"
+import transformErrorInResponse from "utils/BackendAPICommunication/responseHandlers/transformErrorInResponse"
 import httpStatus from "http-status"; 
 
 

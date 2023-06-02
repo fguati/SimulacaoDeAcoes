@@ -4,11 +4,12 @@ import IStockRowProps from "./IStockRowProps"
 
 function StockRow({ stock, stockIndex }: IStockRowProps) {
     const stockProperties = [
-        'id',
         'ticker',
         'companyName',
         'qty',
         'currentPrice',
+        'currency',
+        'averagePrice',
         'totalValue'
     ]
     
@@ -19,7 +20,7 @@ function StockRow({ stock, stockIndex }: IStockRowProps) {
                 //first check if the property being rendered is total value, as this one has its value calculated
                 if(Property === 'totalValue') {
                     return <TotalValueCell
-                        key={`${stock.id}/6`}
+                        key={`${stock.id}/totalValue`}
                         indStock={stockIndex} 
                         stock={stock} 
                     />
