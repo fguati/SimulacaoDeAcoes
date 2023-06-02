@@ -3,7 +3,16 @@ import '@testing-library/jest-dom'
 import HomePage from '..';
 import useFetchPortfolio from '../utils/fetchPortfolio';
 import IStock from 'Interfaces/IStock';
+import { fetchFromServer } from 'utils/BackendAPICommunication';
 jest.mock('../utils/fetchPortfolio', () => jest.fn());
+jest.mock('utils/BackendAPICommunication', () => {
+    const originalModule = jest.requireActual('utils/BackendAPICommunication')
+
+    return {
+        ...originalModule,
+        fetchFromServer: jest.fn()
+    }
+})
 
 
 describe('HomePage', () => {
@@ -25,15 +34,23 @@ describe('HomePage', () => {
             totalValue: 477.44 
         },
     ]
+    const mockBalance = 500
     
     const mockedFetchPortfolio = jest.fn()
-
-
     const mockUseFetchPortfolio = useFetchPortfolio as jest.MockedFunction<typeof useFetchPortfolio>
+    const mockedFetchFromServer = fetchFromServer as jest.MockedFunction<typeof fetchFromServer>
 
-    test('renders the component and fetches portfolio', async () => {
+    beforeEach(() => {
+        mockedFetchFromServer.mockResolvedValue({
+            code: 200,
+            ok: true,
+            body: { balance: mockBalance }
+        })
         mockedFetchPortfolio.mockResolvedValue(mockedStockList)
         mockUseFetchPortfolio.mockReturnValue(mockedFetchPortfolio)
+    })
+
+    test('renders the component and fetches portfolio', async () => {
 
         // Render the component
         render(<HomePage />);
@@ -48,4 +65,13 @@ describe('HomePage', () => {
             }) 
         })
     });
+
+    it('renders component with the user balance', async () => {
+
+        // Render the component
+        render(<HomePage />);
+
+        const userBalance = await screen.findByText(mockBalance.toString(), { exact: false })
+        expect(userBalance).toBeInTheDocument()
+    })
 });

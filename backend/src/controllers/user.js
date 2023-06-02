@@ -112,7 +112,7 @@ class UserController {
             const user = await UserModel.instanceFromDB(id)
 
             //send success response with balance provided by user model
-            return sendOKResponse(res, user.balance)
+            return sendOKResponse(res, {balance: user.balance})
             
         } catch (error) {
             //send error to error treating middleware

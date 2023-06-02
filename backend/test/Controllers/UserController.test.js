@@ -429,9 +429,7 @@ describe('getBalance method', () => {
     
         expect(response.statusCode).toBe(200)
     
-        let responseBody = JSON.parse(response.body)
-    
-        expect(responseBody.balance).toBe(expectedUserBalance)
+        expect(response.body.balance).toBe(expectedUserBalance)
     })
 })
 
