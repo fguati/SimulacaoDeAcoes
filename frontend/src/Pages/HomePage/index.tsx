@@ -4,10 +4,7 @@ import IStock from "Interfaces/IStock";
 import { useEffect, useState } from 'react'
 import useFetchPortfolio from "./utils/fetchPortfolio";
 import Typography from "Components/AtomComponents/Tipography";
-import { fetchFromServer, handleErrorResponse } from "utils/BackendAPICommunication";
-import { useNavigate } from "react-router-dom";
-import transformErrorInResponse from "utils/BackendAPICommunication/responseHandlers/transformErrorInResponse";
-import unknownError from "Pages/ErrorPage/useErrorHandler/unknownError";
+import useFetchUserBalance from "./utils/useFetchUserBalance";
 
 //Render the landing page for a logged in user. Still in construction.
 function HomePage() {
@@ -26,25 +23,12 @@ function HomePage() {
         })
     }, [fetchPortfolio])
 
-    //fetch user balance from server
-    const navigate = useNavigate()
+    //fetch user balance from server and set state to the response
+    const fetchUserBalance = useFetchUserBalance()
     useEffect(() => {
-        fetchFromServer<{balance: number}>('/user/balance')
-            .then(response => {
-                if(response.body) {
-                    if('balance' in response.body){
-                        return setUserBalance(response.body.balance)
-                    } 
-                    
-                    throw response.body
-                }
-
-                throw unknownError
-                
-            })
-            .catch(err => handleErrorResponse(transformErrorInResponse(err), navigate))
-        
-    }, [navigate])
+        fetchUserBalance()
+            .then(res => {if(res) setUserBalance(res)})
+    }, [fetchUserBalance])
     
     return(
         <>

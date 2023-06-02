@@ -3,16 +3,9 @@ import '@testing-library/jest-dom'
 import HomePage from '..';
 import useFetchPortfolio from '../utils/fetchPortfolio';
 import IStock from 'Interfaces/IStock';
-import { fetchFromServer } from 'utils/BackendAPICommunication';
+import useFetchUserBalance from '../utils/useFetchUserBalance';
 jest.mock('../utils/fetchPortfolio', () => jest.fn());
-jest.mock('utils/BackendAPICommunication', () => {
-    const originalModule = jest.requireActual('utils/BackendAPICommunication')
-
-    return {
-        ...originalModule,
-        fetchFromServer: jest.fn()
-    }
-})
+jest.mock('../utils/useFetchUserBalance', () => jest.fn())
 
 
 describe('HomePage', () => {
@@ -37,15 +30,13 @@ describe('HomePage', () => {
     const mockBalance = 500
     
     const mockedFetchPortfolio = jest.fn()
+    const mockedFetchUserBalance = jest.fn()
     const mockUseFetchPortfolio = useFetchPortfolio as jest.MockedFunction<typeof useFetchPortfolio>
-    const mockedFetchFromServer = fetchFromServer as jest.MockedFunction<typeof fetchFromServer>
+    const mockedUseFetchUserBalance = useFetchUserBalance as jest.MockedFunction<typeof useFetchUserBalance>
 
     beforeEach(() => {
-        mockedFetchFromServer.mockResolvedValue({
-            code: 200,
-            ok: true,
-            body: { balance: mockBalance }
-        })
+        mockedFetchUserBalance.mockResolvedValue(mockBalance)
+        mockedUseFetchUserBalance.mockReturnValue(mockedFetchUserBalance)
         mockedFetchPortfolio.mockResolvedValue(mockedStockList)
         mockUseFetchPortfolio.mockReturnValue(mockedFetchPortfolio)
     })
