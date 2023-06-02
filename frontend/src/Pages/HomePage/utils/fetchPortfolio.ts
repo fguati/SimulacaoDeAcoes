@@ -38,7 +38,6 @@ function useFetchPortfolio() {
                 //check if web API request successfully returned an array
                 if('length' in webApiInfo) {
                     updateStocksWithApiData(stockList, webApiInfo)
-
                     return stockList
                 }
 
@@ -69,10 +68,12 @@ export default useFetchPortfolio
 const convertPositionToStock = (position: IServerPositionRes): IStock => {
     const stock: IStock = {
         id: position.stockTicker,
-        companyName: position.stockTicker,
-        currentPrice: position.averagePrice,
-        qty: position.qty,
         ticker: position.stockTicker,
+        companyName: position.stockTicker,
+        qty: position.qty,
+        currentPrice: position.averagePrice,
+        currency: 'BRL',
+        averagePrice: position.averagePrice
     }
 
     stock.totalValue = (stock.qty ?? 0) * stock.currentPrice
@@ -87,6 +88,8 @@ function updateStocksWithApiData(stockList: IStock[], webApiStockInfo: IApiStock
             stock.companyName = stockInfo.companyName
             stock.currentPrice = stockInfo.currentPrice
             stock.totalValue = (stock.qty ?? 0) * stockInfo.currentPrice
+            stock.currency = stockInfo.currency
         }
     })
+
 }

@@ -6,6 +6,7 @@ import { handleErrorResponse } from "utils/BackendAPICommunication";
 import IServerPositionRes from "Interfaces/IServerPositionRes";
 import { fetchStockInfo } from "utils/FinanceAPIComm";
 import IApiStock from "Interfaces/IApiStock";
+import IStock from "Interfaces/IStock";
 
 jest.mock("utils/BackendAPICommunication/http/httpServerFetch", () => jest.fn());
 jest.mock("utils/BackendAPICommunication", () => ({
@@ -50,13 +51,15 @@ describe('Test the hook responsible for fetching the user portfolio from server'
             ok: true,
         };
 
-        const expectedResult = [
+        const expectedResult: IStock[] = [
             { 
                 id: mockServerResponse[0].stockTicker, 
                 companyName: mockWebAPIResponse[0].companyName, 
                 currentPrice: mockWebAPIResponse[0].currentPrice, 
                 qty: mockServerResponse[0].qty, 
-                ticker: mockServerResponse[0].stockTicker, 
+                ticker: mockServerResponse[0].stockTicker,
+                averagePrice: mockServerResponse[0].averagePrice,
+                currency: mockWebAPIResponse[0].currency,
                 totalValue: mockServerResponse[0].qty * mockWebAPIResponse[0].currentPrice 
             },
             { 
@@ -64,7 +67,9 @@ describe('Test the hook responsible for fetching the user portfolio from server'
                 companyName: mockWebAPIResponse[1].companyName, 
                 currentPrice: mockWebAPIResponse[1].currentPrice, 
                 qty: mockServerResponse[1].qty, 
-                ticker: mockServerResponse[1].stockTicker, 
+                ticker: mockServerResponse[1].stockTicker,
+                averagePrice: mockServerResponse[1].averagePrice,
+                currency: mockWebAPIResponse[1].currency,
                 totalValue: mockServerResponse[1].qty * mockWebAPIResponse[1].currentPrice 
             }
         ];

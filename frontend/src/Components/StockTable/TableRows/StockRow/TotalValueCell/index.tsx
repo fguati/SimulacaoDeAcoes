@@ -7,7 +7,7 @@ function TotalValueCell({stock, indStock}:ITotalValueCellProps) {
         // the row number must be the index of the stock +2 because the first row is the header row and the first stock in the stock list will have index 0
         <StyledTableItem
             row={indStock + 2}
-            column={6}
+            column={0}
         >
             {((stock.qty ?? 0) * stock.currentPrice).toFixed(2)}
         </StyledTableItem>

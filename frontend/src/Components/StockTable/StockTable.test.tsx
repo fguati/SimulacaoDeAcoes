@@ -4,11 +4,12 @@ import '@testing-library/jest-dom'
 import IStock from "Interfaces/IStock";
 
 const propertyToHeadersMap = {
-    id: 'id',
     ticker: 'Ticker',
     companyName: 'Company Name',
     qty: 'Stock quantity',
     currentPrice: 'Current Price',
+    currency: 'Currency',
+    averagePrice: 'Average Price',
     totalValue: 'Total Value'
 }
 
@@ -19,6 +20,8 @@ const exampleStockList: IStock[] = [
         companyName: 'Weg',
         qty: 237,
         currentPrice: 25.37,
+        currency: 'BRL',
+        averagePrice: 26.48,
     },
     {
         id: Math.random().toString(),
@@ -26,6 +29,8 @@ const exampleStockList: IStock[] = [
         companyName: 'Engie',
         qty: 315,
         currentPrice:15.17,
+        currency: 'USD',
+        averagePrice: 14.25,
     },
     {
         id: Math.random().toString(),
@@ -33,11 +38,14 @@ const exampleStockList: IStock[] = [
         companyName: 'Banco Itaú',
         qty: 17,
         currentPrice: 155.48,
+        currency: 'BRL',
+        averagePrice: 167.22,
     }
 ]
 
 const headers = Object.values(propertyToHeadersMap)
 const stockProperties = Object.keys(exampleStockList[0])
+stockProperties.shift()
 
 const numberOfColumns = headers.length
 const numberOfRows = exampleStockList.length
