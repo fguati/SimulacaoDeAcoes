@@ -43,6 +43,8 @@ const exampleStockList: IStock[] = [
     }
 ]
 
+const mockUserBalance = 500
+
 const headers = Object.values(propertyToHeadersMap)
 const stockProperties = Object.keys(exampleStockList[0])
 stockProperties.shift()
@@ -53,7 +55,7 @@ const numberOfRows = exampleStockList.length
 describe('Test the correct rendering of the stock table', () => {
 
     test('must render a table with the correct number of headers and rows', () => {
-        render(<StockTable stockList={exampleStockList}/>)
+        render(<StockTable stockList={exampleStockList} userBalance={mockUserBalance}/>)
 
         const renderedTable = screen.getByRole('table')
 
@@ -62,7 +64,7 @@ describe('Test the correct rendering of the stock table', () => {
     })
 
     test('the value of every cell from the rendered table must match the stock list entered as prop', () => {
-        render(<StockTable stockList={exampleStockList}/>)
+        render(<StockTable stockList={exampleStockList} userBalance={mockUserBalance}/>)
         
         const renderedTable = screen.getByRole('table')
         // eslint-disable-next-line testing-library/no-node-access
@@ -95,4 +97,20 @@ describe('Test the correct rendering of the stock table', () => {
         }
 
     })
+
+    test('render cell with total value', () => {
+        render(<StockTable stockList={exampleStockList} userBalance={mockUserBalance}/>)
+        
+        const totalValue = exampleStockList.reduce((acum, stock) => {
+            const { currentPrice, qty } = stock
+            return acum + ((qty ?? 0) * currentPrice)
+        }, mockUserBalance)
+        
+        const totalValueText = `R$ ${totalValue.toFixed(2).toString()}`
+
+        const totalAssets = screen.getByText(totalValueText, {exact:false})
+        expect(totalAssets).toBeInTheDocument()
+    })
+
+
 })
