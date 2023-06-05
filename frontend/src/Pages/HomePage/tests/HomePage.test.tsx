@@ -3,9 +3,10 @@ import '@testing-library/jest-dom'
 import HomePage from '..';
 import useFetchPortfolio from '../utils/fetchPortfolio';
 import IStock from 'Interfaces/IStock';
-import useFetchUserBalance from '../utils/useFetchUserBalance';
+import useFetchUserBalance from 'Common/Contexts/UserBalanceContext/CustomHooks/useFetchUserBalance';
+import { UserBalanceProvider } from 'Common/Contexts/UserBalanceContext';
 jest.mock('../utils/fetchPortfolio', () => jest.fn());
-jest.mock('../utils/useFetchUserBalance', () => jest.fn())
+jest.mock('Common/Contexts/UserBalanceContext/CustomHooks/useFetchUserBalance', () => jest.fn())
 
 
 describe('HomePage', () => {
@@ -44,7 +45,11 @@ describe('HomePage', () => {
     test('renders the component and fetches portfolio', async () => {
 
         // Render the component
-        render(<HomePage />);
+        render(
+            <UserBalanceProvider>
+                <HomePage />
+            </UserBalanceProvider>
+        );
 
         // Assert that the component rendered correctly
         expect(await screen.findByText('Dashboard')).toBeInTheDocument();
@@ -60,7 +65,11 @@ describe('HomePage', () => {
     it('renders component with the user balance', async () => {
 
         // Render the component
-        render(<HomePage />);
+        render(
+            <UserBalanceProvider>
+                <HomePage />
+            </UserBalanceProvider>
+        );
 
         const userBalance = await screen.findByText(mockBalance.toString(), { exact: false })
         expect(userBalance).toBeInTheDocument()

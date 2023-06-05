@@ -4,6 +4,7 @@ import { Outlet } from "react-router-dom";
 import { SessionContext } from "Common/Contexts/SessionContext";
 import { useContext, useEffect } from "react";
 import { SnackbarContext } from "Common/Contexts/SnackbarContext";
+import { UserBalanceProvider } from "Common/Contexts/UserBalanceContext";
 
 /**
  * Function that acts as middleware, checking whether user is already
@@ -27,7 +28,11 @@ function AuthRequestBranch() {
     }, [])
     
     return(
-        loggedIn ? <Outlet/> : <LoginPage/> 
+        loggedIn ? 
+            <UserBalanceProvider>
+                <Outlet/>
+            </UserBalanceProvider> : 
+            <LoginPage/> 
     )
 }
 
