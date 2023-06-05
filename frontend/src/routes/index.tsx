@@ -5,7 +5,6 @@ import { AuthRequestBranch, loggedIndex } from './AuthRequiredRoutes'
 import { loginRoute, signUpRoute } from './OpenRoutes'
 import LoggedOffBranch from './OpenRoutes/LogedOffChecker';
 import PageLayout from 'Components/PageLayout';
-import GlobalContextProvider from 'Common/Contexts/GlobalContextProvider';
 
 /**
  * The routes object of this file is the one actually used by the router 
@@ -15,35 +14,30 @@ import GlobalContextProvider from 'Common/Contexts/GlobalContextProvider';
 */
 const routes:RouteObject[] = [
 	{
-		element: <GlobalContextProvider/>,
+		element: <PageLayout/>,
 		children: [
 			{
-				element: <PageLayout/>,
-				children: [
-					{
-					path: '/',
-					errorElement:<ErrorPage/>,
-					children:[
-						{
-							element: <AuthRequestBranch/>,
-							children: [
-								loggedIndex
-							]
-						},
-						{
-							element: <LoggedOffBranch/>,
-							children: [
-								signUpRoute,
-								loginRoute
-							]
-						}
+			path: '/',
+			errorElement:<ErrorPage/>,
+			children:[
+				{
+					element: <AuthRequestBranch/>,
+					children: [
+						loggedIndex
 					]
-					},
-					errorRoute,
-					notFoundRoute
-		
-				]
-			}
+				},
+				{
+					element: <LoggedOffBranch/>,
+					children: [
+						signUpRoute,
+						loginRoute
+					]
+				}
+			]
+			},
+			errorRoute,
+			notFoundRoute
+
 		]
 	}
 ]
