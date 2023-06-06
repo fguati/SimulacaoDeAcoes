@@ -16,7 +16,7 @@ function useSubmitForm<objToPostType extends object>(route:BackendRoutes, useSuc
         const objectToPost = turnFieldListInObject<objToPostType>(formFields)
 
         //post data to backend API
-        const response = await fetchFromServer(route, 'POST', objectToPost)
+        const response = await fetchFromServer<objToPostType>(route, 'POST', objectToPost)
 
         //Uses the response handler with the response received form the backend API
         const handledResponse = await responseHandler(response)

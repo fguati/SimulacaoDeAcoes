@@ -3,6 +3,17 @@ import { fireEvent, render, screen, waitFor } from "@testing-library/react"
 import useFetchUserBalance from "../CustomHooks/useFetchUserBalance"
 import { UserBalanceContext, UserBalanceProvider } from ".."
 import { useContext } from "react"
+import { useNavigate } from 'react-router-dom'
+import GlobalContextProvider from 'Common/Contexts/GlobalContextProvider'
+
+jest.mock('react-router-dom', () => {
+    const originalModule = jest.requireActual('react-router-dom')
+
+    return {
+        ...originalModule,
+        useNavigate: jest.fn()
+    }
+})
 
 jest.mock("../CustomHooks/useFetchUserBalance")
 
@@ -11,12 +22,15 @@ describe('User Balance Context', () => {
     
     const MockedCustomHookBalance = useFetchUserBalance as jest.MockedFunction<typeof useFetchUserBalance>
     const MockedFetchBalance = jest.fn()
+    const MockNavigatye = useNavigate as jest.MockedFunction<typeof useNavigate>
 
     beforeEach(() => {
         MockedFetchBalance.mockResolvedValue(mockedInitialBalance)
         MockedCustomHookBalance.mockReturnValue(MockedFetchBalance)
+        MockNavigatye.mockReturnValue(jest.fn())
+        
     })
-
+    
     const TestComponent = () => {
         const { userBalance, setUserBalance } = useContext(UserBalanceContext)
 
@@ -33,9 +47,11 @@ describe('User Balance Context', () => {
 
     it('must call the useFetchUserBalance custom hook and the function rendered by it', () => {
         render(
-            <UserBalanceProvider>
-                <TestComponent/>
-            </UserBalanceProvider>
+            <GlobalContextProvider>
+                <UserBalanceProvider>
+                    <TestComponent/>
+                </UserBalanceProvider>
+            </GlobalContextProvider>
         )
         
         expect(MockedCustomHookBalance).toBeCalled()
@@ -44,9 +60,11 @@ describe('User Balance Context', () => {
 
     it('must provide an user balance state', async () => {
         render(
-            <UserBalanceProvider>
-                <TestComponent/>
-            </UserBalanceProvider>
+            <GlobalContextProvider>
+                <UserBalanceProvider>
+                    <TestComponent/>
+                </UserBalanceProvider>
+            </GlobalContextProvider>
         )
 
         const userBalance = await screen.findByText('balance', {exact: false})
@@ -56,9 +74,11 @@ describe('User Balance Context', () => {
 
     it('must provide a setter for balance state',async () => {
         render(
-            <UserBalanceProvider>
-                <TestComponent/>
-            </UserBalanceProvider>
+            <GlobalContextProvider>
+                <UserBalanceProvider>
+                    <TestComponent/>
+                </UserBalanceProvider>
+            </GlobalContextProvider>
         )
         const initialUserBalance = await screen.findByText('balance: 100')
         await waitFor(() => expect(initialUserBalance).toBeInTheDocument())

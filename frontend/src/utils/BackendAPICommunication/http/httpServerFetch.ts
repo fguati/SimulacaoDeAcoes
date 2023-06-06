@@ -9,9 +9,9 @@ import IServerResponse from 'Interfaces/IServerResponse'
 /**
  * function make http requests to the backend server and returns a response
  */
-async function fetchFromServer<resDataType>(url: BackendRoutes, method = 'GET', body: resDataType | null = null): Promise<IServerResponse<resDataType | IErrorResponse>> {
+async function fetchFromServer<resDataType>(url: BackendRoutes, method = 'GET', body: unknown | null = null): Promise<IServerResponse<resDataType | IErrorResponse>> {
     try {
-        const config: AxiosRequestConfig = setAxiosConfig<resDataType>(url, method, body)
+        const config: AxiosRequestConfig = setAxiosConfig(url, method, body)
 
         const axiosResponse : AxiosResponse<resDataType>= await httpServer.request(config)
 
@@ -65,14 +65,13 @@ function handleAxiosResponseError(error: AxiosError<any, any>, errorResponse: IS
     return errorResponse
 }
 
-function setAxiosConfig<resDataType>(url: string, method: string, body: resDataType | null) {
+function setAxiosConfig(url: string, method: string, body: unknown | null) {
     const config: AxiosRequestConfig = {
         url: url,
         method: method
     }
 
-    if (body)
-        config.data = body
+    if (body) config.data = body
     return config
 }
 

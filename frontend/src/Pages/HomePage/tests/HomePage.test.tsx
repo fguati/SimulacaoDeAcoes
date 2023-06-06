@@ -6,6 +6,15 @@ import IStock from 'Interfaces/IStock';
 import useFetchUserBalance from 'Common/Contexts/UserBalanceContext/CustomHooks/useFetchUserBalance';
 import { UserBalanceProvider } from 'Common/Contexts/UserBalanceContext';
 import GlobalContextProvider from 'Common/Contexts/GlobalContextProvider';
+
+jest.mock('react-router-dom', () => {
+    const originalModule = jest.requireActual('react-router-dom')
+
+    return {
+        ...originalModule,
+        useNavigate: jest.fn()
+    }
+})
 jest.mock('../utils/fetchPortfolio', () => jest.fn());
 jest.mock('Common/Contexts/UserBalanceContext/CustomHooks/useFetchUserBalance', () => jest.fn())
 
