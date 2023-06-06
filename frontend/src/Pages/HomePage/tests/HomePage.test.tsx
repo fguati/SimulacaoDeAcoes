@@ -5,6 +5,7 @@ import useFetchPortfolio from '../utils/fetchPortfolio';
 import IStock from 'Interfaces/IStock';
 import useFetchUserBalance from 'Common/Contexts/UserBalanceContext/CustomHooks/useFetchUserBalance';
 import { UserBalanceProvider } from 'Common/Contexts/UserBalanceContext';
+import GlobalContextProvider from 'Common/Contexts/GlobalContextProvider';
 jest.mock('../utils/fetchPortfolio', () => jest.fn());
 jest.mock('Common/Contexts/UserBalanceContext/CustomHooks/useFetchUserBalance', () => jest.fn())
 
@@ -46,9 +47,11 @@ describe('HomePage', () => {
 
         // Render the component
         render(
-            <UserBalanceProvider>
-                <HomePage />
-            </UserBalanceProvider>
+            <GlobalContextProvider>
+                <UserBalanceProvider>
+                    <HomePage />
+                </UserBalanceProvider>
+            </GlobalContextProvider>
         );
 
         // Assert that the component rendered correctly
@@ -66,12 +69,32 @@ describe('HomePage', () => {
 
         // Render the component
         render(
-            <UserBalanceProvider>
-                <HomePage />
-            </UserBalanceProvider>
+            <GlobalContextProvider>
+                <UserBalanceProvider>
+                    <HomePage />
+                </UserBalanceProvider>
+            </GlobalContextProvider>
         );
 
         const userBalance = await screen.findByText(mockBalance.toString(), { exact: false })
         expect(userBalance).toBeInTheDocument()
     })
+
+    it('renders input to move funds', () => {
+        // Render the component
+        render(
+            <GlobalContextProvider>
+                <UserBalanceProvider>
+                    <HomePage />
+                </UserBalanceProvider>
+            </GlobalContextProvider>
+        );
+
+        const moveFundsForm = screen.getByText('Funds to Transfer')
+        const transferFundsButton = screen.getByText('Submit')
+
+        expect(moveFundsForm).toBeInTheDocument()
+        expect(transferFundsButton).toBeInTheDocument()
+    })
+
 });
