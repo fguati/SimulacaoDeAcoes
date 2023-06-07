@@ -9,7 +9,6 @@ interface Props {
 
 interface IUserBalanceContext {
     userBalance: number
-    setUserBalance: React.Dispatch<React.SetStateAction<number>>
     postDeposit: (funds:number) => Promise<void>
 }
 
@@ -18,7 +17,7 @@ const UserBalanceContext = createContext<IUserBalanceContext>(undefined!)
 const UserBalanceProvider = ({ children }: Props) => {
     const [userBalance, setUserBalance] = useState(0)
 
-    //fetch user balance from server and set state to the response
+    //fetch currnet user balance from server and set state to the response
     const fetchUserBalance = useFetchUserBalance()
     useEffect(() => {
         fetchUserBalance()
@@ -29,7 +28,7 @@ const UserBalanceProvider = ({ children }: Props) => {
     const postDeposit = usePostDeposit(setUserBalance)
 
     return (
-        <UserBalanceContext.Provider value={{ userBalance, setUserBalance, postDeposit }}>
+        <UserBalanceContext.Provider value={{ userBalance, postDeposit }}>
             {children}
         </UserBalanceContext.Provider>
     )

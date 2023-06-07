@@ -1,5 +1,5 @@
 import '@testing-library/jest-dom'
-import { fireEvent, render, screen, waitFor } from "@testing-library/react"
+import { render, screen, waitFor } from "@testing-library/react"
 import useFetchUserBalance from "../CustomHooks/useFetchUserBalance"
 import { UserBalanceContext, UserBalanceProvider } from ".."
 import { useContext } from "react"
@@ -32,15 +32,11 @@ describe('User Balance Context', () => {
     })
     
     const TestComponent = () => {
-        const { userBalance, setUserBalance } = useContext(UserBalanceContext)
+        const { userBalance } = useContext(UserBalanceContext)
 
         return(
             <>
                 <p>{`balance: ${userBalance}`}</p>
-                <button onClick={() => {
-                    const newBalance = userBalance + 500
-                    setUserBalance(newBalance)
-                }}>{'Add funds +500'}</button>
             </>
         )
     }
@@ -72,22 +68,4 @@ describe('User Balance Context', () => {
         
     })
 
-    it('must provide a setter for balance state',async () => {
-        render(
-            <GlobalContextProvider>
-                <UserBalanceProvider>
-                    <TestComponent/>
-                </UserBalanceProvider>
-            </GlobalContextProvider>
-        )
-        const initialUserBalance = await screen.findByText('balance: 100')
-        await waitFor(() => expect(initialUserBalance).toBeInTheDocument())
-
-        const addFundsButton = screen.getByText('Add funds', {exact: false})
-        fireEvent.click(addFundsButton)
-        
-        const userBalance = await screen.findByText('balance', {exact: false})
-        await waitFor(() => expect(userBalance).toHaveTextContent(`balance: ${mockedInitialBalance + 500}`))
-        
-    })
 })
