@@ -36,7 +36,7 @@ function TransferFundsForm() {
     }
     
     return (
-        <Form fields={formFields} onSubmit={submitTransferFunds}/>
+        <Form fields={formFields} onSubmit={submitTransferFunds} submitButtonText="Transfer"/>
     )
 }
 
