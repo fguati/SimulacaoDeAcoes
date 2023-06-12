@@ -1,3 +1,4 @@
+import { InputType } from "Common/Types"
 import { FormValidator } from "utils/FormValidators"
 
 /**
@@ -8,7 +9,7 @@ export type FieldValue = string | number
 
 interface IFormField {
     name: string
-    type: 'text' | 'password' | 'email'
+    type: InputType
     value: FieldValue
     validators?: Array<FormValidator>
     fieldProperty?: string

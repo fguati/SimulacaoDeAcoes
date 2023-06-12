@@ -7,6 +7,7 @@ const router = Router()
 
 //route to get portfolio from logged user
 router.get('/portfolio', UserController.getPortfolio)
+router.get('/balance', UserController.getBalance)
 router.post('/deposit', UserController.moveFunds)
 
 //routes available for admin role: access to user database

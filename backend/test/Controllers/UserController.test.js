@@ -413,3 +413,23 @@ describe('Test the getPortfolio method of the user controller', () => {
 
 })
 
+describe('getBalance method', () => {
+    it('must return an ok response with user balance', async () => {
+        const { req, res, next } = mockReqResNext()
+        const testUserId = 26
+        const dbUser = await dbAll(`SELECT * FROM users WHERE id=?`, [testUserId])
+        const expectedUserBalance = dbUser.user_balance
+        req.body = {
+            payloadJWT: {
+                id: testUserId,
+            },
+        }
+    
+        let response = await UserController.getBalance(req, res, next)
+    
+        expect(response.statusCode).toBe(200)
+    
+        expect(response.body.balance).toBe(expectedUserBalance)
+    })
+})
+

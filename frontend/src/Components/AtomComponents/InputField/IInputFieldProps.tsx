@@ -1,3 +1,4 @@
+import { InputType } from 'Common/Types'
 import { ReactElement } from 'react'
 import { FormValidator } from 'utils/FormValidators'
 
@@ -6,7 +7,7 @@ interface IInputFieldProps {
     name: string
     currentValue: string | number
     setValue: (value: React.ChangeEvent<HTMLInputElement>) => void
-    inputType?: 'text' | 'email' | 'password'
+    inputType?: InputType
     validators?: Array<FormValidator>
 }
 

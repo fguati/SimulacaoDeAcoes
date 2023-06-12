@@ -99,6 +99,27 @@ class UserController {
         }
     }
 
+    //method that returns the user balance
+    static async getBalance(req, res, next) {
+        try {
+            //get user id from jwt payload
+            const { id } = req.body.payloadJWT
+
+            //check if user id was sent in jwt payload in the req body
+            if(!id) throw new InvalidInputError('User id was not sent in http request', ['id'])
+
+            //instance user model
+            const user = await UserModel.instanceFromDB(id)
+
+            //send success response with balance provided by user model
+            return sendOKResponse(res, {balance: user.balance})
+            
+        } catch (error) {
+            //send error to error treating middleware
+            return next(error)    
+        }
+    }
+
 }
 
 module.exports = UserController;

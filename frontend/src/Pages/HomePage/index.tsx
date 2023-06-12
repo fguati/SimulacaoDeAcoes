@@ -1,11 +1,16 @@
 import StockTable from "Components/StockTable";
 import Title from "Components/AtomComponents/Title";
 import IStock from "Interfaces/IStock";
-import { useEffect, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import useFetchPortfolio from "./utils/fetchPortfolio";
+import { UserBalanceContext } from "Common/Contexts/UserBalanceContext";
+import TransferFundsForm from "./Components/TransferFundsForm";
 
 //Render the landing page for a logged in user. Still in construction.
 function HomePage() {
+    //get user balance from context
+    const { userBalance } = useContext(UserBalanceContext)
+    
     //set state that will populate the stock table
     const [stockList, setStockList] = useState<IStock[]>([])
     
@@ -21,7 +26,8 @@ function HomePage() {
     return(
         <>
             <Title>Dashboard</Title>
-            <StockTable stockList={stockList}/>
+            <StockTable stockList={stockList} userBalance={userBalance}/>
+            <TransferFundsForm/>
         </>
     )
 }
