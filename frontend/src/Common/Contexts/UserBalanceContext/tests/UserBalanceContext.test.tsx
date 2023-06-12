@@ -1,7 +1,7 @@
 import '@testing-library/jest-dom'
 import { render, screen, waitFor } from "@testing-library/react"
 import useFetchUserBalance from "../CustomHooks/useFetchUserBalance"
-import { UserBalanceContext, UserBalanceProvider } from ".."
+import { UserAssetContext, UserAssetProvider } from ".."
 import { useContext } from "react"
 import { useNavigate } from 'react-router-dom'
 import GlobalContextProvider from 'Common/Contexts/GlobalContextProvider'
@@ -32,7 +32,7 @@ describe('User Balance Context', () => {
     })
     
     const TestComponent = () => {
-        const { userBalance } = useContext(UserBalanceContext)
+        const { userBalance } = useContext(UserAssetContext)
 
         return(
             <>
@@ -44,9 +44,9 @@ describe('User Balance Context', () => {
     it('must call the useFetchUserBalance custom hook and the function rendered by it', () => {
         render(
             <GlobalContextProvider>
-                <UserBalanceProvider>
+                <UserAssetProvider>
                     <TestComponent/>
-                </UserBalanceProvider>
+                </UserAssetProvider>
             </GlobalContextProvider>
         )
         
@@ -57,9 +57,9 @@ describe('User Balance Context', () => {
     it('must provide an user balance state', async () => {
         render(
             <GlobalContextProvider>
-                <UserBalanceProvider>
+                <UserAssetProvider>
                     <TestComponent/>
-                </UserBalanceProvider>
+                </UserAssetProvider>
             </GlobalContextProvider>
         )
 

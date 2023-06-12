@@ -1,10 +1,10 @@
 import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom'
 import HomePage from '..';
-import useFetchPortfolio from '../utils/fetchPortfolio';
+import useFetchPortfolio from 'Common/Contexts/UserBalanceContext/CustomHooks/fetchPortfolio';
 import IStock from 'Interfaces/IStock';
 import useFetchUserBalance from 'Common/Contexts/UserBalanceContext/CustomHooks/useFetchUserBalance';
-import { UserBalanceProvider } from 'Common/Contexts/UserBalanceContext';
+import { UserAssetProvider } from 'Common/Contexts/UserBalanceContext';
 import GlobalContextProvider from 'Common/Contexts/GlobalContextProvider';
 
 jest.mock('react-router-dom', () => {
@@ -15,7 +15,7 @@ jest.mock('react-router-dom', () => {
         useNavigate: jest.fn()
     }
 })
-jest.mock('../utils/fetchPortfolio', () => jest.fn());
+jest.mock('Common/Contexts/UserBalanceContext/CustomHooks/fetchPortfolio', () => jest.fn());
 jest.mock('Common/Contexts/UserBalanceContext/CustomHooks/useFetchUserBalance', () => jest.fn())
 
 
@@ -57,9 +57,9 @@ describe('HomePage', () => {
         // Render the component
         render(
             <GlobalContextProvider>
-                <UserBalanceProvider>
+                <UserAssetProvider>
                     <HomePage />
-                </UserBalanceProvider>
+                </UserAssetProvider>
             </GlobalContextProvider>
         );
 
@@ -79,9 +79,9 @@ describe('HomePage', () => {
         // Render the component
         render(
             <GlobalContextProvider>
-                <UserBalanceProvider>
+                <UserAssetProvider>
                     <HomePage />
-                </UserBalanceProvider>
+                </UserAssetProvider>
             </GlobalContextProvider>
         );
 
@@ -93,14 +93,14 @@ describe('HomePage', () => {
         // Render the component
         render(
             <GlobalContextProvider>
-                <UserBalanceProvider>
+                <UserAssetProvider>
                     <HomePage />
-                </UserBalanceProvider>
+                </UserAssetProvider>
             </GlobalContextProvider>
         );
 
         const moveFundsForm = screen.getByText('Funds to Transfer')
-        const transferFundsButton = screen.getByText('Submit')
+        const transferFundsButton = screen.getByText('Transfer')
 
         expect(moveFundsForm).toBeInTheDocument()
         expect(transferFundsButton).toBeInTheDocument()

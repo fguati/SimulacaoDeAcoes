@@ -1,4 +1,4 @@
-import { UserBalanceContext } from "Common/Contexts/UserBalanceContext";
+import { UserAssetContext } from "Common/Contexts/UserBalanceContext";
 import Form from "Components/Form";
 import IFormField from "Interfaces/IFormField";
 import { useCallback, useContext, useEffect, useRef } from 'react'
@@ -7,7 +7,7 @@ import { fundsAreSuficientForWithdraw } from "utils/FormValidators";
 //component that renders a form used to post to the server requests to move funds to user balance
 function TransferFundsForm() {
     //context that manages the execution of the funds transfer
-    const { postDeposit, userBalance } = useContext(UserBalanceContext)
+    const { postDeposit, userBalance } = useContext(UserAssetContext)
     
     //validation function that checks if user has enough funds for the transfer attempted. Must be re-rendered every time the user balance changes
     const fundsValidator = useCallback((value: string | number) => fundsAreSuficientForWithdraw(userBalance)(value), [userBalance]) 
