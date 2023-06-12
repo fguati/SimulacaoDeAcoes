@@ -23,7 +23,8 @@ const usePostDeposit = (balanceSetter: React.Dispatch<React.SetStateAction<numbe
             if(!('balance' in response.body)) throw response.body
 
             //call success snackbar to inform user that transfer was successful
-            activateSnackbar(`${funds} successfully transfered to your account`, { colorPalette: 'success' })
+            const snackbarMessage = renderSnakcbarMessage(funds)
+            activateSnackbar(snackbarMessage , { colorPalette: 'success' })
             
             //set balance state to the new balance received in the response
             balanceSetter(response.body.balance)
@@ -38,3 +39,10 @@ const usePostDeposit = (balanceSetter: React.Dispatch<React.SetStateAction<numbe
 }
 
 export default usePostDeposit
+
+function renderSnakcbarMessage(funds: number) {
+    const withDrawMessage = `Successfully withdrew R$${-1 * funds}!`
+    const depositMessage = `Successfully deposited R$${funds}`
+    const snackbarMessage = funds >= 0 ? depositMessage : withDrawMessage
+    return snackbarMessage
+}

@@ -6,7 +6,6 @@ export const fundsAreSuficientForWithdraw = (userCurrentBalance: number): FormVa
         const validatorReturnObject: IValidatorReturn = {
             valid: true
         }
-        
         const balanceAfterTransfer = userCurrentBalance + Number(fundsToTransfer)
 
         if(balanceAfterTransfer < 0) {
