@@ -9,6 +9,7 @@ const router = Router()
 router.get('/portfolio', UserController.getPortfolio)
 router.get('/balance', UserController.getBalance)
 router.post('/deposit', UserController.moveFunds)
+router.post('/trade', UserController.trade)
 
 //routes available for admin role: access to user database
 router.use(authorization(['ADMIN']))
