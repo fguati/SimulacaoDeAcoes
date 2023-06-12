@@ -1,7 +1,7 @@
 import {  RouteObject } from 'react-router-dom'
 import { errorRoute, notFoundRoute } from './ErrorRoutes'
 import ErrorPage from 'Pages/ErrorPage';
-import { AuthRequestBranch, loggedIndex } from './AuthRequiredRoutes'
+import { AuthRequestBranch, homeBrokerRoute, loggedIndex } from './AuthRequiredRoutes'
 import { loginRoute, signUpRoute } from './OpenRoutes'
 import LoggedOffBranch from './OpenRoutes/LogedOffChecker';
 import PageLayout from 'Components/PageLayout';
@@ -23,7 +23,8 @@ const routes:RouteObject[] = [
 				{
 					element: <AuthRequestBranch/>,
 					children: [
-						loggedIndex
+						loggedIndex,
+						homeBrokerRoute
 					]
 				},
 				{
