@@ -13,6 +13,7 @@ interface IFormField {
     value: FieldValue
     validators?: Array<FormValidator>
     fieldProperty?: string
+    selectOptions?: string[]
 }
 
 export default IFormField

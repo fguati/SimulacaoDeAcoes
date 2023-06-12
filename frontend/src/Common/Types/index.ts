@@ -17,4 +17,4 @@ export type BoxColorPalette = 'success' | 'failure' | 'neutral'
 export type currency = 'BRL' | 'USD'
 
 //Input types
-export type InputType = 'text' | 'email' | 'password' | 'number'
+export type InputType = 'text' | 'email' | 'password' | 'number' | 'dropdown'
