@@ -41,7 +41,7 @@ function InputField( {children, name, currentValue, setValue, inputType = 'text'
                     name={name}
                 >
                     <Option value={''} disabled></Option>
-                    {selectOptions.map(option => (<Option value={option}>{option}</Option>))}
+                    {selectOptions.map(option => (<Option value={option} key={option}>{option}</Option>))}
                 </Dropdown>
 
             }

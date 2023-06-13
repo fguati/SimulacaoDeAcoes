@@ -1,14 +1,18 @@
+import { UserAssetContext } from "Common/Contexts/UserBalanceContext"
 import Title from "Components/AtomComponents/Title"
 import Form from "Components/Form"
 import IFormField from "Interfaces/IFormField"
+import { useContext } from "react"
 import { fieldIsNotEmpty } from "utils/FormValidators"
 
 function HomeBrokerPage() {
+    const { stockList } = useContext(UserAssetContext)
+    
     const sellForm: IFormField[] =[
         {
             name: 'Stock to Sell',
             type: 'dropdown',
-            selectOptions:['Placeholder 1', 'Placeholder 2', 'Placeholder 3'],
+            selectOptions: stockList.map(stock => stock.ticker),
             value: '',
             validators: [fieldIsNotEmpty]
         },
