@@ -2,6 +2,7 @@ import { render, screen } from '@testing-library/react';
 import { UserAssetContext } from 'Common/Contexts/UserBalanceContext';
 import HomeBrokerPage from '..';
 import '@testing-library/jest-dom'
+import { ISnackbarContext, SnackbarContext } from 'Common/Contexts/SnackbarContext';
 
 jest.mock('../Components/BuyForm', () => () => <div data-testid="buy-form-mock" />);
 jest.mock('../Components/SellForm', () => () => <div data-testid="sell-form-mock" />);
@@ -14,14 +15,27 @@ describe('HomeBrokerPage', () => {
         updateUserAssets: jest.fn()
     }
 
+    const mockActivateSnackbar = jest.fn()
+    const mockSnackbarContext: ISnackbarContext = {
+        activateSnackbar: mockActivateSnackbar,
+        active: false,
+        colorPalette: 'neutral',
+        deactivateSnackbar: jest.fn(),
+        overwriteDeactivationTimer: jest.fn(),
+        snackbarMessage: 'Default message',
+        snackBarPosition: '-7vh'
+    }
+
     const renderHomeBrokerPage = () => {
         render(
-            <UserAssetContext.Provider value={mockUserContext}>
-                <HomeBrokerPage />
-            </UserAssetContext.Provider>
+            <SnackbarContext.Provider value={mockSnackbarContext}>
+                <UserAssetContext.Provider value={mockUserContext}>
+                    <HomeBrokerPage />
+                </UserAssetContext.Provider>
+            </SnackbarContext.Provider>
         );
     }
-    
+
     test('renders the title', () => {
         renderHomeBrokerPage()
         const titleElement = screen.getByText('Home Broker');
@@ -39,11 +53,11 @@ describe('HomeBrokerPage', () => {
 
     test('renders the BuyForm and SellForm components', () => {
         renderHomeBrokerPage()
-    
+
         const buyFormMock = screen.getByTestId('buy-form-mock');
         const sellFormMock = screen.getByTestId('sell-form-mock');
-    
+
         expect(buyFormMock).toBeInTheDocument();
         expect(sellFormMock).toBeInTheDocument();
-      });
+    });
 });

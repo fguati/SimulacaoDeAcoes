@@ -5,7 +5,7 @@ import GlobalContextProvider from 'Common/Contexts/GlobalContextProvider';
 
 // Mock the custom hooks used in BuyForm
 jest.mock('Pages/HomeBrokerPage/CustomHooks/useSubmitTrade', () => jest.fn());
-jest.mock('../Components/BuyForm/CustomHooks/useBuyFormFields');
+jest.mock('../../Components/BuyForm/CustomHooks/useBuyFormFields');
 
 describe('BuyForm', () => {
     const mockUseAddStockValidator = useAddStockValidator as jest.MockedFunction<typeof useAddStockValidator>

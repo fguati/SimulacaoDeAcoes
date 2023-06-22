@@ -6,7 +6,7 @@ import useAddPortfolioAsSelectOptions from '../../Components/SellForm/Custom Hoo
 
 // Mock the custom hooks used in BuyForm
 jest.mock('Pages/HomeBrokerPage/CustomHooks/useSubmitTrade', () => jest.fn());
-jest.mock('../Components/SellForm/Custom Hooks/useAddSelectOptions', () => jest.fn())
+jest.mock('../../Components/SellForm/Custom Hooks/useAddSelectOptions', () => jest.fn())
 
 describe('SellForm', () => {
     const mockUseAddSelectOptions = useAddPortfolioAsSelectOptions as jest.MockedFunction<typeof useAddPortfolioAsSelectOptions>
