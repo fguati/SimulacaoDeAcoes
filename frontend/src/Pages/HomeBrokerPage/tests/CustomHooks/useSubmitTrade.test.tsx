@@ -1,7 +1,7 @@
 import { renderHook } from '@testing-library/react-hooks';
 import { UserAssetContext } from "Common/Contexts/UserBalanceContext";
 import { ISnackbarContext, SnackbarContext } from "Common/Contexts/SnackbarContext";
-import useSubmitTrade from '../CustomHooks/useSubmitTrade';
+import useSubmitTrade from '../../CustomHooks/useSubmitTrade';
 import IFormField from 'Interfaces/IFormField';
 import { ReactChildren } from 'Common/Types';
 import { turnFieldListInObject, useHandleRequestResponse } from 'utils/BackendAPICommunication';

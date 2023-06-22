@@ -1,6 +1,6 @@
 import { renderHook } from '@testing-library/react-hooks';
 import { UserAssetContext } from 'Common/Contexts/UserBalanceContext';
-import useAddPortfolioAsSelectOptions from '../Components/SellForm/Custom Hooks/useAddSelectOptions';
+import useAddPortfolioAsSelectOptions from '../../Components/SellForm/Custom Hooks/useAddSelectOptions';
 import { ReactChildren } from 'Common/Types';
 import IFormField from 'Interfaces/IFormField';
 

@@ -2,8 +2,8 @@ import { renderHook } from '@testing-library/react-hooks';
 import { UserAssetContext } from "Common/Contexts/UserBalanceContext"
 import { ISnackbarContext, SnackbarContext } from "Common/Contexts/SnackbarContext"
 import IServerResponse from "Interfaces/IServerResponse"
-import ITradeRes from "../Interfaces/ITradeRes"
-import useTradeSuccessHandler from '../CustomHooks/useTradeSuccessHandler';
+import ITradeRes from "../../Interfaces/ITradeRes"
+import useTradeSuccessHandler from '../../CustomHooks/useTradeSuccessHandler';
 import { ReactChildren } from 'Common/Types';
 
 describe('useTradeSuccessHandler', () => {

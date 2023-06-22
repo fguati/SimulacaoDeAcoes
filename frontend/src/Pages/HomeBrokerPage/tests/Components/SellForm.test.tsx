@@ -1,17 +1,23 @@
 import { render, fireEvent, screen } from '@testing-library/react';
-import BuyForm from '../Components/BuyForm';
-import useAddStockValidator from '../Components/BuyForm/CustomHooks/useBuyFormFields'
+
 import GlobalContextProvider from 'Common/Contexts/GlobalContextProvider';
+import SellForm from '../../Components/SellForm';
+import useAddPortfolioAsSelectOptions from '../../Components/SellForm/Custom Hooks/useAddSelectOptions';
 
 // Mock the custom hooks used in BuyForm
 jest.mock('Pages/HomeBrokerPage/CustomHooks/useSubmitTrade', () => jest.fn());
-jest.mock('../Components/BuyForm/CustomHooks/useBuyFormFields');
+jest.mock('../Components/SellForm/Custom Hooks/useAddSelectOptions', () => jest.fn())
 
-describe('BuyForm', () => {
-    const mockUseAddStockValidator = useAddStockValidator as jest.MockedFunction<typeof useAddStockValidator>
+describe('SellForm', () => {
+    const mockUseAddSelectOptions = useAddPortfolioAsSelectOptions as jest.MockedFunction<typeof useAddPortfolioAsSelectOptions>
 
     it('renders the form fields and calls submitTrade on form submission', () => {
-        mockUseAddStockValidator.mockImplementation((fields) => fields)
+        mockUseAddSelectOptions.mockImplementation((fields) => {
+            const modifiedFields = fields
+            const index = modifiedFields.findIndex(field => field.name === 'Stock to Sell')
+            modifiedFields[index].selectOptions = ['AAPL']
+            return modifiedFields
+        })
         
         // Mock the submitTrade function
         const submitTradeMock = jest.fn();
@@ -19,14 +25,14 @@ describe('BuyForm', () => {
 
         render(
             <GlobalContextProvider>
-                <BuyForm />
+                <SellForm />
             </GlobalContextProvider>
         );
 
         // Find the form fields and submit button
-        const stockInput = screen.getByPlaceholderText('Enter the ticker of the stock to buy');
-        const qtyInput = screen.getByPlaceholderText('Enter the number of stocks to buy');
-        const submitButton = screen.getByRole('button', { name: 'Buy' });
+        const stockInput = screen.getByRole('combobox')
+        const qtyInput = screen.getByPlaceholderText('Enter the number of stocks to sell');
+        const submitButton = screen.getByRole('button', { name: 'Sell' });
 
         // Fill in the form fields
         fireEvent.change(stockInput, { target: { value: 'AAPL' } });
@@ -37,6 +43,6 @@ describe('BuyForm', () => {
 
         // Assert that submitTrade was called with the correct values
         expect(submitTradeMock).toHaveBeenCalled();
-        expect(mockUseAddStockValidator).toBeCalled()
+        expect(mockUseAddSelectOptions).toBeCalled()
     });
 });

@@ -1,5 +1,5 @@
 import { renderHook } from '@testing-library/react-hooks';
-import useAddStockValidator from '../Components/BuyForm/CustomHooks/useBuyFormFields';
+import useAddStockValidator from '../../Components/BuyForm/CustomHooks/useBuyFormFields';
 import IFormField from 'Interfaces/IFormField';
 import { fieldIsNotEmpty, useStockExistsValidator } from 'utils/FormValidators';
 
