@@ -1,50 +1,22 @@
-import { UserAssetContext } from "Common/Contexts/UserBalanceContext"
 import Title from "Components/AtomComponents/Title"
-import Form from "Components/Form"
-import IFormField from "Interfaces/IFormField"
-import { useContext } from "react"
-import { fieldIsNotEmpty } from "utils/FormValidators"
+import BuyForm from "./Components/BuyForm"
+import SellForm from "./Components/SellForm"
+import { useContext } from 'react'
+import { UserAssetContext } from "Common/Contexts/UserBalanceContext"
+import Label from "Components/AtomComponents/Label"
+import Paragraph from "Components/AtomComponents/Paragraph"
 
+//Page with the functions to buy and sell stocks
 function HomeBrokerPage() {
-    const { stockList } = useContext(UserAssetContext)
-    
-    const sellForm: IFormField[] =[
-        {
-            name: 'Stock to Sell',
-            type: 'dropdown',
-            selectOptions: stockList.map(stock => stock.ticker),
-            value: '',
-            validators: [fieldIsNotEmpty]
-        },
-        {
-            name: 'Number of Stocks to Sell',
-            type: 'number',
-            value: 0,
-        }
-    ]
-
-    const buyForm: IFormField[] =[
-        {
-            name:'Stock to Buy',
-            type: 'text',
-            value: '',
-        },
-        {
-            name: 'Number of Stocks to Buy',
-            type: 'number',
-            value: 0
-        }
-    ]
-    
-    const placeholderOnSubmit = (fields: IFormField[]) => {
-        console.log(fields[0].value)
-    }
+    const { userBalance } = useContext(UserAssetContext)
 
     return (
         <>
             <Title>Home Broker</Title>
-            <Form fields={buyForm} onSubmit={placeholderOnSubmit} submitButtonText="Buy"/> 
-            <Form fields={sellForm} onSubmit={placeholderOnSubmit} submitButtonText="Sell"/>
+            <Label>User Balance: </Label>
+            <Paragraph>{`R$ ${userBalance.toFixed(2)}`}</Paragraph>
+            <BuyForm/>
+            <SellForm/>
         </>
     )
 }

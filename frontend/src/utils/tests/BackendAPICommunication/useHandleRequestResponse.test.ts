@@ -17,7 +17,7 @@ describe('Tests for the useHandleRequestResponse custom hook', () => {
     const mockedErrorHandler = handleErrorResponse as jest.MockedFunction<typeof handleErrorResponse> 
     
     it('calls the happy path handler with response if status code is below 400', async () => {
-        const mockResponse: IServerResponse<null> = {
+        const mockResponse: IServerResponse<Object> = {
             code: 200,
             ok: true
         }

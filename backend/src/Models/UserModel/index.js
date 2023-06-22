@@ -99,10 +99,12 @@ class UserModel {
         if(!postitionToTrade) postitionToTrade = await PositionModel.instanceFromDB(this.#id, stockToTrade)
 
         //call trade method from position model
-        await postitionToTrade.trade(qtyToTrade, tradeType)
+        const updatedInfo = await postitionToTrade.trade(qtyToTrade, tradeType)
 
         //if position instance is new, add it to portfolio from this instance
         this.#portfolio.push(postitionToTrade)
+
+        return updatedInfo
 
     }
 

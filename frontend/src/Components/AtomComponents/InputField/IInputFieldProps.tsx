@@ -10,6 +10,7 @@ interface IInputFieldProps {
     inputType?: InputType
     validators?: Array<FormValidator>
     selectOptions?: string[]
+    placeholder?: string
 }
 
 export default IInputFieldProps;

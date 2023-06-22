@@ -7,7 +7,7 @@ import Dropdown from "./StyledComponents/StyledDropdown";
 import Option from "./StyledComponents/StyledOption";
 
 //Component made of an input and its label
-function InputField( {children, name, currentValue, setValue, inputType = 'text', validators = [], selectOptions = [] }: IInputFieldProps ) {
+function InputField( {children, name, currentValue, setValue, inputType = 'text', validators = [], selectOptions = [], placeholder = '' }: IInputFieldProps ) {
     //Renders the function responsible for running the field validator functions on its value
     const validateField = useValidateField()
     
@@ -31,6 +31,7 @@ function InputField( {children, name, currentValue, setValue, inputType = 'text'
                     type={inputType}
                     name={name}
                     aria-labelledby={name}
+                    placeholder={placeholder}
         
                 /> :
 

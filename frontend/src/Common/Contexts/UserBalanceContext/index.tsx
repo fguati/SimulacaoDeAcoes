@@ -13,6 +13,7 @@ interface IUserAssetContext {
     userBalance: number
     postDeposit: (funds:number) => Promise<void>
     stockList: IStock[]
+    updateUserAssets: (newUserBalance?: number, newStockList?: IStock[]) => void
 }
 
 const UserAssetContext = createContext<IUserAssetContext>(undefined!)
@@ -43,8 +44,15 @@ const UserAssetProvider = ({ children }: Props) => {
         })
     }, [fetchPortfolio])
 
+    //Function that updates the user assets states in the context
+    const updateUserAssets = (newUserBalance?: number, newStockList?: IStock[]) => {
+        if(newUserBalance) setUserBalance(newUserBalance)
+        if(newStockList) setStockList(newStockList)
+    }
+
+
     return (
-        <UserAssetContext.Provider value={{ userBalance, postDeposit, stockList }}>
+        <UserAssetContext.Provider value={{ userBalance, postDeposit, stockList, updateUserAssets }}>
             {children}
         </UserAssetContext.Provider>
     )

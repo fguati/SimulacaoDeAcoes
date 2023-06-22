@@ -1,5 +1,5 @@
 import IFormField from "Interfaces/IFormField"
-import { emailFieldIsCorrectlyFormatted, fieldIsNotEmpty, entederedValueIsWithinLength, passwordMatchesRequirements, passwordFieldMatchesConfirmePassword } from ".."
+import { emailFieldIsCorrectlyFormatted, fieldIsNotEmpty, entederedValueIsWithinLength, passwordMatchesRequirements, passwordFieldMatchesConfirmePassword, stockExists, stockQtyIsPositive } from ".."
 
 describe('Unit tests of the form validator functions', () => {
     
@@ -229,6 +229,7 @@ describe('Unit tests of the form validator functions', () => {
         expect(testResult.message).toEqual(expect.any(String))
         
     })
+
     test('Confirm password validator must return true if password matches confirm password', () => {
         const testField: IFormField = {
             name: 'Test Field',
@@ -249,4 +250,33 @@ describe('Unit tests of the form validator functions', () => {
         expect(testResult.valid).toBe(true)
         expect(testResult.message).toEqual(undefined)
     })
+
+    test('stockExists must return true if stock is in existing list and false if not', () => {
+        const mockStockList = ['WEGE3', 'ABEV3', 'VALE4', 'TAEE11']
+        
+        const stockValidator = stockExists(mockStockList)
+
+        const validResult = stockValidator('WEGE3')
+
+        expect(validResult.valid).toBe(true)
+        expect(validResult.message).toBeUndefined()
+
+        const invalidResult = stockValidator('INVL7')
+
+        expect(invalidResult.valid).toBe(false)
+        expect(invalidResult.message).toEqual(expect.any(String))
+    })
+
+    test('quantity validator must return true if value is positive and false if not', () => {
+        const validResult = stockQtyIsPositive(1)
+
+        expect(validResult.valid).toBe(true)
+        expect(validResult.message).toBeUndefined()
+
+        const invalidResult = stockQtyIsPositive(-1)
+
+        expect(invalidResult.valid).toBe(false)
+        expect(invalidResult.message).toEqual(expect.any(String))
+    })
+
 })

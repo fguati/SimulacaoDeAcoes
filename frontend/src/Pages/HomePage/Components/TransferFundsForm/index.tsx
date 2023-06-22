@@ -16,8 +16,9 @@ function TransferFundsForm() {
     const formFields:IFormField[] =[{
         name: 'Funds to Transfer',
         type: 'number',
-        value: '',
-        validators: [fundsValidator]
+        value: 0,
+        validators: [fundsValidator],
+        placeholder: 'Quantity to transfer'
     }]
 
     //reference to the form fields which will allow it to be updated whenever the fundsValidator function is re-rendered
@@ -25,13 +26,14 @@ function TransferFundsForm() {
 
     //effect that updates the form fields whenever the validator is updated as well
     useEffect(() => {
-        formFieldsRef.current[0].validators = [fundsValidator]
+        const funds2TransferField = formFieldsRef.current.find(field => field.name === 'Funds to Transfer')
+        funds2TransferField!.validators = [fundsValidator]
     }, [fundsValidator])
     
     //function that calls the postDeposit function with the data from the form
     const submitTransferFunds = (fields: IFormField[]) => {
-        const fundsInputField = fields[0]
-        const fundsValue = fundsInputField.value 
+        const fundsInputField = fields.find(field => field.name === 'Funds to Transfer')
+        const fundsValue = fundsInputField!.value 
         postDeposit(Number(fundsValue))
     }
     

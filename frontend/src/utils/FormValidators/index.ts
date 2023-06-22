@@ -11,4 +11,5 @@ export type FormValidator = (value: string | number) => IValidatorReturn
 export * from "./globalValidators"
 export * from './registerFormValidators'
 export * from './transferFundsValidators'
+export * from './tradeFormValidators'
 

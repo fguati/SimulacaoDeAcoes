@@ -131,15 +131,15 @@ class UserController {
             const user = await UserModel.instanceFromDB(id)
     
             //call trade method from user class
-            await user.trade(stockToTrade, qtyToTrade, tradeType)
+            const updatedInfo = await user.trade(stockToTrade, Number(qtyToTrade), tradeType)
     
             //return new balance and stock position with response
             const tradeData = {
-                userBalance: user.balance,
+                userBalance: updatedInfo.userBalance,
                 newPosition: {
                     stock: stockToTrade,
-                    qty: user.portfolioDict[stockToTrade].qty,
-                    averagePrice: user.portfolioDict[stockToTrade].averagePrice
+                    qty: updatedInfo.stockQty,
+                    averagePrice: updatedInfo.stockAveragePrice
                 }
             }
     

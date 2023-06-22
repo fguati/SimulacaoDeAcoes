@@ -30,7 +30,7 @@ function Form({fields, onSubmit, submitButtonText = 'Submit'}:IFormProps) {
     return(
         <FormContainer action="" onSubmit={baseOnSubmit}>
             {currentFieldValues.map((field) => {
-                const {name, value, type, validators, selectOptions} = field
+                const {name, value, type, validators, selectOptions, placeholder} = field
                 
                 return (
                     <InputField 
@@ -41,6 +41,7 @@ function Form({fields, onSubmit, submitButtonText = 'Submit'}:IFormProps) {
                         validators={validators}
                         inputType={type}
                         selectOptions={selectOptions}
+                        placeholder={placeholder}
                     >
                         {field.name}
                     </InputField>
