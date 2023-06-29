@@ -4,6 +4,7 @@ import { fieldIsNotEmpty, entederedValueIsWithinLength, emailFieldIsCorrectlyFor
 import useSubmitForm from "utils/BackendAPICommunication/useSubmitForm";
 import { BackendRoutes } from "Common/Types";
 import useSignUpSuccessHandler from "./utils/useSignUpSuccessHandler";
+import ContainerCard from "Components/AtomComponents/ContainerCard";
 
 function SignUpPage() {
     const backendAPISignUpRoute:BackendRoutes = '/register'
@@ -21,10 +22,9 @@ function SignUpPage() {
     ] 
 
     return(
-        <>
+        <ContainerCard>
             <Form fields={fields} onSubmit={submitSignUp}/>
-
-        </>
+        </ContainerCard>
     )
 }
 
