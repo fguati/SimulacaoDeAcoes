@@ -10,7 +10,7 @@ import DarkModeToggleButton from "Components/DarkModeToggleButton";
 function PageLayout() {
     const { pageTheme } = useContext(PageThemeContext)
     return(
-        <div className={pageTheme}>
+        <div className={pageTheme} style={{display: "flex", flexDirection:'column'}}>
             <Header/>
             <DarkModeToggleButton/>
             <PageContainer>
