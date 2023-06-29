@@ -1,3 +1,4 @@
+import { displayMonetaryValue } from "utils/displayFunctions";
 import StyledTableItem from "../StyledTableItem";
 import ITotalValueCellProps from "./IProp";
 
@@ -9,7 +10,7 @@ function TotalValueCell({stock, indStock}:ITotalValueCellProps) {
             row={indStock + 2}
             column={0}
         >
-            {((stock.qty ?? 0) * stock.currentPrice).toFixed(2)}
+            {displayMonetaryValue((stock.qty ?? 0) * stock.currentPrice)}
         </StyledTableItem>
     )
 }

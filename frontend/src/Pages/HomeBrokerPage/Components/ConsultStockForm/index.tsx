@@ -6,6 +6,15 @@ import IApiStock from "Interfaces/IApiStock"
 import Label from "Components/AtomComponents/Label"
 import Paragraph from "Components/AtomComponents/Paragraph"
 import useSubmitStockConsult from "./CustomHooks/useSubmitStockConsult"
+import styled from "styled-components"
+import { displayMonetaryValue } from "utils/displayFunctions"
+
+const StockDataContainer = styled.div`
+    margin: var(--default-spacing);
+    display: flex;
+    flex-direction: column;
+    gap: var(--default-spacing);
+`
 
 function StockConsultForm() {
     const [stockInfo, setStockInfo] = useState<IApiStock>()
@@ -25,10 +34,16 @@ function StockConsultForm() {
     return (
         <>
             <Form fields={formFields} onSubmit={submitForm} submitButtonText="Search Stock"/>
-            <Label>Company Name</Label>
-            <Paragraph>{stockInfo?.companyName}</Paragraph>
-            <Label>Current Price</Label>
-            <Paragraph>{stockInfo?.currentPrice.toFixed(2)}</Paragraph>
+
+            <StockDataContainer>
+                <Label>Company Name</Label>
+                <Paragraph>{stockInfo?.companyName}</Paragraph>
+            </StockDataContainer>
+
+            <StockDataContainer>
+                <Label>Current Price</Label>
+                <Paragraph>{stockInfo ? displayMonetaryValue(stockInfo.currentPrice): ''}</Paragraph>
+            </StockDataContainer>
         </>
     )
 }

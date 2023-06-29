@@ -25,7 +25,6 @@ const useSubmitStockConsult = (setStockInfo: React.Dispatch<React.SetStateAction
         //in case of error display error message with snackbar and clear displayed stock
         setStockInfo(undefined)
         activateSnackbar(err.message, { colorPalette: 'failure' })
-        console.log('entrou no error handler')
     }
 
     //function to be used on onSubmit listener of stockConsultForm component
