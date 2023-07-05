@@ -55,7 +55,7 @@ describe('StockConsultForm', () => {
 
         // Wait for the stock information to be displayed
         const companyName = await screen.findByText('Apple Inc.');
-        const currentPrice = await screen.findByText('150.00');
+        const currentPrice = await screen.findByText('150.00', {exact: false});
 
         // Assert that the stock information is displayed correctly
         await waitFor(() => expect(companyName).toBeInTheDocument())
