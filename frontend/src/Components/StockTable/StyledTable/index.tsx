@@ -24,6 +24,10 @@ const StyledTable = styled.div`
     grid-template-rows: repeat(${rows}, 1fr);
     border: 1px solid var(--border-color);
     margin: 20px;
+
+    /* @media screen and (max-width: 768px) {
+
+    } */
 `
 
 export default StyledTable

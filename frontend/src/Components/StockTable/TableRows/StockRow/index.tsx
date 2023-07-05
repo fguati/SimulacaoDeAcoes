@@ -1,9 +1,10 @@
 import StandardCell from "./StandardCell"
 import TotalValueCell from "./TotalValueCell"
 import IStockRowProps from "./IStockRowProps"
+import IStock from "Interfaces/IStock"
 
 function StockRow({ stock, stockIndex }: IStockRowProps) {
-    const stockProperties = [
+    const stockProperties: Array<keyof IStock> = [
         'ticker',
         'companyName',
         'qty',

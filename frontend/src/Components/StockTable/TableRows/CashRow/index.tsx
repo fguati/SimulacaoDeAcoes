@@ -11,7 +11,7 @@ function CashRow({ cashValue, rowLength, valueType }: ICashRowProps) {
                 {valueType}
             </StyledTableItem>
 
-            <StyledTableItem row={0} column={0}>
+            <StyledTableItem row={rowPosition} column={0}>
                 {displayMonetaryValue(cashValue)}
             </StyledTableItem>
         
