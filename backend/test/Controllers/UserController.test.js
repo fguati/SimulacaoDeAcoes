@@ -1,8 +1,9 @@
 const UserController = require("../../src/controllers/user");
 const UserDAO = require("../../src/db/ComunicationDB/user");
 const { createMocks } = require('node-mocks-http');
-const { dbAll } = require("../../src/db/utils/dbutils");
-
+const { dbAll, dbGet } = require("../../src/db/utils/dbutils");
+const FinanceAPIFetcher = require("../../src/services/FinanceAPIFetcher");
+const { NotFoundError } = require("../../src/CustomErrors");
 
 const validCredentials = {
     username:'Testget',
@@ -430,6 +431,270 @@ describe('getBalance method', () => {
         expect(response.statusCode).toBe(200)
     
         expect(response.body.balance).toBe(expectedUserBalance)
+    })
+})
+
+describe('trade method', () => {
+    const mockStockPrice = 100
+
+    afterEach(() => {
+        jest.clearAllMocks()
+    })
+
+    async function testSuccessfulTrade(testUserId, initialBalance, initialQty, qtyToTrade, testStock, tradeType, numberOfNegotiations = 0) {
+        const signMultiplier = tradeType === 'BUY' ? 1 : -1
+        const expectedUserBalance = initialBalance - signMultiplier * qtyToTrade * mockStockPrice
+        const expectedQty = initialQty + signMultiplier * qtyToTrade
+
+        const mockFetchStockInfo = jest.spyOn(FinanceAPIFetcher, 'fetchStockInfo')
+        mockFetchStockInfo.mockResolvedValue({
+            list: [{
+            ticker: testStock,
+            companyName: 'mockName',
+            currency: 'BRL',
+            currentPrice: mockStockPrice
+        }]})
+
+        const { req, res, next } = mockReqResNext()
+        
+        req.body = {
+            stockToTrade: testStock, 
+            qtyToTrade: qtyToTrade, 
+            tradeType: tradeType,
+            payloadJWT: {
+                id: testUserId
+            }
+        }
+
+        const response = await UserController.trade(req, res, next)
+        const userPosition = await dbAll(`SELECT * from stock_positions WHERE user_id=? AND stock_ticker=?`, [testUserId, testStock])
+        const userBalance = await dbGet(`SELECT * from users WHERE id=?`, [testUserId])
+        const negotiations = await dbAll(`SELECT * from negotiations WHERE user_id=? AND stock_ticker=?`, [testUserId, testStock])
+
+        expect(response.statusCode).toBe(200)
+        expect(negotiations.length).toBe(numberOfNegotiations + 1)
+        expect(userBalance.user_balance).toBe(expectedUserBalance)
+        expect(userPosition[0].stock_qty).toBe(expectedQty)
+    }
+
+    test('successfully buys stocks', async () => {
+        const testUserId = 29
+        const testStock = 'WEGE3'
+        const qtyToBuy = 20
+        
+        await testSuccessfulTrade(testUserId, 10000, 0, qtyToBuy, testStock, 'BUY')
+
+        const newBalance = 10000 - qtyToBuy * mockStockPrice
+        const newQty = 0 + qtyToBuy
+
+        await testSuccessfulTrade(testUserId, newBalance, newQty, qtyToBuy, testStock, 'BUY', 1)
+    })
+
+    test('successfully sells stocks', async () => {
+        const testUserId = 30
+        const testStock = 'HGRE11'
+        const qtyToSell = 20
+        const initialBalance = 10000
+        const initialQty = 100
+        
+        await testSuccessfulTrade(testUserId, initialBalance, initialQty, qtyToSell, testStock, 'SELL')
+
+        const newBalance = initialBalance + qtyToSell * mockStockPrice
+        const newQty = initialQty - qtyToSell
+
+        await testSuccessfulTrade(testUserId, newBalance, newQty, qtyToSell, testStock, 'SELL', 1)
+        
+    })
+
+    test('sends invalid input error to next middleware if has any invalid input in the req', async () => {
+        const mockFetchStockInfo = jest.spyOn(FinanceAPIFetcher, 'fetchStockInfo')
+        mockFetchStockInfo.mockResolvedValue({
+            list: [{
+            ticker: 'WEGE3',
+            companyName: 'mockName',
+            currency: 'BRL',
+            currentPrice: mockStockPrice
+        }]})
+
+        const { req, res, next } = mockReqResNext()
+        
+        async function testFunction(testBody) {
+            req.body = {
+                ...testBody,
+                payloadJWT: {
+                    id: 30
+                }
+            }
+    
+            const response = await UserController.trade(req, res, next)
+
+            expect(next).toHaveBeenCalled()
+            expect(response.statusCode).toBe(422)
+
+            expect(response).toEqual(expect.objectContaining({
+                name: 'InvalidInputError',
+                message: expect.any(String),
+            }))
+
+        }
+
+        await testFunction({ stockToTrade: undefined, qtyToTrade: 1, tradeType: 'BUY' })
+        await testFunction({ stockToTrade: 'WEGE3', qtyToTrade: undefined, tradeType: 'BUY' })
+        await testFunction({ stockToTrade: 'WEGE3', qtyToTrade: 1, tradeType: undefined })
+        await testFunction({ stockToTrade: 'WEGE3', qtyToTrade: 'invalid', tradeType: 'BUY' })
+        await testFunction({ stockToTrade: 'WEGE3', qtyToTrade: 1, tradeType: 'INVALID' })
+
+    })
+
+    test('sends invalid input error to next middleware if balance is insuficient for trade', async () => {
+        const mockFetchStockInfo = jest.spyOn(FinanceAPIFetcher, 'fetchStockInfo')
+        mockFetchStockInfo.mockResolvedValue({
+            list: [{
+            ticker: 'WEGE3',
+            companyName: 'mockName',
+            currency: 'BRL',
+            currentPrice: mockStockPrice
+        }]})
+
+        const testUserId = 29
+
+        const { req, res, next } = mockReqResNext()
+        
+        async function testFunction(testBody) {
+            req.body = {
+                ...testBody,
+                payloadJWT: {
+                    id: testUserId
+                }
+            }
+    
+            const response = await UserController.trade(req, res, next)
+
+            expect(next).toHaveBeenCalled()
+            expect(response.statusCode).toBe(422)
+
+            expect(response).toEqual(expect.objectContaining({
+                name: 'InvalidInputError',
+                message: expect.any(String),
+            }))
+
+        }
+
+        await testFunction({ stockToTrade: 'WEGE3', qtyToTrade: 1000000, tradeType: 'BUY' })
+        const userBalance = await dbGet(`SELECT * FROM users WHERE id=?`, [testUserId])
+        expect(userBalance.user_balance).toBeGreaterThan(0)
+    })
+
+    test('sends invalid input error to next middleware if stock position quantity is insuficient for trade', async () => {
+        const mockFetchStockInfo = jest.spyOn(FinanceAPIFetcher, 'fetchStockInfo')
+        mockFetchStockInfo.mockResolvedValue({
+            list: [{
+            ticker: 'WEGE3',
+            companyName: 'mockName',
+            currency: 'BRL',
+            currentPrice: mockStockPrice
+        }]})
+
+        const testUserId = 30
+        const testStock = 'HGRE11'
+
+        const { req, res, next } = mockReqResNext()
+        
+        async function testFunction(testBody) {
+            req.body = {
+                ...testBody,
+                payloadJWT: {
+                    id: testUserId
+                }
+            }
+    
+            const response = await UserController.trade(req, res, next)
+
+            expect(next).toHaveBeenCalled()
+            expect(response.statusCode).toBe(422)
+
+            expect(response).toEqual(expect.objectContaining({
+                name: 'InvalidInputError',
+                message: expect.any(String),
+            }))
+
+        }
+
+        await testFunction({ stockToTrade: testStock, qtyToTrade: 100, tradeType: 'SELL' })
+        const position = await dbGet(`SELECT * FROM stock_positions WHERE user_id=? AND stock_ticker=?`, [testUserId, testStock])
+        expect(position.stock_qty).toBeGreaterThan(0)
+    })
+
+    test('sends 404 error to next middleware if user id is not in db', async () => {
+        const mockFetchStockInfo = jest.spyOn(FinanceAPIFetcher, 'fetchStockInfo')
+        mockFetchStockInfo.mockResolvedValue({
+            list: [{
+            ticker: 'WEGE3',
+            companyName: 'mockName',
+            currency: 'BRL',
+            currentPrice: mockStockPrice
+        }]})
+
+        const testUserId = 9999999
+        const testStock = 'HGRE11'
+
+        const { req, res, next } = mockReqResNext()
+        
+        async function testFunction(testBody) {
+            req.body = {
+                ...testBody,
+                payloadJWT: {
+                    id: testUserId
+                }
+            }
+    
+            const response = await UserController.trade(req, res, next)
+
+            expect(next).toHaveBeenCalled()
+            expect(response.statusCode).toBe(404)
+
+            expect(response).toEqual(expect.objectContaining({
+                name: 'NotFoundError',
+                message: expect.any(String),
+            }))
+
+        }
+
+        await testFunction({ stockToTrade: testStock, qtyToTrade: 100, tradeType: 'SELL' })
+    })
+
+    test('sends 404 error to next middleware if user stock ticker is invalid', async () => {
+        const mockFetchStockInfo = jest.spyOn(FinanceAPIFetcher, 'fetchStockInfo')
+        mockFetchStockInfo.mockImplementation(() => {
+            throw new NotFoundError(`Stock not found`)
+        })
+
+        const testUserId = 30
+        const testStock = 'INVLD7'
+
+        const { req, res, next } = mockReqResNext()
+        
+        async function testFunction(testBody) {
+            req.body = {
+                ...testBody,
+                payloadJWT: {
+                    id: testUserId
+                }
+            }
+    
+            const response = await UserController.trade(req, res, next)
+
+            expect(next).toHaveBeenCalled()
+            expect(response.statusCode).toBe(404)
+
+            expect(response).toEqual(expect.objectContaining({
+                name: 'NotFoundError',
+                message: expect.any(String),
+            }))
+
+        }
+
+        await testFunction({ stockToTrade: testStock, qtyToTrade: 100, tradeType: 'SELL' })
     })
 })
 

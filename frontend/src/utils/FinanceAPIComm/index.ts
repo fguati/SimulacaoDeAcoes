@@ -1,5 +1,5 @@
 import IApiStock from "Interfaces/IApiStock"
-import { ApiResponseStock } from "./interfaces"
+import { ApiResponseAvailable, ApiResponseStock } from "./interfaces"
 import httpFinAPI from "./http"
 import { AxiosResponse } from "axios"
 import IErrorResponse from "Interfaces/IErrorResponse"
@@ -30,5 +30,19 @@ const fetchStockInfo = async (tickerList: string[]):Promise<IApiStock[] | IError
 
 }
 
+const fetchAvailableStockList = async () => {
+    try {
+        //make request to finance API
+        const response:AxiosResponse<ApiResponseAvailable> = await httpFinAPI({url: `/available`})
+        
+        return response.data.stocks
 
-export { fetchStockInfo }
+    } catch (error) {
+        //throw an error object that implements the Error Response interface so it can be treated by hooks
+        const errorResponse = handleFinanceAPIError(error)
+        throw errorResponse
+    }
+}
+
+
+export { fetchStockInfo, fetchAvailableStockList }

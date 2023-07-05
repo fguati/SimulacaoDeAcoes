@@ -1,16 +1,19 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import LoginPage from "Pages/Login";
-import { Outlet } from "react-router-dom";
+import { Outlet, useLocation } from "react-router-dom";
 import { SessionContext } from "Common/Contexts/SessionContext";
 import { useContext, useEffect } from "react";
 import { SnackbarContext } from "Common/Contexts/SnackbarContext";
-import { UserBalanceProvider } from "Common/Contexts/UserBalanceContext";
+import { UserAssetProvider } from "Common/Contexts/UserBalanceContext";
 
 /**
  * Function that acts as middleware, checking whether user is already
  * logged in and, redirecting them to the login page if they are not
  */
 function AuthRequestBranch() {
+    //get location so snackbar is not called on the / route
+    const location = useLocation()
+
     const { checkAuthCookie, loggedIn } = useContext(SessionContext)
     const { activateSnackbar } = useContext(SnackbarContext)
     const errorMessage = 'Please log in before trying to access this page'
@@ -21,7 +24,7 @@ function AuthRequestBranch() {
     }, [checkAuthCookie])
 
     useEffect(() => {
-        if(!loggedIn) {
+        if(!loggedIn && location.pathname !== '/') {
             //renders error snackbar in case it is not logged in
             activateSnackbar(errorMessage, { colorPalette: 'failure'})
         }
@@ -29,9 +32,9 @@ function AuthRequestBranch() {
     
     return(
         loggedIn ? 
-            <UserBalanceProvider>
+            <UserAssetProvider>
                 <Outlet/>
-            </UserBalanceProvider> : 
+            </UserAssetProvider> : 
             <LoginPage/> 
     )
 }

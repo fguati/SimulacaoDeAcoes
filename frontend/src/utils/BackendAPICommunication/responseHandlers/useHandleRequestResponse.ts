@@ -10,19 +10,19 @@ import IServerResponse from "Interfaces/IServerResponse";
  * It has a function that handles the success cases beacuse so the success can be handled
  * in customized ways, according to the requirements of the module that makes the request
  */
-function useHandleRequestResponse<resBodyType extends object> (happyResponseHandler: (happyResponse: IServerResponse<unknown>, navigateFunction: NavigateFunction) => unknown) {
+function useHandleRequestResponse<resBodyType extends object> (happyResponseHandler: (happyResponse: IServerResponse<resBodyType>, navigateFunction: NavigateFunction) => unknown) {
     const navigate = useNavigate()
-    return async (response: IServerResponse<resBodyType | IErrorResponse | null>) => {
+    return async (response: IServerResponse<resBodyType | IErrorResponse>) => {
         //check if response body implements Error response interface
-        const bodyIsErrorRes = (response.body &&'code' in response.body && 'message' in response.body && 'name' in response.body)
+        const bodyIsErrorRes = (response:IServerResponse<resBodyType | IErrorResponse>): response is IServerResponse<IErrorResponse> => {return Boolean(response.body && 'code' in response.body && 'message' in response.body && 'name' in response.body)}
         //check if response received is an error one and, if it is, calls the error response handler
-        if (response.code > 399 && bodyIsErrorRes) {
-            const handleError = await handleErrorResponse(response.body as IErrorResponse, navigate)
+        if (bodyIsErrorRes(response)) {
+            const handleError = await handleErrorResponse(response.body!, navigate)
             return handleError
         }
         
         //if response received is a successfull one, calls the success handler entered as argument
-        return happyResponseHandler(response, navigate)
+        return happyResponseHandler(response as IServerResponse<resBodyType>, navigate)
 
     }
 }

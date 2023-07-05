@@ -9,7 +9,7 @@ import { formIsValid } from "./validateForm"
  * fields with the inputs and their labels, and render a submit button as well 
  * that will call the onSubmit functio received as props
 */
-function Form({fields, onSubmit}:IFormProps) {
+function Form({fields, onSubmit, submitButtonText = 'Submit'}:IFormProps) {
     //create a state for the field values of each input field
     const { currentFieldValues, setFieldValue, clearForm } = useFormFields(fields)
 
@@ -30,7 +30,8 @@ function Form({fields, onSubmit}:IFormProps) {
     return(
         <FormContainer action="" onSubmit={baseOnSubmit}>
             {currentFieldValues.map((field) => {
-                const {name, value, type, validators} = field
+                const {name, value, type, validators, selectOptions, placeholder} = field
+                
                 return (
                     <InputField 
                         key={name}
@@ -39,6 +40,8 @@ function Form({fields, onSubmit}:IFormProps) {
                         setValue={(e) => setFieldValue({value:e.target.value, name, type})}
                         validators={validators}
                         inputType={type}
+                        selectOptions={selectOptions}
+                        placeholder={placeholder}
                     >
                         {field.name}
                     </InputField>
@@ -50,7 +53,7 @@ function Form({fields, onSubmit}:IFormProps) {
                 disabled={submitButtonDisabled}
                 disabledStyle={submitButtonDisabled}
             >
-                Submit
+                {submitButtonText}
             </Button>
 
         </FormContainer>

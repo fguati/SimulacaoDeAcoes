@@ -120,6 +120,37 @@ class UserController {
         }
     }
 
+    //method that trades stocks
+    static async trade(req, res, next) {
+        try {
+            //get info from req
+            const { id } = req.body.payloadJWT
+            const {stockToTrade, qtyToTrade, tradeType} = req.body
+    
+            //instantiate the User class with id from JWT payload caried in the body
+            const user = await UserModel.instanceFromDB(id)
+    
+            //call trade method from user class
+            const updatedInfo = await user.trade(stockToTrade, Number(qtyToTrade), tradeType)
+    
+            //return new balance and stock position with response
+            const tradeData = {
+                userBalance: updatedInfo.userBalance,
+                newPosition: {
+                    stock: stockToTrade,
+                    qty: updatedInfo.stockQty,
+                    averagePrice: updatedInfo.stockAveragePrice
+                }
+            }
+    
+            return sendOKResponse(res, tradeData)
+            
+        } catch (error) {
+            //send caught error to be processed in the error handler middleware
+            return next(error)
+        }
+    }
+
 }
 
 module.exports = UserController;

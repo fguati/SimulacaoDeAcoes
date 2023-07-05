@@ -6,9 +6,11 @@ interface IInputFieldProps {
     children: ReactElement | string
     name: string
     currentValue: string | number
-    setValue: (value: React.ChangeEvent<HTMLInputElement>) => void
+    setValue: (value: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void
     inputType?: InputType
     validators?: Array<FormValidator>
+    selectOptions?: string[]
+    placeholder?: string
 }
 
 export default IInputFieldProps;

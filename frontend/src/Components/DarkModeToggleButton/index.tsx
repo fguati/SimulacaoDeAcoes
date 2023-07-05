@@ -22,7 +22,8 @@ function DarkModeToggleButton() {
                     onClick={toggleDarkMode} 
                     className={styles.toggleButton}
                     aria-labelledby='toggle'
-                />}
+                />
+            }
             
         </ToggleButtonContainer>
     )

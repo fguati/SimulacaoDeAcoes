@@ -7,6 +7,7 @@ const ToggleButtonContainer = styled.div`
     height: 3vh;
     margin-bottom: 2vh;
     margin-left: var(--default-spacing);
+    z-index: 0;
 
 `
 

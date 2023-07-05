@@ -1,6 +1,6 @@
 import { renderHook } from "@testing-library/react-hooks";
 import { useNavigate } from "react-router-dom";
-import useFetchPortfolio from 'Pages/HomePage/utils/fetchPortfolio';
+import useFetchPortfolio from '../CustomHooks/fetchPortfolio';
 import fetchFromServer from "utils/BackendAPICommunication/http/httpServerFetch";
 import { handleErrorResponse } from "utils/BackendAPICommunication";
 import IServerPositionRes from "Interfaces/IServerPositionRes";

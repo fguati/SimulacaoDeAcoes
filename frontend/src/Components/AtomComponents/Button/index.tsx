@@ -11,8 +11,12 @@ const Button = styled.button`
     border-color: ${(props: IButtonProps) => props.disabledStyle ? 'var(--disabled-bg)' : 'var(--button-color)'};
     margin: var(--default-spacing);
     padding: var(--default-spacing) var(--xl-spacing);
-    cursor: pointer;
+    cursor: ${(props: IButtonProps) => props.disabledStyle ? "default" : "pointer"};
     font-size: var(--default-font-size);
+
+    :hover {
+        opacity: ${(props: IButtonProps) => props.disabledStyle ? "100%" : "50%"};
+    }
 
     @media screen and (min-width: 375px){
         font-size: var(--medium-font-size);

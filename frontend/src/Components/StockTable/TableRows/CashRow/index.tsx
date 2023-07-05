@@ -1,3 +1,4 @@
+import { displayMonetaryValue } from "utils/displayFunctions"
 import StyledTableItem from "../StockRow/StyledTableItem"
 import ICashRowProps from "./ICashRowProps"
 
@@ -10,8 +11,8 @@ function CashRow({ cashValue, rowLength, valueType }: ICashRowProps) {
                 {valueType}
             </StyledTableItem>
 
-            <StyledTableItem row={0} column={0}>
-                {`R$ ${cashValue.toFixed(2)}`}
+            <StyledTableItem row={rowPosition} column={0}>
+                {displayMonetaryValue(cashValue)}
             </StyledTableItem>
         
         </>

@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react"
+import { render, screen, waitFor } from "@testing-library/react"
 import { MemoryRouter, Route, Routes } from "react-router-dom"
 import '@testing-library/jest-dom'
 import AuthRequestBranch from "."
@@ -34,14 +34,15 @@ describe('Testing the component responsible for checking if user is logged in an
         return(<p>test</p>)
     }
     
-    function renderAuthBranch(mockedSessionContext: IMockedSessionContext) {
+    function renderAuthBranch(mockedSessionContext: IMockedSessionContext , initialRoute = '/') {
         render(
             <SessionContext.Provider value={mockedSessionContext}>
                 <SnackbarContext.Provider value={MockedSnackBarContext}>
-                    <MemoryRouter>
+                    <MemoryRouter initialEntries={[initialRoute]}>
                         <Routes>
                             <Route element={<AuthRequestBranch/>}>
                                 <Route element={<TestComponent/>} path="/"/>
+                                <Route element={<TestComponent/>} path="/other"/>
                             </Route>
                         </Routes>
                     </MemoryRouter>
@@ -50,19 +51,25 @@ describe('Testing the component responsible for checking if user is logged in an
         )
     }
 
-    test('calls activate snackbar and renders login page if user is not logged in', () => {
-        MockedLoginPage.mockReturnValue((<p>Mocked Login Page</p>))
+    test('calls activate snackbar and renders login page if user is not logged in', async () => {
+        MockedLoginPage.mockReturnValue((
+            <>
+                <p>Mocked Login Page</p>
+            </>
+        ))
+
         const mockedSessionContext:IMockedSessionContext = {
             checkAuthCookie: jest.fn(),
             loggedIn: false,
             setLogIn: jest.fn()
         }
 
-        renderAuthBranch(mockedSessionContext)
-
+        renderAuthBranch(mockedSessionContext, '/other')
         const $mockedLoginPage = screen.getByText('Mocked Login Page')
-        expect(mockedActivateSnackBar).toBeCalledWith(expect.any(String), { colorPalette: 'failure'})
         expect($mockedLoginPage).toBeInTheDocument()
+
+        await waitFor(() => expect(mockedActivateSnackBar).toBeCalledWith(expect.any(String), { colorPalette: 'failure'}))
+        
     })
 
     test('returns outlet if user is logged in', () => {

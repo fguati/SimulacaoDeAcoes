@@ -9,3 +9,8 @@ export interface ApiResponseStock {
 
     }>
 }
+
+export interface ApiResponseAvailable {
+    indexes: string[]
+    stocks: string[]
+}

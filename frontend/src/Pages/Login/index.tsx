@@ -4,6 +4,7 @@ import { fieldIsNotEmpty } from "utils/FormValidators";
 import useSubmitForm from "utils/BackendAPICommunication/useSubmitForm";
 import { BackendRoutes } from "Common/Types";
 import useLoginSuccessHandler from "./utils/useLoginSuccessHandler";
+import ContainerCard from "Components/AtomComponents/ContainerCard";
 
 /**
  * Renders the Login Page, with email and password input fields and a
@@ -26,10 +27,9 @@ function LoginPage() {
     const login = useSubmitForm(backendLoginRoute, useLoginSuccessHandler)
 
     return(
-        <>
+        <ContainerCard style={{minHeight: '350px'}}>
             <Form fields={fields} onSubmit={login} data-testid='LoginForm'/>
-
-        </>
+        </ContainerCard>
     )
 }
 
