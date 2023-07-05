@@ -49,4 +49,23 @@ describe('Testing links in the header component', () => {
 
     })
 
+    test.only('when logged in header must have options of trade and negotiation history pages', () => {
+        Cookies.set('authToken', 'testValues')
+        
+        render(
+            <SessionProvider>
+                <CookiesProvider>
+                    <Header/>
+                </CookiesProvider>
+            </SessionProvider>,
+            {wrapper: MemoryRouter}
+        )
+
+        const tradeLink = screen.queryByText('Trade')
+        const negotiationHistoryLink = screen.queryByText('History', {exact: false})
+        
+        expect(tradeLink).toHaveAttribute('href','/homebroker')
+        expect(negotiationHistoryLink).toHaveAttribute('href','/history')
+    })
+
 })
