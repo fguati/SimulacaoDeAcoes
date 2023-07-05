@@ -18,3 +18,12 @@ export type currency = 'BRL' | 'USD'
 
 //Input types
 export type InputType = 'text' | 'email' | 'password' | 'number' | 'dropdown'
+
+//Viewport sizes
+export type viewportSizes = '768px' | '425px' | '375px' | '320px'
+
+//Element that is hidden at certain viewport width
+export interface IHideableElement {
+    hideOn?: viewportSizes
+    element?: ReactChildren
+}
