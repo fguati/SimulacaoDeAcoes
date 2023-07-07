@@ -1,7 +1,7 @@
 import { IHideableElement } from "Common/Types"
 import styled from "styled-components"
 
-
+//Element where the headers from the history list will be container
 const HeadersContaianer = styled.div`
     /* Display properties */
     display: flex;
@@ -14,6 +14,7 @@ const HeadersContaianer = styled.div`
     padding: 0 var(--medium-spacing);
 `
 
+//Element that will contain each header
 const HeaderItem = styled.div`
     /* Font properties */
     color: var(--standard-font-color);
@@ -32,14 +33,15 @@ const HeaderItem = styled.div`
     }
 `
 
-function NegotiationListHeaders() {
+//Component that renders the headers of the negotiations list
+function NegotiationListHeaders({headersWidth}: {headersWidth: number}) {
     return (
         <HeadersContaianer>
-            <HeaderItem width={65}>Date</HeaderItem>
-            <HeaderItem width={65}>Qty</HeaderItem>
-            <HeaderItem width={65}>Stock</HeaderItem>
-            <HeaderItem width={65}>Price</HeaderItem>
-            <HeaderItem width={65}>Type</HeaderItem>
+            <HeaderItem width={headersWidth}>Date</HeaderItem>
+            <HeaderItem width={headersWidth}>Qty</HeaderItem>
+            <HeaderItem width={headersWidth}>Stock</HeaderItem>
+            <HeaderItem width={headersWidth}>Price</HeaderItem>
+            <HeaderItem width={headersWidth}>Type</HeaderItem>
         </HeadersContaianer>
     )
 }
