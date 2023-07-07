@@ -26,4 +26,5 @@ export type viewportSizes = '768px' | '425px' | '375px' | '320px'
 export interface IHideableElement {
     hideOn?: viewportSizes
     element?: ReactChildren
+    width?: number
 }

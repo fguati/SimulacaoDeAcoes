@@ -11,6 +11,7 @@ const turnValuesToCardItems = (negotiationPropertyValue: any): IHideableElement 
 
     return {
         element: valueToDisplay,
+        width: 65
     }
 }
 

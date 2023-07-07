@@ -32,6 +32,10 @@ const CardItem = styled.div`
     color: var(--standard-font-color);
     font-size: var(--medium-font-size);
 
+    /* Item Box properties */
+    display: block;
+    width: ${(props: IHideableElement) => props.width ? props.width + 'px' : 'auto'};
+
     @media screen and (max-width: 425px) {
         font-size: var(--default-font-size);
     }
@@ -45,8 +49,15 @@ const CardItem = styled.div`
 function ListCard({cardItems, onClick}: CardProps) {
     return(
         <CardContainer onClick={onClick}>
-            {cardItems?.map(item => (
-                <CardItem hideOn={item.hideOn}>{item.element}</CardItem>
+            {cardItems?.map((item, index) => (
+                <CardItem 
+                    hideOn={item.hideOn} 
+                    width={item.width}
+                    key={index}
+                >
+                    {item.element}
+                </CardItem>
+
             ))}
         </CardContainer>
     )
