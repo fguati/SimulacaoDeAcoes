@@ -11,6 +11,7 @@ const HeadersContaianer = styled.div`
     /* Box Properties */
     margin: var(--default-spacing) auto;
     max-width: var(--max-width-page);
+    width: 100%;
     padding: 0 var(--medium-spacing);
 `
 

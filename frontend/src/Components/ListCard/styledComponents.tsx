@@ -17,6 +17,7 @@ export const CardContainer = styled.li`
     margin: var(--medium-spacing) auto;
     border-radius: 8px;
     max-width: var(--max-width-page);
+    width: 100%;
 
     /* Cursor properties */
     cursor: ${(props: ContainerProps) => props.onClick ? 'pointer' : 'auto'};

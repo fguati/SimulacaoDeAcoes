@@ -19,7 +19,10 @@ const turnValuesToCardItems = (itemsWidth: number) => (negotiationPropertyValue:
 
 //component that renders each negotiation card in the transaction history
 function NegotiationListItem({negotiation, widthOfItemsInCard}: Props) {
-    const negotiationValues = Object.values(negotiation)
+    //removing id from properties so its not rendered in the negotiation card
+    const {id, ...negotiationWithoutId} = negotiation
+    
+    const negotiationValues = Object.values(negotiationWithoutId)
     const negotiationItems = negotiationValues.map(turnValuesToCardItems(widthOfItemsInCard))
     
     return (

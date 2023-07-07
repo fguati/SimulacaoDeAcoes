@@ -1,4 +1,5 @@
 interface INegotiation {
+    id: string
     tradeDate: Date
     tradedStock: string
     tradePrice: number
