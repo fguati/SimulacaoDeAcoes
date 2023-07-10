@@ -71,7 +71,9 @@ VALUES  ("14", "TAEE11", 100, 10.45, "BUY"),
         ("15", "ALZR11", 100, 10.45, "BUY"),
         ("15", "TAEE11", 100, 10.45, "BUY"),
         ("15", "XPML11", 100, 10.45, "SELL"),
+        ("15", "XPML11", 34, 10.45, "SELL"),
+        ("15", "AMZO34", 19, 4.17, "BUY"),
         ("14", "BBSE3", 27, 23.47, "SELL"), --negotiation that will be updated,
-        ("14", "BBSE3", 27, 23.47, "SELL") --negotiation that will be deleted: id 7;
+        ("14", "BBSE3", 27, 23.47, "SELL") --negotiation that will be deleted: id 9;
 `
 module.exports = { userDbSql, positionDbSql, negotiationDbSql, updateAdminRole }

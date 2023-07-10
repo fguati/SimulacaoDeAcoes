@@ -363,7 +363,7 @@ describe('Test the select by id method of the negotiationDAO class', () => {
 describe('Test the update method of the NegotiationDAO class', () => {
     it('updates the negotiation in db to the same values entered in the argument', async () => {
         const negotiationToUpdate = {
-            id: 6,
+            id: 8,
             userId: 15,
             stockTicker: 'BBAS3',
             negotiatedQty: 72,
@@ -495,7 +495,7 @@ describe('Test the update method of the NegotiationDAO class', () => {
 
 describe('Test the delete method of the negotiationDAO class', () => {
     it('deletes a negotiation from the database', async () => {
-        const testId = 7
+        const testId = 9
         let testNegotiationDB = await dbGet(`SELECT * FROM negotiations WHERE id=?`, [testId])
         expect(testNegotiationDB).toEqual(expect.objectContaining({id: testId}))
 

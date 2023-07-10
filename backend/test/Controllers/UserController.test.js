@@ -698,3 +698,86 @@ describe('trade method', () => {
     })
 })
 
+describe('getTradeHistory method', () => {
+    it('returns a negotiation list', async () => {
+        const { req, res, next } = mockReqResNext()
+        const testUserId = 15 //id of user with more than 2 negotiations on test db
+        const dbNegotiationHistory = await dbAll(`SELECT * FROM negotiations WHERE user_id=? ORDER BY negotiation_date`, [testUserId])
+        req.body = {
+            payloadJWT: {
+                id: testUserId,
+            },
+        }
+    
+        let response = await UserController.getTradeHistory(req, res, next)
+        const negotiations = JSON.parse(response.body).negotiations
+
+        expect(response.statusCode).toBe(200)
+
+        negotiations.forEach((negotiation, index) => {
+            expect(negotiation).toEqual(expect.objectContaining({
+                stock_ticker: dbNegotiationHistory[index].stock_ticker,
+                negotiated_qty: dbNegotiationHistory[index].negotiated_qty,
+                negotiated_price: dbNegotiationHistory[index].negotiated_price,
+                negotiation_type: dbNegotiationHistory[index].negotiation_type,
+                negotiation_date: dbNegotiationHistory[index].negotiation_date,
+            }))
+        })
+    })
+
+    it('returns a negotiation list that obeys the pagination parameters', async () => {
+        const { req, res, next } = mockReqResNext()
+        const testUserId = 15 //id of user with more than 2 negotiations on test db
+
+        const resultsPerPage = 2
+        const pageNumber = 2
+        const firstResultOfPage = (pageNumber - 1) * resultsPerPage
+
+        const dbNegotiationHistory = await dbAll(`SELECT * FROM negotiations WHERE user_id=? ORDER BY negotiation_date`, [testUserId])
+        req.body = {
+            payloadJWT: {
+                id: testUserId,
+            },
+            resultsPerPage: resultsPerPage,
+            pageNumber: pageNumber
+        }
+    
+        let response = await UserController.getTradeHistory(req, res, next)
+        const negotiations = JSON.parse(response.body).negotiations
+
+        expect(response.statusCode).toBe(200)
+        expect(negotiations.length).toBeLessThanOrEqual(resultsPerPage)
+        expect(negotiations[0]).toEqual(expect.objectContaining({
+            stock_ticker: dbNegotiationHistory[firstResultOfPage].stock_ticker,
+            negotiated_qty: dbNegotiationHistory[firstResultOfPage].negotiated_qty,
+            negotiated_price: dbNegotiationHistory[firstResultOfPage].negotiated_price,
+            negotiation_type: dbNegotiationHistory[firstResultOfPage].negotiation_type,
+            negotiation_date: dbNegotiationHistory[firstResultOfPage].negotiation_date,
+        }))
+
+    })
+
+    it('returns an empty list if page number is larger than the supported by the number of entries', async () => {
+        const { req, res, next } = mockReqResNext()
+        const testUserId = 15 //id of user with more than 2 negotiations on test db
+
+        const resultsPerPage = 2
+        const pageNumber = 100
+        
+        req.body = {
+            payloadJWT: {
+                id: testUserId,
+            },
+            resultsPerPage: resultsPerPage,
+            pageNumber: pageNumber
+        }
+    
+        let response = await UserController.getTradeHistory(req, res, next)
+        const negotiations = JSON.parse(response.body).negotiations
+
+        expect(response.statusCode).toBe(200)
+        expect(negotiations.length).toBe(0)
+        
+    })
+})
+

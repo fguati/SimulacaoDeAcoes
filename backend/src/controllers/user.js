@@ -5,6 +5,7 @@ const { InvalidInputError } = require('../CustomErrors');
 const { hasInvalidParam } = require('../utils');
 const UserModel = require('../Models/UserModel');
 const { sendOKResponse } = require('./utils');
+const NegotiationDAO = require('../db/ComunicationDB/NegotiaionDAO');
 
 class UserController {
     static async getAll(req, res, next) {
@@ -151,6 +152,55 @@ class UserController {
         }
     }
 
+    //method that gets the user trade history
+    static async getTradeHistory(req, res, next) {
+        try {
+            //get user id from JWT payload
+            const { id } = req.body.payloadJWT
+
+            //get filters from request
+
+            //make the arguments for the db query from the pagination parameters from request
+            const { limitOfResults, offsetResults } = makeSqlPaginationArgs(req); 
+
+            //query db for negotiation history
+            const dbNegotiationHistory = await NegotiationDAO.select({ userId: id }, limitOfResults, offsetResults)
+
+            //Create response object
+            const tradeHistory = createTradeHistoryReturnObj(dbNegotiationHistory)
+
+            //send success response with page number and list of negotiations
+            return sendOKResponse(res, tradeHistory)
+
+        } catch (error) {
+            // send error to error treating middleware
+            return next(error)
+        }
+    }
+
 }
 
 module.exports = UserController;
+
+function makeSqlPaginationArgs(req) {
+    //get pagination parameters from request
+    const { resultsPerPage, pageNumber } = req.body
+    
+    //Use 100 as the default results per page
+    const limitOfResults = resultsPerPage ?? 100;
+
+    //Calculate how many results must be skiped based on the page being returned, while setting page 1 as default
+    const offsetResults = ((pageNumber ?? 1) - 1) * limitOfResults;
+    
+    return { limitOfResults, offsetResults };
+}
+
+function createTradeHistoryReturnObj(dbNegotiationHistory) {
+    return {
+        negotiations: dbNegotiationHistory.map(negotiation => {
+            // eslint-disable-next-line no-unused-vars
+            const { id, user_id, ...negotiationWihtoutId } = negotiation;
+            return negotiationWihtoutId;
+        })
+    };
+}
