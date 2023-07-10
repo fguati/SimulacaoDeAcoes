@@ -59,7 +59,7 @@ class NegotiationDAO {
     static async select(filters = null, limitOfResults = 100, offsetBy = 0) {        
         //base sql elements
         let baseSQL = `SELECT * FROM negotiations `
-        const paginationSQL = `ORDER BY negotiation_date LIMIT ${limitOfResults} OFFSET ${offsetBy}`
+        const paginationSQL = `ORDER BY negotiation_date DESC LIMIT ${limitOfResults} OFFSET ${offsetBy}`
         
         // //Prepare to create filter setup
         let valuesToFilterList

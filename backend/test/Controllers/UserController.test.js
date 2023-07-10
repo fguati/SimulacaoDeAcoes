@@ -738,6 +738,9 @@ describe('getTradeHistory method', () => {
             payloadJWT: {
                 id: testUserId,
             },
+        }
+
+        req.query = {
             resultsPerPage: resultsPerPage,
             pageNumber: pageNumber
         }
@@ -768,6 +771,9 @@ describe('getTradeHistory method', () => {
             payloadJWT: {
                 id: testUserId,
             },
+        }
+
+        req.query = {
             resultsPerPage: resultsPerPage,
             pageNumber: pageNumber
         }

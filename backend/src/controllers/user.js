@@ -21,8 +21,8 @@ class UserController {
         const id = req.params.id
         try {
             const user = await UserDAO.selectById(id)
-            
-            if(!user) {
+
+            if (!user) {
                 return next(new InvalidInputError("Id not found", [id]))
             }
 
@@ -39,15 +39,15 @@ class UserController {
             const newUser = req.body
             const userPropsReceived = userPropertyNames.map(key => newUser[key])
 
-            if(hasInvalidParam(userPropsReceived)) {
+            if (hasInvalidParam(userPropsReceived)) {
                 const invalidInputs = listInvalidInputs(newUser, userPropertyNames)
                 const invalidInputError = new InvalidInputError('Invalid user information', invalidInputs)
                 return next(invalidInputError)
             }
 
             await UserDAO.insert(newUser)
-            return sendOKResponse(res, {message: 'User created successfully'}, 201)
-            
+            return sendOKResponse(res, { message: 'User created successfully' }, 201)
+
         } catch (error) {
             return next(error)
         }
@@ -60,19 +60,19 @@ class UserController {
             const { id } = req.body.payloadJWT
 
             //check if user id was sent in jwt payload in the req body
-            if(!id) throw new InvalidInputError('User id was not sent in http request', ['id'])
+            if (!id) throw new InvalidInputError('User id was not sent in http request', ['id'])
 
             //get funds moved from request body
             const { funds } = req.body
 
             //check if request body has the value of funds to be deposited or withdrawn
-            if(isNaN(funds)) throw new InvalidInputError('Valid funds to be moved were not sent in http request', ['funds'])
+            if (isNaN(funds)) throw new InvalidInputError('Valid funds to be moved were not sent in http request', ['funds'])
 
             //send operation to database
             const balance = await UserDAO.updateBalance(id, funds)
             //send success response
             return sendOKResponse(res, { balance })
-            
+
         } catch (error) {
             //send error to error treating middleware
             return next(error)
@@ -86,17 +86,17 @@ class UserController {
             const { id } = req.body.payloadJWT
 
             //check if user id was sent in jwt payload in the req body
-            if(!id) throw new InvalidInputError('User id was not sent in http request', ['id'])
+            if (!id) throw new InvalidInputError('User id was not sent in http request', ['id'])
 
             //instance user model
             const user = await UserModel.instanceFromDB(id)
 
             //send success response with portfolio provided by user model
             return sendOKResponse(res, user.portfolio)
-            
+
         } catch (error) {
             //send error to error treating middleware
-            return next(error)    
+            return next(error)
         }
     }
 
@@ -107,17 +107,17 @@ class UserController {
             const { id } = req.body.payloadJWT
 
             //check if user id was sent in jwt payload in the req body
-            if(!id) throw new InvalidInputError('User id was not sent in http request', ['id'])
+            if (!id) throw new InvalidInputError('User id was not sent in http request', ['id'])
 
             //instance user model
             const user = await UserModel.instanceFromDB(id)
 
             //send success response with balance provided by user model
-            return sendOKResponse(res, {balance: user.balance})
-            
+            return sendOKResponse(res, { balance: user.balance })
+
         } catch (error) {
             //send error to error treating middleware
-            return next(error)    
+            return next(error)
         }
     }
 
@@ -126,14 +126,14 @@ class UserController {
         try {
             //get info from req
             const { id } = req.body.payloadJWT
-            const {stockToTrade, qtyToTrade, tradeType} = req.body
-    
+            const { stockToTrade, qtyToTrade, tradeType } = req.body
+
             //instantiate the User class with id from JWT payload caried in the body
             const user = await UserModel.instanceFromDB(id)
-    
+
             //call trade method from user class
             const updatedInfo = await user.trade(stockToTrade, Number(qtyToTrade), tradeType)
-    
+
             //return new balance and stock position with response
             const tradeData = {
                 userBalance: updatedInfo.userBalance,
@@ -143,9 +143,9 @@ class UserController {
                     averagePrice: updatedInfo.stockAveragePrice
                 }
             }
-    
+
             return sendOKResponse(res, tradeData)
-            
+
         } catch (error) {
             //send caught error to be processed in the error handler middleware
             return next(error)
@@ -161,7 +161,7 @@ class UserController {
             //get filters from request
 
             //make the arguments for the db query from the pagination parameters from request
-            const { limitOfResults, offsetResults } = makeSqlPaginationArgs(req); 
+            const { limitOfResults, offsetResults } = makeSqlPaginationArgs(req);
 
             //query db for negotiation history
             const dbNegotiationHistory = await NegotiationDAO.select({ userId: id }, limitOfResults, offsetResults)
@@ -184,23 +184,33 @@ module.exports = UserController;
 
 function makeSqlPaginationArgs(req) {
     //get pagination parameters from request
-    const { resultsPerPage, pageNumber } = req.body
-    
+    const { resultsPerPage, pageNumber } = req.query
+
     //Use 100 as the default results per page
     const limitOfResults = resultsPerPage ?? 100;
 
     //Calculate how many results must be skiped based on the page being returned, while setting page 1 as default
     const offsetResults = ((pageNumber ?? 1) - 1) * limitOfResults;
-    
+
     return { limitOfResults, offsetResults };
 }
 
 function createTradeHistoryReturnObj(dbNegotiationHistory) {
+    
+    const turnDbTradeToINegotiaion = negotiation => {
+        // eslint-disable-next-line no-unused-vars
+        const { id, negotiation_date, negotiated_qty, stock_ticker, negotiated_price, negotiation_type } = negotiation;
+        return {
+            id,
+            tradeDate: negotiation_date,
+            tradedQty: negotiated_qty,
+            tradedStock: stock_ticker,
+            tradePrice: negotiated_price,
+            tradeType: negotiation_type
+        };
+    };
+
     return {
-        negotiations: dbNegotiationHistory.map(negotiation => {
-            // eslint-disable-next-line no-unused-vars
-            const { id, user_id, ...negotiationWihtoutId } = negotiation;
-            return negotiationWihtoutId;
-        })
+        negotiations: dbNegotiationHistory.map(turnDbTradeToINegotiaion)
     };
 }

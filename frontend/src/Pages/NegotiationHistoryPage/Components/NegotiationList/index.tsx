@@ -17,7 +17,7 @@ const ListContainer = styled.ul`
 //component that list all the negotiations done by user
 function NegotiationList({negotiationList}: Props) {
     const listColumnWIdth = 65
-    
+
     return (
         <ListContainer>
             <NegotiationListHeaders headersWidth={listColumnWIdth} />

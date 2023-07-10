@@ -8,7 +8,7 @@ export type ReactChildren = ReactElement | string | Array<ReactElement | string>
 export type ISnackPosition = typeof botScrnSnckBrPosition | typeof outScrnSnckBrPosition
 
 //type that define all the possible backend routes
-export type BackendRoutes = '/login' | '/register' | '/user' | '/user/deposit' | '/user/portfolio' | '/user/balance' | '/user/trade'
+export type BackendRoutes = '/login' | '/register' | '/user' | '/user/deposit' | '/user/portfolio' | '/user/balance' | '/user/trade' | 'user/history'
 
 //Type that restricts the basic collor palette of a box
 export type BoxColorPalette = 'success' | 'failure' | 'neutral'
