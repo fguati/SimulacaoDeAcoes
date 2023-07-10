@@ -1,6 +1,6 @@
 const { InvalidInputError, NotFoundError } = require("../../../src/CustomErrors")
 const NegotiationDAO = require("../../../src/db/ComunicationDB/NegotiaionDAO")
-const { dbGet, dbRun } = require("../../../src/db/utils/dbutils")
+const { dbGet, dbRun, dbAll } = require("../../../src/db/utils/dbutils")
 
 describe('Test the insert method in the negotiationDAO class', () => {
     const testNegotiation = {
@@ -33,6 +33,7 @@ describe('Test the insert method in the negotiationDAO class', () => {
         expect(dbNegotiationDate.getFullYear).toBe(today.getFullYear)
 
     })
+    
 
     it('must throw an invalid input error if any mandatory parameter is not provided or has an invalid value', async () => {
         function testRejectFunction(testObject) {
@@ -176,6 +177,13 @@ describe('Test the select method and all its optional filters in the negotiation
             negotiation_type: expect.stringMatching(/BUY|SELL/),
             negotiation_date: expect.any(String)
         })]))
+    })
+
+    it('Must return a list of negotiations that obeys the pagination parameters', async () => {
+        const dbTestQuery = await NegotiationDAO.select(null, 1, 1)
+        const dbNegotiationFullList = await dbAll(`SELECT * FROM negotiations ORDER BY negotiation_date`)
+        expect(dbTestQuery.length).toBe(1)
+        expect(dbTestQuery[0]).toEqual(expect.objectContaining(dbNegotiationFullList[1]))
     })
 
     it('Must return a list of negotiations that fufills that entered filters', async () => {

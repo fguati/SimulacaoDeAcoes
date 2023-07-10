@@ -55,10 +55,11 @@ class NegotiationDAO {
         }
     } 
 
-    //method for getting multiple entries from the negotiation table, with optional filters
-    static async select(filters = null) {        
-        //base select sql
+    //method for getting multiple entries from the negotiation table, with optional filters and pagination parameters
+    static async select(filters = null, limitOfResults = 100, offsetBy = 0) {        
+        //base sql elements
         let baseSQL = `SELECT * FROM negotiations `
+        const paginationSQL = `ORDER BY negotiation_date LIMIT ${limitOfResults} OFFSET ${offsetBy}`
         
         // //Prepare to create filter setup
         let valuesToFilterList
@@ -76,7 +77,7 @@ class NegotiationDAO {
         }
         
         // build final sql
-        const sql = baseSQL + filterSQL + ';'
+        const sql = baseSQL + filterSQL + paginationSQL +  ';'
 
         //run sql
         const result = await dbAll(sql, valuesToFilterList)
