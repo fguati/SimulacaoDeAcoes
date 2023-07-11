@@ -6,6 +6,7 @@ import { fetchFromServer } from "utils/BackendAPICommunication";
 import INegotiationAPIRes from "Interfaces/INegotiationAPIRes";
 import IServerResponse from "Interfaces/IServerResponse";
 import IErrorResponse from "Interfaces/IErrorResponse";
+import Pagination from "Components/Pagination";
 
 //Page that lists negotiations made by the user
 function NegotiationHistoryPage() {
@@ -17,7 +18,7 @@ function NegotiationHistoryPage() {
 
     //effect that updates the negotiation list state with data from the server
     useEffect(() => {
-        const resultsPerPage = 9
+        const resultsPerPage = 10
         const queryParams = {
             resultsPerPage,
             pageNumber: currentPage
@@ -31,6 +32,7 @@ function NegotiationHistoryPage() {
         <>
             <Title>Negotiation History</Title>
             <NegotiationList negotiationList={negotiationsList} />
+            <Pagination currentPage={currentPage} setCurrentPage={setCurrentPage} lastPage={7}/>
         </>
     )
 }
