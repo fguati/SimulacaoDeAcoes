@@ -747,7 +747,8 @@ describe('getTradeHistory method', () => {
         }
     
         let response = await UserController.getTradeHistory(req, res, next)
-        const negotiations = JSON.parse(response.body).negotiations
+        const responseBody = JSON.parse(response.body)
+        const negotiations = responseBody.negotiations
 
         expect(response.statusCode).toBe(200)
         expect(negotiations.length).toBeLessThanOrEqual(resultsPerPage)
@@ -759,6 +760,8 @@ describe('getTradeHistory method', () => {
             tradeType: dbNegotiationHistory[firstResultOfPage].negotiation_type,
             tradeDate: dbNegotiationHistory[firstResultOfPage].negotiation_date,
         }))
+
+        expect(responseBody.numberOfPages).toBe(3)
 
     })
 

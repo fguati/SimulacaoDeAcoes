@@ -10,8 +10,9 @@ import Pagination from "Components/Pagination";
 
 //Page that lists negotiations made by the user
 function NegotiationHistoryPage() {
-    //state that manages the pagination of the negotiation list
+    //states that manage the pagination of the negotiation list
     const [currentPage, setCurrentPage] = useState(1)
+    const [lasPage, setLastPage] = useState(100)
 
     //state that manages negotiations being rendered
     const [negotiationsList, setNegotiationsList] = useState<INegotiation[]>([])
@@ -25,28 +26,42 @@ function NegotiationHistoryPage() {
         }
         
         fetchFromServer<INegotiationAPIRes>('user/history', 'get', null, queryParams)
-            .then(setTradeHistToServerData(setNegotiationsList))
+            .then(tradeHistResHandler(setNegotiationsList, setLastPage))
     }, [currentPage])
 
     return (
         <>
             <Title>Negotiation History</Title>
             <NegotiationList negotiationList={negotiationsList} />
-            <Pagination currentPage={currentPage} setCurrentPage={setCurrentPage} lastPage={7}/>
+            <Pagination currentPage={currentPage} setCurrentPage={setCurrentPage} lastPage={lasPage}/>
         </>
     )
 }
 
 export default NegotiationHistoryPage
 
-//aux function that takes the trade history data fetched from the server and updates the negotiation list state with it 
-function setTradeHistToServerData(setNegotiationsList: React.Dispatch<React.SetStateAction<INegotiation[]>>): ((value: IServerResponse<INegotiationAPIRes | IErrorResponse>) => void | PromiseLike<void>) | null | undefined {
-    return res => {
+type stateSetter<stateType> = React.Dispatch<React.SetStateAction<stateType>>
+
+//aux function that handles the response from fetching the list of negotiations from the server
+function tradeHistResHandler(setNegotiationsList: stateSetter<INegotiation[]>, lastPageSetter: stateSetter<number>) {
+    return (res: IServerResponse<INegotiationAPIRes | IErrorResponse>) => {
         if (isNegotiationAPIRes(res.body)) {
-            const newNegotiationList = getTradeList(res.body);
-            setNegotiationsList(newNegotiationList);
+            setTradeHistToServerData(res.body, setNegotiationsList)
+            determineLastPage(res.body, lastPageSetter)
         }
-    };
+    }
+}
+
+//aux function that takes the trade history data fetched from the server and updates the negotiation list state with it 
+function setTradeHistToServerData(resBody: INegotiationAPIRes , setNegotiationsList: stateSetter<INegotiation[]>) {
+    const newNegotiationList = getTradeList(resBody);
+    setNegotiationsList(newNegotiationList);
+}
+
+//aux function that takes number of pages returned by server and use it to determine the last page number
+function determineLastPage(resBody: INegotiationAPIRes , lastPageSetter: stateSetter<number>) {
+    const lastPage = resBody.numberOfPages
+    lastPageSetter(lastPage);
 }
 
 //aux function that takes trade list from the body of the server response while converting the tradeDate property of all its elements into Date objects

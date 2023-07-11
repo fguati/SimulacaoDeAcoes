@@ -159,15 +159,20 @@ class UserController {
             const { id } = req.body.payloadJWT
 
             //get filters from request
+            const filters = { userId: id }
 
             //make the arguments for the db query from the pagination parameters from request
             const { limitOfResults, offsetResults } = makeSqlPaginationArgs(req);
 
             //query db for negotiation history
-            const dbNegotiationHistory = await NegotiationDAO.select({ userId: id }, limitOfResults, offsetResults)
+            const dbNegotiationHistory = await NegotiationDAO.select(filters, limitOfResults, offsetResults)
+
+            //query to get number of pages that exist fro the previous query
+            const numberOfResults = await NegotiationDAO.countEntries(filters)
+            const numberOfPages = Math.ceil(numberOfResults.number_of_entries / limitOfResults)
 
             //Create response object (list of negotiation objects)
-            const tradeHistory = createTradeHistoryReturnObj(dbNegotiationHistory)
+            const tradeHistory = createTradeHistoryReturnObj(dbNegotiationHistory, numberOfPages)
 
             //send success response with page number and list of negotiations
             return sendOKResponse(res, tradeHistory)
@@ -195,7 +200,7 @@ function makeSqlPaginationArgs(req) {
     return { limitOfResults, offsetResults };
 }
 
-function createTradeHistoryReturnObj(dbNegotiationHistory) {
+function createTradeHistoryReturnObj(dbNegotiationHistory, numberOfPages) {
     
     //aux function that takes the neogtiation data received from the a db row and converts to an object that implements the INegotiation interface
     const turnDbTradeToINegotiaion = negotiation => {
@@ -212,6 +217,7 @@ function createTradeHistoryReturnObj(dbNegotiationHistory) {
     };
 
     return {
-        negotiations: dbNegotiationHistory.map(turnDbTradeToINegotiaion)
+        negotiations: dbNegotiationHistory.map(turnDbTradeToINegotiaion),
+        numberOfPages
     };
 }
