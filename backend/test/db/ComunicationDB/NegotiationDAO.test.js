@@ -330,6 +330,19 @@ describe('Test the select method and all its optional filters in the negotiation
     })
 })
 
+describe('Teste the countEntries method', () => {
+    it('must return the number of negotiations on the db that fufill the filter ', async () => {
+        const testUserId = 31
+
+        const numberOfNegotiations = await NegotiationDAO.countEntries({ userId: testUserId })
+
+        const negotiationsDb = await dbAll(`SELECT * FROM negotiations WHERE user_id=?`, [testUserId])
+        const expectedNumberOfNegotiations = negotiationsDb.length
+
+        expect(numberOfNegotiations.number_of_entries).toBe(expectedNumberOfNegotiations)
+    })
+})
+
 describe('Test the select by id method of the negotiationDAO class', () => {
     it('returns a negotiation from the database', async () => {
         const testID = 1
