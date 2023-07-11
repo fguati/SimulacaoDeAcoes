@@ -3,11 +3,19 @@ import { INegotiation } from "Interfaces/INegotiation";
 import NegotiationList from "./Components/NegotiationList";
 import { useEffect, useState } from "react";
 import { fetchFromServer } from "utils/BackendAPICommunication";
+import INegotiationAPIRes from "Interfaces/INegotiationAPIRes";
+import IServerResponse from "Interfaces/IServerResponse";
+import IErrorResponse from "Interfaces/IErrorResponse";
 
+//Page that lists negotiations made by the user
 function NegotiationHistoryPage() {
+    //state that manages the pagination of the negotiation list
     const [currentPage, setCurrentPage] = useState(1)
+
+    //state that manages negotiations being rendered
     const [negotiationsList, setNegotiationsList] = useState<INegotiation[]>([])
 
+    //effect that updates the negotiation list state with data from the server
     useEffect(() => {
         const resultsPerPage = 9
         const queryParams = {
@@ -15,13 +23,8 @@ function NegotiationHistoryPage() {
             pageNumber: currentPage
         }
         
-        fetchFromServer<NegotiationAPIResponse>('user/history', 'get', null, queryParams)
-            .then(res => {
-                if (res.body && 'negotiations' in res.body) {
-                    const newNegotiationList = res.body.negotiations.map(neg => ({...neg, tradeDate: new Date(neg.tradeDate)}))
-                    setNegotiationsList(newNegotiationList)
-                }
-            })
+        fetchFromServer<INegotiationAPIRes>('user/history', 'get', null, queryParams)
+            .then(setTradeHistToServerData(setNegotiationsList))
     }, [currentPage])
 
     return (
@@ -34,6 +37,24 @@ function NegotiationHistoryPage() {
 
 export default NegotiationHistoryPage
 
-interface NegotiationAPIResponse {
-    negotiations: INegotiation[]
+//aux function that takes the trade history data fetched from the server and updates the negotiation list state with it 
+function setTradeHistToServerData(setNegotiationsList: React.Dispatch<React.SetStateAction<INegotiation[]>>): ((value: IServerResponse<INegotiationAPIRes | IErrorResponse>) => void | PromiseLike<void>) | null | undefined {
+    return res => {
+        if (isNegotiationAPIRes(res.body)) {
+            const newNegotiationList = getTradeList(res.body);
+            setNegotiationsList(newNegotiationList);
+        }
+    };
 }
+
+//aux function that takes trade list from the body of the server response while converting the tradeDate property of all its elements into Date objects
+function getTradeList(resposeBody: INegotiationAPIRes) {
+    return resposeBody.negotiations.map(neg => ({ ...neg, tradeDate: new Date(neg.tradeDate) }));
+}
+
+//typeguard for the API response body
+function isNegotiationAPIRes(responseBody: INegotiationAPIRes | IErrorResponse | undefined): responseBody is INegotiationAPIRes {
+    return Boolean(responseBody && 'negotiations' in responseBody)
+}
+
+
