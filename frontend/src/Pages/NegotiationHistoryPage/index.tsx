@@ -14,6 +14,7 @@ function NegotiationHistoryPage() {
             resultsPerPage,
             pageNumber: currentPage
         }
+        
         fetchFromServer<NegotiationAPIResponse>('user/history', 'get', null, queryParams)
             .then(res => {
                 if (res.body && 'negotiations' in res.body) {

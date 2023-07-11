@@ -166,7 +166,7 @@ class UserController {
             //query db for negotiation history
             const dbNegotiationHistory = await NegotiationDAO.select({ userId: id }, limitOfResults, offsetResults)
 
-            //Create response object
+            //Create response object (list of negotiation objects)
             const tradeHistory = createTradeHistoryReturnObj(dbNegotiationHistory)
 
             //send success response with page number and list of negotiations
@@ -197,6 +197,7 @@ function makeSqlPaginationArgs(req) {
 
 function createTradeHistoryReturnObj(dbNegotiationHistory) {
     
+    //aux function that takes the neogtiation data received from the a db row and converts to an object that implements the INegotiation interface
     const turnDbTradeToINegotiaion = negotiation => {
         // eslint-disable-next-line no-unused-vars
         const { id, negotiation_date, negotiated_qty, stock_ticker, negotiated_price, negotiation_type } = negotiation;

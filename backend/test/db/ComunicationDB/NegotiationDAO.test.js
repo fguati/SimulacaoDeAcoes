@@ -181,7 +181,7 @@ describe('Test the select method and all its optional filters in the negotiation
 
     it('Must return a list of negotiations that obeys the pagination parameters', async () => {
         const dbTestQuery = await NegotiationDAO.select(null, 1, 1)
-        const dbNegotiationFullList = await dbAll(`SELECT * FROM negotiations ORDER BY negotiation_date`)
+        const dbNegotiationFullList = await dbAll(`SELECT * FROM negotiations ORDER BY negotiation_date DESC`)
         expect(dbTestQuery.length).toBe(1)
         expect(dbTestQuery[0]).toEqual(expect.objectContaining(dbNegotiationFullList[1]))
     })
