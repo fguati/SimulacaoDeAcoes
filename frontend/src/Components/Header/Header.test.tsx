@@ -49,7 +49,7 @@ describe('Testing links in the header component', () => {
 
     })
 
-    test.only('when logged in header must have options of trade and negotiation history pages', () => {
+    test('when logged in header must have options of trade and negotiation history pages', () => {
         Cookies.set('authToken', 'testValues')
         
         render(

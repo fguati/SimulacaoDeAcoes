@@ -39,9 +39,9 @@ function Pagination({ currentPage, setCurrentPage, lastPage = 1000 }: Pagination
 
     return (
         <PaginationContainer>
-            <FaArrowCircleLeft size={'22px'} onClick={() => setCurrentPage(previouPage)} />
-            <p>{currentPage}</p>
-            <FaArrowCircleRight size={'22px'} onClick={() => setCurrentPage(nextPage)} />
+            <FaArrowCircleLeft size={'22px'} onClick={() => setCurrentPage(previouPage)} aria-label='previousPage' />
+            <p aria-label="currentPageNumber">{currentPage}</p>
+            <FaArrowCircleRight size={'22px'} onClick={() => setCurrentPage(nextPage)} aria-label='nextPage' />
         </PaginationContainer>
     )
 }

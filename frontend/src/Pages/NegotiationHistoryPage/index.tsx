@@ -73,5 +73,3 @@ function getTradeList(resposeBody: INegotiationAPIRes) {
 function isNegotiationAPIRes(responseBody: INegotiationAPIRes | IErrorResponse | undefined): responseBody is INegotiationAPIRes {
     return Boolean(responseBody && 'negotiations' in responseBody)
 }
-
-
