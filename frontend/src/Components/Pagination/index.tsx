@@ -25,6 +25,13 @@ const PaginationContainer = styled.div`
         font-size: var(--large-font-size);
         color: var(--standard-font-color);
     }
+
+    button {
+        background: none;
+        border: none;
+        padding: 0;
+        margin: 0;
+    }
 `
 
 interface PaginationProps {
@@ -35,13 +42,19 @@ interface PaginationProps {
 
 function Pagination({ currentPage, setCurrentPage, lastPage = 1000 }: PaginationProps) {
     const nextPage = useChangePage(1, lastPage)
-    const previouPage = useChangePage(-1, lastPage)  
+    const previouPage = useChangePage(-1, lastPage)
 
     return (
         <PaginationContainer>
-            <FaArrowCircleLeft size={'22px'} onClick={() => setCurrentPage(previouPage)} aria-label='previousPage' />
+            <button onClick={() => setCurrentPage(previouPage)} aria-label='previousPage'>
+                <FaArrowCircleLeft size={'22px'} />
+            </button>
+
             <p aria-label="currentPageNumber">{currentPage}</p>
-            <FaArrowCircleRight size={'22px'} onClick={() => setCurrentPage(nextPage)} aria-label='nextPage' />
+
+            <button onClick={() => setCurrentPage(nextPage)} aria-label='nextPage'>
+                <FaArrowCircleRight size={'22px'} />
+            </button>
         </PaginationContainer>
     )
 }
@@ -55,5 +68,5 @@ function useChangePage(pagesChanged: 1 | -1, lastPageNumber: number) {
         const isValidPage = (newPageNumber > 0 && newPageNumber <= lastPageNumber)
         if (isValidPage) return newPageNumber
         return currentPageNumber
-    },[lastPageNumber, pagesChanged])
+    }, [lastPageNumber, pagesChanged])
 }
