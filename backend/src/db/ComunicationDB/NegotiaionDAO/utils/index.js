@@ -45,10 +45,10 @@ function createSqlFilterForSelect(filters) {
         }
         
         //add value to be userd in filter in list that will be used as arguments for running the sql
-        valuesToFilterList.push(filters[filterKey])
+        if(filters[filterKey]) valuesToFilterList.push(filters[filterKey])
         
         //add sql strings to standard filters
-        filterSqlList.push(filterSqlQueryMap[filterKey])
+        if(filters[filterKey]) filterSqlList.push(filterSqlQueryMap[filterKey])
 
     }
 

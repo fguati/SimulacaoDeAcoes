@@ -748,6 +748,7 @@ describe('getTradeHistory method', () => {
     
         let response = await UserController.getTradeHistory(req, res, next)
         const responseBody = JSON.parse(response.body)
+        // console.log(responseBody)
         const negotiations = responseBody.negotiations
 
         expect(response.statusCode).toBe(200)
@@ -789,6 +790,59 @@ describe('getTradeHistory method', () => {
         expect(response.statusCode).toBe(200)
         expect(negotiations.length).toBe(0)
         
+    })
+
+    it('returns a filtered negotiation list', async () => {
+        const { req, res, next } = mockReqResNext()
+        const testUserId = 31 //id of user with more than 2 negotiations on test db
+        const dbNegotiationHistory = await dbAll(`SELECT * FROM negotiations WHERE user_id=? ORDER BY negotiation_date`, [testUserId])
+        req.body = {
+            payloadJWT: {
+                id: testUserId,
+            },
+        }
+
+        req.query = {
+            stockFilter: 'XPML11'
+        }
+    
+        let response = await UserController.getTradeHistory(req, res, next)
+        let negotiations = JSON.parse(response.body).negotiations
+
+        expect(response.statusCode).toBe(200)
+
+        negotiations.forEach((negotiation) => {
+            const dbNegotiation = dbNegotiationHistory.find(dbNeg => dbNeg.id === negotiation.id)
+            expect(negotiation).toEqual(expect.objectContaining({
+                id: dbNegotiation.id,
+                tradedStock: 'XPML11',
+                tradedQty: dbNegotiation.negotiated_qty,
+                tradePrice: dbNegotiation.negotiated_price,
+                tradeType: dbNegotiation.negotiation_type,
+                tradeDate: dbNegotiation.negotiation_date,
+            }))
+        })
+
+        req.query = {
+            typeFilter: 'BUY'
+        }
+    
+        response = await UserController.getTradeHistory(req, res, next)
+        negotiations = JSON.parse(response.body).negotiations
+
+        expect(response.statusCode).toBe(200)
+
+        negotiations.forEach((negotiation) => {
+            const dbNegotiation = dbNegotiationHistory.find(dbNeg => dbNeg.id === negotiation.id)
+            expect(negotiation).toEqual(expect.objectContaining({
+                id: dbNegotiation.id,
+                tradedStock: dbNegotiation.stock_ticker,
+                tradedQty: dbNegotiation.negotiated_qty,
+                tradePrice: dbNegotiation.negotiated_price,
+                tradeType: 'BUY',
+                tradeDate: dbNegotiation.negotiation_date,
+            }))
+        })
     })
 })
 
