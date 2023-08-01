@@ -1,4 +1,5 @@
 import { botScrnSnckBrPosition, outScrnSnckBrPosition } from "Common/Constants"
+import { type } from "os";
 import { ReactElement } from "react";
 
 //Type for the children prop of any component
@@ -28,3 +29,7 @@ export interface IHideableElement {
     element?: ReactChildren
     width?: number
 }
+
+export type spacingVariables = '--font-based-spacing' | '--small-spacing' | '--default-spacing' | '--medium-spacing' | '--large-spacing' | '--xl-spacing'
+
+export type fontSizeVariables = '--xxl-font-size' | '--xl-font-size' | '--large-font-size' | '--medium-font-size' | '--default-font-size'

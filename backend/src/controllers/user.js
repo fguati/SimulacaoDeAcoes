@@ -159,7 +159,7 @@ class UserController {
             const { id } = req.body.payloadJWT
 
             //get filters from request
-            const { stockFilter, typeFilter, startDateFilter, endDateFilter } = req.query
+            const { stockFilter, typeFilter, startDateFilter, endDateFilter } = req.query.filters ?? {}
             const filters = { userId: id, stockTicker: stockFilter, negotiationType: typeFilter, startDate: startDateFilter, endDate: endDateFilter }
 
             //make the arguments for the db query from the pagination parameters from request

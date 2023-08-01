@@ -748,7 +748,6 @@ describe('getTradeHistory method', () => {
     
         let response = await UserController.getTradeHistory(req, res, next)
         const responseBody = JSON.parse(response.body)
-        // console.log(responseBody)
         const negotiations = responseBody.negotiations
 
         expect(response.statusCode).toBe(200)

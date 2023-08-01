@@ -81,9 +81,6 @@ class NegotiationDAO {
 
         //run sql
         const result = await dbAll(sql, valuesToFilterList)
-        console.log('sql: ', sql)
-        console.log('filters: ', valuesToFilterList)
-        console.log('result: ', result)
 
         //return result from query
         return result

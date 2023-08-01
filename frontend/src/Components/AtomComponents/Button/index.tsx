@@ -13,6 +13,7 @@ const Button = styled.button`
     padding: var(--default-spacing) var(--xl-spacing);
     cursor: ${(props: IButtonProps) => props.disabledStyle ? "default" : "pointer"};
     font-size: var(--default-font-size);
+    width: fit-content;
 
     :hover {
         opacity: ${(props: IButtonProps) => props.disabledStyle ? "100%" : "50%"};

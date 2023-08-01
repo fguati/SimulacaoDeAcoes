@@ -7,12 +7,17 @@ import INegotiationAPIRes from "Interfaces/INegotiationAPIRes";
 import IServerResponse from "Interfaces/IServerResponse";
 import IErrorResponse from "Interfaces/IErrorResponse";
 import Pagination from "Components/Pagination";
+import NegotiationListFilters from "./Components/Filters";
+import IFiltersNegotiation from "Interfaces/IFiltersNegotiation";
 
 //Page that lists negotiations made by the user
 function NegotiationHistoryPage() {
     //states that manage the pagination of the negotiation list
     const [currentPage, setCurrentPage] = useState(1)
     const [lasPage, setLastPage] = useState(100)
+
+    //state that manages the db query filters
+    const [filters, setFilters] = useState<IFiltersNegotiation>({})
 
     //state that manages negotiations being rendered
     const [negotiationsList, setNegotiationsList] = useState<INegotiation[]>([])
@@ -22,16 +27,18 @@ function NegotiationHistoryPage() {
         const resultsPerPage = 10
         const queryParams = {
             resultsPerPage,
-            pageNumber: currentPage
+            pageNumber: currentPage,
+            filters: filters
         }
-        
+
         fetchFromServer<INegotiationAPIRes>('user/history', 'get', null, queryParams)
             .then(tradeHistResHandler(setNegotiationsList, setLastPage))
-    }, [currentPage])
+    }, [currentPage, filters])
 
     return (
         <>
             <Title>Negotiation History</Title>
+            <NegotiationListFilters setFilters={setFilters}/>
             <NegotiationList negotiationList={negotiationsList} />
             <Pagination currentPage={currentPage} setCurrentPage={setCurrentPage} lastPage={lasPage}/>
         </>
