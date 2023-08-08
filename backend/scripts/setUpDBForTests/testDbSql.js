@@ -30,7 +30,8 @@ VALUES  ("Testget", "test@get", "3a02078363bb72fd562ef80a18fed3ff05b1e80622283ea
         ('userWithEmptyPositions', 'TestUser@WithEmptyPositions.com', '123', '123', 10000),
         ('admin', 'admim@admin.com', 'f9db4a45745deee1840ecc5c9c3c4d44dd86f7b562662e79e86dee7e0896e551402041eb9e18cd76ccf95f5bb7ffe437c56b748cd5eeeba2affa55bb1c4152ca', '33b3700ea5ebcb36a86501cc31166db5b39d0627ff55eb7fe30db230674140fa8b568027fa64b818eeab11abf0116270c5360ee5860aa0edee7a5683d1d87bed1112359da6a2b21d0d7a0eaa229bd36b808e411e40d2f44ac76286440bceb0a8a59a2552e2df830f659f05b1684193f3f0a6c82818974db255ec14d8f01d1b07', 0),
         ('userTestBuyMethod', 'userController@testbuymethod.com', '123', '123', 10000),
-        ('userTestSellMethod', 'userController@testsellmethod.com', '123', '123', 10000);
+        ('userTestSellMethod', 'userController@testsellmethod.com', '123', '123', 10000),
+        ('userTestTradeHistory', 'userController@testtradehisroty.com', '123', '123', 10000);
 
 
 `
@@ -71,7 +72,14 @@ VALUES  ("14", "TAEE11", 100, 10.45, "BUY"),
         ("15", "ALZR11", 100, 10.45, "BUY"),
         ("15", "TAEE11", 100, 10.45, "BUY"),
         ("15", "XPML11", 100, 10.45, "SELL"),
+        ("15", "XPML11", 34, 10.45, "SELL"),
+        ("15", "AMZO34", 19, 4.17, "BUY"),
         ("14", "BBSE3", 27, 23.47, "SELL"), --negotiation that will be updated,
-        ("14", "BBSE3", 27, 23.47, "SELL") --negotiation that will be deleted: id 7;
+        ("14", "BBSE3", 27, 23.47, "SELL"), --negotiation that will be deleted: id 9
+        ("31", "ALZR11", 100, 10.45, "BUY"), --user with fixed trade history
+        ("31", "TAEE11", 100, 10.45, "BUY"), --user with fixed trade history
+        ("31", "XPML11", 100, 10.45, "SELL"), --user with fixed trade history
+        ("31", "XPML11", 34, 10.45, "SELL"), --user with fixed trade history
+        ("31", "AMZO34", 19, 4.17, "BUY") --user with fixed trade history;
 `
 module.exports = { userDbSql, positionDbSql, negotiationDbSql, updateAdminRole }

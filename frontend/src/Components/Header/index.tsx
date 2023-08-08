@@ -26,7 +26,8 @@ function Header() {
                 <LastPageButton txtColor="clear"/>
                 <nav>
                     <StyledLink to='/'>Home</StyledLink>
-                    <StyledLink to='/homebroker'>Trade</StyledLink>
+                    {loggedIn && <StyledLink to='/homebroker'>Trade</StyledLink>}
+                    {loggedIn && <StyledLink to='/history'>Negotiation History</StyledLink>}
                 </nav>
 
                 {!loggedIn && <nav>

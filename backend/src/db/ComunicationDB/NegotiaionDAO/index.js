@@ -55,10 +55,11 @@ class NegotiationDAO {
         }
     } 
 
-    //method for getting multiple entries from the negotiation table, with optional filters
-    static async select(filters = null) {        
-        //base select sql
+    //method for getting multiple entries from the negotiation table, with optional filters and pagination parameters
+    static async select(filters = null, limitOfResults = 100, offsetBy = 0) {        
+        //base sql elements
         let baseSQL = `SELECT * FROM negotiations `
+        const paginationSQL = `ORDER BY negotiation_date DESC LIMIT ${limitOfResults} OFFSET ${offsetBy}`
         
         // //Prepare to create filter setup
         let valuesToFilterList
@@ -76,10 +77,40 @@ class NegotiationDAO {
         }
         
         // build final sql
-        const sql = baseSQL + filterSQL + ';'
+        const sql = baseSQL + filterSQL + paginationSQL +  ';'
 
         //run sql
         const result = await dbAll(sql, valuesToFilterList)
+
+        //return result from query
+        return result
+    }
+    
+    //method for getting number of entries from the negotiation table, with optional filters
+    static async countEntries(filters = null) {        
+        //base sql elements
+        let baseSQL = `SELECT COUNT(*) as number_of_entries FROM negotiations `
+        
+        // //Prepare to create filter setup
+        let valuesToFilterList
+        let filterSQL = ''
+
+        //Handle filters if entered
+        if(filters) {
+            //validate filters entered
+            await validateFilters(filters)
+
+            //get filter sql and list of arguments
+            const filterSqlAndArgs = createSqlFilterForSelect(filters)
+            filterSQL = filterSqlAndArgs.filterSQL 
+            valuesToFilterList = filterSqlAndArgs.valuesToFilterList   
+        }
+        
+        // build final sql
+        const sql = baseSQL + filterSQL +  ';'
+
+        //run sql
+        const result = await dbGet(sql, valuesToFilterList)
 
         //return result from query
         return result

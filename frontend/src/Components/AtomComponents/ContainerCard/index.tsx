@@ -1,13 +1,18 @@
 import styled from "styled-components";
 
+interface Props {
+    minHeight?: number
+}
+
 const ContainerCard = styled.div`
     display: flex;
     flex-direction: column;
+    align-items: center;
 
     max-width: var(--max-width-card);
-    min-height: 350px;
+    min-height: ${(props: Props) => (props.minHeight ?? 350) + 'px' };
     
-    padding: var(--default-spacing);
+    padding: var(--large-spacing);
     margin: var(--default-spacing) auto;
     border-radius: var(--default-spacing);
 

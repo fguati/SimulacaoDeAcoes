@@ -1,6 +1,6 @@
 const { InvalidInputError, NotFoundError } = require("../../../src/CustomErrors")
 const NegotiationDAO = require("../../../src/db/ComunicationDB/NegotiaionDAO")
-const { dbGet, dbRun } = require("../../../src/db/utils/dbutils")
+const { dbGet, dbRun, dbAll } = require("../../../src/db/utils/dbutils")
 
 describe('Test the insert method in the negotiationDAO class', () => {
     const testNegotiation = {
@@ -33,6 +33,7 @@ describe('Test the insert method in the negotiationDAO class', () => {
         expect(dbNegotiationDate.getFullYear).toBe(today.getFullYear)
 
     })
+    
 
     it('must throw an invalid input error if any mandatory parameter is not provided or has an invalid value', async () => {
         function testRejectFunction(testObject) {
@@ -176,6 +177,13 @@ describe('Test the select method and all its optional filters in the negotiation
             negotiation_type: expect.stringMatching(/BUY|SELL/),
             negotiation_date: expect.any(String)
         })]))
+    })
+
+    it('Must return a list of negotiations that obeys the pagination parameters', async () => {
+        const dbTestQuery = await NegotiationDAO.select(null, 1, 1)
+        const dbNegotiationFullList = await dbAll(`SELECT * FROM negotiations ORDER BY negotiation_date DESC`)
+        expect(dbTestQuery.length).toBe(1)
+        expect(dbTestQuery[0]).toEqual(expect.objectContaining(dbNegotiationFullList[1]))
     })
 
     it('Must return a list of negotiations that fufills that entered filters', async () => {
@@ -322,6 +330,19 @@ describe('Test the select method and all its optional filters in the negotiation
     })
 })
 
+describe('Teste the countEntries method', () => {
+    it('must return the number of negotiations on the db that fufill the filter ', async () => {
+        const testUserId = 31
+
+        const numberOfNegotiations = await NegotiationDAO.countEntries({ userId: testUserId })
+
+        const negotiationsDb = await dbAll(`SELECT * FROM negotiations WHERE user_id=?`, [testUserId])
+        const expectedNumberOfNegotiations = negotiationsDb.length
+
+        expect(numberOfNegotiations.number_of_entries).toBe(expectedNumberOfNegotiations)
+    })
+})
+
 describe('Test the select by id method of the negotiationDAO class', () => {
     it('returns a negotiation from the database', async () => {
         const testID = 1
@@ -355,7 +376,7 @@ describe('Test the select by id method of the negotiationDAO class', () => {
 describe('Test the update method of the NegotiationDAO class', () => {
     it('updates the negotiation in db to the same values entered in the argument', async () => {
         const negotiationToUpdate = {
-            id: 6,
+            id: 8,
             userId: 15,
             stockTicker: 'BBAS3',
             negotiatedQty: 72,
@@ -487,7 +508,7 @@ describe('Test the update method of the NegotiationDAO class', () => {
 
 describe('Test the delete method of the negotiationDAO class', () => {
     it('deletes a negotiation from the database', async () => {
-        const testId = 7
+        const testId = 9
         let testNegotiationDB = await dbGet(`SELECT * FROM negotiations WHERE id=?`, [testId])
         expect(testNegotiationDB).toEqual(expect.objectContaining({id: testId}))
 
