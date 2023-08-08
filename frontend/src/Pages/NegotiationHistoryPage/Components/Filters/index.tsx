@@ -4,6 +4,8 @@ import Paragraph from "Components/AtomComponents/Paragraph"
 import IFiltersNegotiation from "Interfaces/IFiltersNegotiation"
 import styled from "styled-components"
 import FilterField from "./FilterField"
+import useFilters from "Pages/NegotiationHistoryPage/hooks/useFilters"
+import MinimizeButton from "Components/MinimizeButton"
 import { useState } from "react"
 
 const FilterAreaContainer = styled.div`
@@ -18,61 +20,32 @@ const FilterAreaContainer = styled.div`
     margin: var(--medium-spacing);
 `
 
+const FilterTitleContainer = styled.div`
+    display: grid;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-rows: 1fr;
+
+    p {
+        grid-column: 2;
+    }
+`
+
 interface Props {
     setFilters: React.Dispatch<React.SetStateAction<IFiltersNegotiation>>
     setCurrentPage: React.Dispatch<React.SetStateAction<number>>
 }
 
-interface IFilterField {
-    fieldFilter: keyof IFiltersNegotiation
-    inputType?: 'date' | 'text'
-    fieldName: string
-}
-
-interface IFilterValues {
-    stockFilter?: string
-    typeFilter?: string
-    startDateFilter?: string
-    endDateFilter?: string
-}
-
 //Component that renders the filter form of the negotiations list
 function NegotiationListFilters({ setFilters, setCurrentPage }: Props) {
     
-    const filterFields:IFilterField[]  = [
-        {
-            fieldFilter: 'stockFilter',
-            fieldName: 'Stock Ticker'
-        },
-        {
-            fieldFilter: 'typeFilter',
-            fieldName: 'Trade Type'
-        },
-        {
-            fieldFilter: 'startDateFilter',
-            fieldName: 'Start Date',
-            inputType: 'date'
-        },
-        {
-            fieldFilter: 'endDateFilter',
-            fieldName: 'End Date',
-            inputType: 'date'
-        }
-    ]
+    //use custom hook to render filter variables, states and setters
+    const { filterFields, emptyFilters, filtersValues, setFilterValues, currentFilterValues, setCurrentFilterValues } = useFilters()
 
-    const emptyFilters: IFilterValues = {
-        stockFilter: '',
-        typeFilter: '',
-        startDateFilter: '',
-        endDateFilter: ''
-    }
-
-    //state that manages the current values in the inputs of the filter fields
-    const [filtersValues, setFilterValues] = useState<IFilterValues>(emptyFilters)
-
-    //state that manages the current values of the filters that will be applied when the Apply Button is clicked
-    const [currentFilterValues, setCurrentFilterValues] = useState<IFiltersNegotiation>({})
-
+    //states that control minimization of filter area
+    const [ minimized, setMinimized ] = useState(true)
 
     //function that apply selected filters to the negotiation list
     const applyFilters = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
@@ -98,25 +71,32 @@ function NegotiationListFilters({ setFilters, setCurrentPage }: Props) {
     }
 
     return (
-        <ContainerCard minHeight={200}>
-            <Paragraph fontSize="--large-font-size">Filters: </Paragraph>
-            <FilterAreaContainer>
-                {filterFields.map((field, index) => (
-                    <FilterField
-                        fieldFilter={field.fieldFilter}
-                        filterGroup={currentFilterValues}
-                        filterSetter={setCurrentFilterValues}
-                        inputType={field.inputType}
-                        key={`filter${index}`}
-                        fieldValue={filtersValues[field.fieldFilter]}
-                        fieldSetter={setField(field.fieldFilter)}
-                    >
-                        {field.fieldName}
-                    </FilterField>
-                ))}
-            </FilterAreaContainer>
+        <ContainerCard minHeight={24}>
+            <FilterTitleContainer>
+                <Paragraph fontSize="--large-font-size">Filters: </Paragraph>
+                <MinimizeButton minimized={minimized} setMinimized={setMinimized}/>
+            </FilterTitleContainer>
 
-            <Button onClick={applyFilters}>Apply Filters</Button>
+            {!minimized && <>
+                <FilterAreaContainer>
+                    {filterFields.map((field, index) => (
+                        <FilterField
+                            fieldFilter={field.fieldFilter}
+                            filterGroup={currentFilterValues}
+                            filterSetter={setCurrentFilterValues}
+                            inputType={field.inputType}
+                            key={`filter${index}`}
+                            fieldValue={filtersValues[field.fieldFilter]}
+                            fieldSetter={setField(field.fieldFilter)}
+                        >
+                            {field.fieldName}
+                        </FilterField>
+                    ))}
+                </FilterAreaContainer>
+
+                <Button onClick={applyFilters}>Apply Filters</Button>
+            </>}
+
         </ContainerCard>
     )
 }
